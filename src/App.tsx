@@ -1,43 +1,11 @@
 import React, { createContext } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { AuthStateHook } from "react-firebase-hooks/auth";
+import { useAuthState, AuthStateHook } from "react-firebase-hooks/auth";
 import { auth } from "./firebase/auth";
-import { Routes, Route, Navigate } from "react-router-dom";
-import { HomePage } from "./Component/HomePage/Home";
-import { SigninPage } from "./Component/SigninPage/SigninPage";
-import { LoginPage } from "./Component/LoginPage/LoginPage";
-// import { MessagesPage } from "./Component/MessagesPage/MessagesPage";
-import MessagesPage from "./Component/Tempopary/Message";
+import { Routes, Route } from "react-router-dom";;
 import { ErrorPage } from "./Component/Error/Error";
+import { unAuthorizedRoutes, authorizedRoutes } from "./routes/routes";
 
-const unAuthorizedRoutes = [
-  {
-    path: "/login",
-    element: <LoginPage />,
-  },
-  {
-    path: "/signin",
-    element: <SigninPage />,
-  },
-  {
-    path: "*",
-    element: <Navigate to={"/login"} replace />,
-  },
-];
-const authorizedRoutes = [
-  {
-    path: "/",
-    element: <HomePage />,
-  },
-  {
-    path: "/message",
-    element: <MessagesPage />,
-  },
-  {
-    path: "*",
-    element: <Navigate to={"/"} replace />,
-  },
-];
+
 
 const UserContext: any = createContext<AuthStateHook | null>(null);
 
@@ -56,21 +24,12 @@ const App = () => {
   }
   if (loading) {
     return (
-      <div className="lds-roller">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
+      
     );
   }
 
   return (
-    <UserContext.Provider value={[user,loading,error]}>
+    <UserContext.Provider value={user}>
       <Routes>
         {routes}
         <Route path={"*"} element={<ErrorPage />} />

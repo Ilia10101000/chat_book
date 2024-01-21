@@ -9,21 +9,28 @@ import { AuthStateHook } from "react-firebase-hooks/auth";
 export default function () {
   const [value, setValue] = React.useState("");
   const [messages, loading, error] = useCollectionData(
-    query(collection(db, "messages"), orderBy('time','asc'))
+    query(collection(db, "message"), orderBy('time','asc'))
   );
     
     const [user] : AuthStateHook = useContext(UserContext);
 
   const handleSubmit = async (event: FormEvent) => {
-      event.preventDefault();
+    event.preventDefault();
+    try {
       const senderDoc = {
         from: user?.uid,
         to:'111',
         text: value,
         time: serverTimestamp(),
       };
-    await addDoc(collection(db, 'messages'), senderDoc);
+    await addDoc(collection(db, 'message'), senderDoc);
+    
+  } catch (error) {
+    console.log(error)
+  } finally {
+    
     setValue('')
+    }
   };
 
   let status;
@@ -57,6 +64,7 @@ export default function () {
         {messages
           ? messages.map((mes, index) => (
               <div
+              key={index}
                 style={{
                   padding: "10px",
                   borderRadius: "10px",
