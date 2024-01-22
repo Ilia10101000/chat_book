@@ -6,7 +6,7 @@ import { auth } from "../../firebase/auth";
 
 const SigninPage = () => {
 
-    const [createUserWithEmailAndPassword, user, loading, error] =
+    const [createUserWithEmailAndPassword] =
         useCreateUserWithEmailAndPassword(auth);
     
   return (

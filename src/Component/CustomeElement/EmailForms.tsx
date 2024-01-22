@@ -12,7 +12,6 @@ import {
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
 import { useState } from "react";
-// import { GoogleAuthButton } from "@/firebase/GoogleAuth";
 
 interface IEmailForms {
   handleSubmit: (email: string, password: string) => void;

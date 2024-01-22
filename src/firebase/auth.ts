@@ -13,15 +13,6 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_APP_ID,
 };
 
-// const firebaseConfig = {
-//   apiKey: "AIzaSyAxcXFqSvFO0Ek7l3HaOrJK_AhpVqzdPIw",
-//   authDomain: "chat-book-3205d.firebaseapp.com",
-//   projectId: "chat-book-3205d",
-//   storageBucket: "chat-book-3205d.appspot.com",
-//   messagingSenderId: "322939136736",
-//   appId: "1:322939136736:web:bb53a71dbbc9370ac3fe85",
-// };
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);

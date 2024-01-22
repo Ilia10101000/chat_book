@@ -4,13 +4,16 @@ import { Button, Container, Box } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import NightsStayIcon from "@mui/icons-material/NightsStay";
+import { PaletteMode } from "@mui/material";
 
 interface ThemeProps {
   children: ReactNode;
 }
 
 function Theme({ children }: ThemeProps) {
-  const [mode, setMode] = React.useState(localStorage.getItem('theme') || "light");
+  const [mode, setMode] = React.useState<PaletteMode>(
+    localStorage.getItem("theme") as PaletteMode || "light"
+  );
 
   const theme = useMemo(() => {
     return createTheme({

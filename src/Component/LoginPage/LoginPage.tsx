@@ -13,7 +13,7 @@ interface IWindow extends Window {
 const windowI: IWindow = window;
 
 const LoginPage = () => {
-  const [signInWithEmailAndPassword, user, loading, error] =
+  const [signInWithEmailAndPassword] =
     useSignInWithEmailAndPassword(auth);
   return (
     <div

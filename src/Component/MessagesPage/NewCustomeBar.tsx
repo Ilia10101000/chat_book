@@ -1,8 +1,7 @@
-"use client";
+import React from "react";
 import {
   Box,
   Button,
-  CssBaseline,
   Divider,
   IconButton,
   List,
@@ -80,7 +79,6 @@ export default function CustomeBar({ children }: { children: ReactNode }) {
 
   return (
     <Box sx={{ display: "flex" }}>
-      <CssBaseline />
       <AppBar position="fixed">
         <Toolbar>
           <IconButton

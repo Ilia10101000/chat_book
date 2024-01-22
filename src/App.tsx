@@ -1,37 +1,29 @@
-import React, { createContext } from "react";
-import { useAuthState, AuthStateHook } from "react-firebase-hooks/auth";
-import { auth } from "./firebase/auth";
-import { Routes, Route } from "react-router-dom";;
 import { ErrorPage } from "./Component/Error/Error";
-import { unAuthorizedRoutes, authorizedRoutes } from "./routes/routes";
+import { unAuthorizedRoutes, authorizedRoutes, renderRoutes } from "./routes/routes";
+import React, { createContext } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "./firebase/auth";
+import { Routes, Route } from "react-router-dom";
+import { CircularProgress } from "@mui/material";
+import { User } from "firebase/auth";
 
 
 
-const UserContext: any = createContext<AuthStateHook | null>(null);
+const UserContext: any = createContext<User>(null);
 
 const App = () => {
   const [user, loading, error] = useAuthState(auth);
 
-  let routes;
-  if (!user) {
-    routes = unAuthorizedRoutes.map((route) => (
-      <Route key={route.path} path={route.path} element={route.element} />
-    ));
-  } else {
-    routes = authorizedRoutes.map((route) => (
-      <Route key={route.path} path={route.path} element={route.element} />
-    ));
-  }
+  let availablePaths = user ? authorizedRoutes : unAuthorizedRoutes;
+
   if (loading) {
-    return (
-      
-    );
+    return <CircularProgress color="success" />;
   }
 
   return (
     <UserContext.Provider value={user}>
       <Routes>
-        {routes}
+        {renderRoutes(availablePaths)}
         <Route path={"*"} element={<ErrorPage />} />
       </Routes>
     </UserContext.Provider>
