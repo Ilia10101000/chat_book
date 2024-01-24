@@ -26,15 +26,15 @@ import { User, signOut } from "firebase/auth";
 import { UserContext } from "../../App";
 
 const drawerListItems = [
-  { label: "Friends", icon: <GroupIcon /> },
-  { label: "Message", icon: <EmailIcon /> },
-  { label: "Settings", icon: <TuneIcon /> },
+  { label: "Friends", icon: <GroupIcon />, href: "/friends" },
+  { label: "Message", icon: <EmailIcon />, href: "/message" },
+  { label: "Settings", icon: <TuneIcon />, href: "/settings" },
 ];
 
-const drawerInner = drawerListItems.map(({ label, icon }) => (
+const drawerInner = drawerListItems.map(({ label, icon, href }) => (
   <Link
     key={label}
-    to={`/${label.toLowerCase()}`}
+    to={href}
     style={{ textDecoration: "none", color: "inherit" }}
   >
     <ListItemButton
@@ -141,11 +141,11 @@ function HomePage() {
       <Box
         component="main"
         sx={{
-          flexGrow: 1,
+          flexGrow: 1
         }}
       >
         <DrawerHeader />
-        <div style={{width:'500px'}}>{JSON.stringify(user,null,2)}</div>
+        {/* <div style={{width:'500px'}}>{JSON.stringify(user,null,2)}</div> */}
         <Outlet/>
       </Box>
     </Box>

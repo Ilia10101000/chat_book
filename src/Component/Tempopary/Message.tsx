@@ -1,10 +1,10 @@
-import React, { FormEvent, useContext } from "react";
+import React, { FormEvent, ReactNode, useContext } from "react";
 import { collection, orderBy, query } from "firebase/firestore";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { db } from "../../firebase/auth";
 import { UserContext } from "../../App";
-import {addDoc, serverTimestamp} from 'firebase/firestore'
-import { AuthStateHook } from "react-firebase-hooks/auth";
+import { addDoc, serverTimestamp } from 'firebase/firestore';
+import { User } from "firebase/auth";
 
 export default function () {
   const [value, setValue] = React.useState("");
@@ -12,7 +12,7 @@ export default function () {
     query(collection(db, "message"), orderBy('time','asc'))
   );
     
-    const [user] : AuthStateHook = useContext(UserContext);
+    const user : User = useContext(UserContext);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -33,13 +33,14 @@ export default function () {
     }
   };
 
-  let status;
+  let status: ReactNode;
   if (loading) {
     status = <div>Loading...</div>;
   }
   if (error) {
     status = <div>Some error occured!</div>;
   }
+  console.log(messages)
   return (
     <div
       style={{

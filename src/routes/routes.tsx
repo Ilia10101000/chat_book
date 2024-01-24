@@ -6,6 +6,7 @@ import { LoginPage } from "../Component/LoginPage/LoginPage";
 import { Settings } from "../Component/SettingsPage/Settings";
 // import { MessagesPage } from "./Component/MessagesPage/MessagesPage";
 import MessagesPage from "../Component/Tempopary/Message";
+import { FriendsList } from "../Component/Tempopary/FriendsList";
 
 
 export const unAuthorizedRoutes = [
@@ -36,6 +37,10 @@ export const authorizedRoutes = [
       {
         path: 'settings',
         element:<Settings/>
+      },
+      {
+        path: 'friends',
+        element:<FriendsList/>
       }
     ],
   },
