@@ -31,7 +31,7 @@ export const authorizedRoutes = [
     element: <HomePage />,
     children: [
       {
-        path: "message",
+        path: "messages/:reciever",
         element: <MessagesPage />,
       },
       {

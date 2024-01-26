@@ -1,19 +1,23 @@
 import React from "react";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { db } from "../../firebase/auth";
-import { collection, query, where } from "firebase/firestore";
-
+import { collection, query, where, limit } from "firebase/firestore";
 
 const useFindFriends = ({ text }: { text: string }) => {
-    const [list, loading, error] = useCollectionData(
-      query(collection(db, "users"), orderByChild("name"), equalTo(searchValue))
-    );
+  const [list] = useCollectionData(
+    query(
+      collection(db, "users"),
+      where("displayName", ">=", text),
+      where("displayName", "<=", text + "\uf8ff"),
+      limit(5)
+    )
+  );
 
-    if (text.length <= 0) {
-        return null
-    }
-    
-    return list
+  if (text.length <= 0) {
+    return null;
+  }
+
+  return list;
 };
 
-export {useFindFriends}
+export { useFindFriends };
