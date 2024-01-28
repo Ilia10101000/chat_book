@@ -5,8 +5,9 @@ import { SigninPage } from "../Component/SigninPage/SigninPage";
 import { LoginPage } from "../Component/LoginPage/LoginPage";
 import { Settings } from "../Component/SettingsPage/Settings";
 // import { MessagesPage } from "./Component/MessagesPage/MessagesPage";
-import MessagesPage from "../Component/Tempopary/Message";
+import {Message} from "../Component/Tempopary/Message";
 import { FriendsList } from "../Component/Tempopary/FriendsList";
+import { UserProfile } from "../Component/Tempopary/UserProfile";
 
 
 export const unAuthorizedRoutes = [
@@ -32,16 +33,20 @@ export const authorizedRoutes = [
     children: [
       {
         path: "messages/:reciever",
-        element: <MessagesPage />,
+        element: <Message />,
       },
       {
-        path: 'settings',
-        element:<Settings/>
+        path: "user/:id",
+        element: <UserProfile />,
       },
       {
-        path: 'friends',
-        element:<FriendsList/>
-      }
+        path: "settings",
+        element: <Settings />,
+      },
+      {
+        path: "friends",
+        element: <FriendsList />,
+      },
     ],
   },
   {

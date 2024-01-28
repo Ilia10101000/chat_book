@@ -5,6 +5,7 @@ import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase/auth";
+import DefaultUserIcon from '../../img/default-user.svg'
 
 interface IWindow extends Window {
   recaptchaVerifier?: any;
@@ -43,7 +44,7 @@ const LoginPage = () => {
         }}
       >
         <Box>
-          <img src={"../../img/bird.png"} alt="icon" />
+          <img src={DefaultUserIcon} alt="icon" />
         </Box>
         <Box>
           <EmailForms handleSubmit={signInWithEmailAndPassword} />
