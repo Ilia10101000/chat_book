@@ -2,12 +2,29 @@ import React from "react";
 import { EmailForms } from "../CustomeElement/EmailForms";
 import Box from "@mui/material/Box";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { auth } from "../../firebase/auth";
+import { auth, db } from "../../firebase/auth";
+import { setDoc, doc } from "firebase/firestore";
 
 const SigninPage = () => {
 
-    const [createUserWithEmailAndPassword] =
-        useCreateUserWithEmailAndPassword(auth);
+    const [createUserWithEmailAndPassword, user, loading, error] =
+    useCreateUserWithEmailAndPassword(auth);
+  
+  const handleSignInUser = async (email: string, password: string) => {
+    try {
+      const credentials = await createUserWithEmailAndPassword(email, password);
+      await setDoc(doc(db, "users", credentials.user.uid), {
+        id: credentials.user.uid,
+        email: credentials.user.email,
+        emailVerified: credentials.user.emailVerified,
+        displayName:
+          credentials.user.displayName ||
+          `User: ${credentials.user.uid.slice(0, 6)}`,
+      });
+    } catch (error) {
+      console.log('error: ', error.message)
+    }
+  };
     
   return (
     <Box
@@ -31,8 +48,28 @@ const SigninPage = () => {
         <img src={"../../img/bird.png"} alt="icon" />
       </Box>
       <Box>
-        <EmailForms handleSubmit={createUserWithEmailAndPassword} />
+        <EmailForms handleSubmit={handleSignInUser} />
       </Box>
+      {error && (
+        <Box
+          sx={{
+            maxWidth: "100%",
+            whiteSpace: "wrap",
+          }}
+        >
+          {error.message}
+        </Box>
+      )}
+      {loading && (
+        <Box
+          sx={{
+            maxWidth: "100%",
+            whiteSpace: "wrap",
+          }}
+        >
+          loading...
+        </Box>
+      )}
     </Box>
   );
 };
