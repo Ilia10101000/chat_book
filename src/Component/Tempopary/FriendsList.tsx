@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useDebounce } from "use-debounce";
 import { DocumentData } from "firebase/firestore";
 import { useFindFriends } from "./useFindFriends";
 import { UserFindItem } from "./UserFindItem";
 import { TextField } from "@mui/material";
 import { Link } from "react-router-dom";
+import { UserContext } from "../../App";
 
 interface IUser {
   displayName: string;
@@ -14,6 +15,7 @@ interface IUser {
 }
 
 const FriendsList = () => {
+  const authUser = useContext(UserContext)
   const [value, setValue] = useState("");
   const [text] = useDebounce(value, 600);
 
@@ -31,7 +33,7 @@ const FriendsList = () => {
           gap: "20px",
         }}
       >
-        {list.map((user: IUser) => (
+        {list.filter(user => user.id !== authUser.uid).map((user: IUser) => (
           <Link to={`/user/${user.id}`}>
             <UserFindItem name={user.displayName} />
           </Link>

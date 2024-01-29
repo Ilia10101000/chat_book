@@ -9,7 +9,7 @@ import { User } from "firebase/auth";
 
 
 
-const UserContext: any = createContext<User>(null);
+const UserContext = createContext<User>(null);
 
 const App = () => {
   const [user, loading, error] = useAuthState(auth);

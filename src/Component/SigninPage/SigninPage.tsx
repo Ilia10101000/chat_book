@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth, db } from "../../firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
+import User from '../../img/default-user.svg'
 
 const SigninPage = () => {
 
@@ -45,7 +46,7 @@ const SigninPage = () => {
       }}
     >
       <Box>
-        <img src={"../../img/bird.png"} alt="icon" />
+        <img src={User} alt="icon" />
       </Box>
       <Box>
         <EmailForms handleSubmit={handleSignInUser} />

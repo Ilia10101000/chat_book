@@ -49,6 +49,7 @@ const LoginPage = () => {
         <Box>
           <EmailForms handleSubmit={signInWithEmailAndPassword} />
         </Box>
+        <Link to={'/signin'}><Button size="small">Create account</Button></Link>
         <Link to="/reset">
           <Button sx={{ fontSize: "10px" }} color="error">
             I forgot password

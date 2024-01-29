@@ -1,94 +1,79 @@
-import React, { FormEvent, ReactNode, useContext } from "react";
-import { collection, orderBy, query } from "firebase/firestore";
-import { useCollectionData } from "react-firebase-hooks/firestore";
+import React, { FormEvent, ReactNode, useContext, useEffect, useState } from "react";
+import { collection, limit, orderBy, query, setDoc, where,doc } from "firebase/firestore";
+import { useCollection, useCollectionData } from "react-firebase-hooks/firestore";
+import { useParams } from "react-router-dom";
 import { db } from "../../firebase/auth";
 import { UserContext } from "../../App";
-import { addDoc, serverTimestamp } from 'firebase/firestore';
-import { User } from "firebase/auth";
+import { addDoc, serverTimestamp } from "firebase/firestore";
+import { TextField } from "@mui/material";
 
- function Message() {
-  const [value, setValue] = React.useState("");
-  const [messages, loading, error] = useCollectionData(
-    query(collection(db, "message"), orderBy('time','asc'))
+function Message() {
+  const authUser = useContext(UserContext);
+
+  const { reciever } = useParams();
+
+  const [chatData, loadingChatData, errorChatData] = useCollection(
+    query(
+      collection(db, "chats"),
+      where(authUser.uid, "==", true),
+      where(reciever, "==", true),
+      limit(1)
+    )
   );
-    
-    const user : User = useContext(UserContext);
 
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-    try {
-      const senderDoc = {
-        from: user?.uid,
-        to:'111',
-        text: value,
-        time: serverTimestamp(),
-      };
-    await addDoc(collection(db, 'message'), senderDoc);
-    
-  } catch (error) {
-    console.log(error)
-  } finally {
-    
-    setValue('')
+  useEffect(() => {
+    if (chatData?.empty) {
+      addDoc(collection(db, 'chats'), {
+        [authUser.uid]: true,
+        reciever:true
+      })
     }
+  },[])
+
+  const [messages, loadingMessages, errorMessages] = useCollectionData(
+    collection(db, `chats/${chatData?.docs[0].id}/messages`)
+  );
+  console.log(chatData)
+  console.log(messages);
+
+  const [messageValue, setMessageValue] = useState<string>('');
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    await addDoc(collection(db, `chats/${chatData?.docs[0].id}/messages`), {
+      senderId: authUser.uid,
+      text: messageValue,
+      timestamp: serverTimestamp(),
+    });
+    setMessageValue('')
   };
 
-  let status: ReactNode;
-  if (loading) {
-    status = <div>Loading...</div>;
+  if (messages?.length === 0) {
+    return (
+      <>
+        <div>Write a message</div>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            value={messageValue}
+            onChange={(e) => setMessageValue(e.target.value)}
+          />
+        </form>
+      </>
+    );
   }
-  if (error) {
-    status = <div>Some error occured!</div>;
-  }
-  console.log(messages)
   return (
-    // <div
-    //   style={{
-    //     display: "flex",
-    //     flexDirection: "column",
-    //     alignItems: "center",
-    //     minHeight: "calc(100vh - 20px)",
-    //     padding: "10px",
-    //   }}
-    // >
-    //   <div
-    //     style={{
-    //       width: "80%",
-    //       display: "flex",
-    //       flexDirection: "column",
-
-    //       border: "1px solid grey",
-    //       borderRadius: "10px",
-    //       flexGrow: 3,
-    //     }}
-    //   >
-    //     {messages
-    //       ? messages.map((mes, index) => (
-    //           <div
-    //           key={index}
-    //             style={{
-    //               padding: "10px",
-    //               borderRadius: "10px",
-    //               border: "1px solid grey",
-    //               alignSelf: index % 2 ? "start" : "end",
-    //             }}
-    //           >
-    //             {mes.text}
-    //           </div>
-    //         ))
-    //       : status}
-    //   </div>
-    //   <form style={{ display: "flex", width: "80%" }} onSubmit={handleSubmit}>
-    //     <textarea
-    //       style={{ flexGrow: 1 }}
-    //       value={value}
-    //       onChange={(e) => setValue(e.target.value)}
-    //     />
-    //     <button type="submit">Send</button>
-    //   </form>
-    // </div>
-    <div>5000$</div>
+    <>
+      {messages?.map((message) => (
+        <div>{message.text}</div>
+      ))}
+      <form onSubmit={(e) => handleSubmit(e)}>
+        <TextField
+          value={messageValue}
+          onChange={(e) => setMessageValue(e.target.value)}
+        />
+      </form>
+    </>
   );
 }
 
-export {Message}
+export { Message };
