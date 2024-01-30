@@ -5,7 +5,6 @@ import { SigninPage } from "../Component/SigninPage/SigninPage";
 import { LoginPage } from "../Component/LoginPage/LoginPage";
 import { Settings } from "../Component/SettingsPage/Settings";
 import { MessagesPage } from "../Component/MessagesPage/MessagesPage";
-// import {Message} from "../Component/Tempopary/Message";
 import { FriendsList } from "../Component/Tempopary/FriendsList";
 import { UserProfile } from "../Component/Tempopary/UserProfile";
 

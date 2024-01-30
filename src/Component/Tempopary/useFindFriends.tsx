@@ -3,7 +3,7 @@ import { useCollectionData } from "react-firebase-hooks/firestore";
 import { db } from "../../firebase/auth";
 import { collection, query, where, limit } from "firebase/firestore";
 
-const useFindFriends = ({ text }: { text: string }) => {
+const useFindFriends = (text: string ) => {
   const [list] = useCollectionData(
     query(
       collection(db, "users"),

@@ -19,7 +19,7 @@ const FriendsList = () => {
   const [value, setValue] = useState("");
   const [text] = useDebounce(value, 600);
 
-  let list = useFindFriends({ text });
+  let list = useFindFriends( text );
   let result: DocumentData[] | React.ReactNode | null;
 
   if (!list) {
@@ -34,9 +34,7 @@ const FriendsList = () => {
         }}
       >
         {list.filter(user => user.id !== authUser.uid).map((user: IUser) => (
-          <Link to={`/user/${user.id}`}>
-            <UserFindItem name={user.displayName} />
-          </Link>
+            <UserFindItem key={user.id} id={user.id} name={user.displayName} />
         ))}
       </div>
     );
@@ -56,6 +54,7 @@ const FriendsList = () => {
         label={"Find friends"}
         onChange={(e) => setValue(e.target.value)}
         autoFocus
+        autoComplete="off"
       />
       {result}
     </div>

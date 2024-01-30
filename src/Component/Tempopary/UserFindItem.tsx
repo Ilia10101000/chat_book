@@ -1,18 +1,21 @@
 import React from "react"
-import { Box, Avatar } from "@mui/material";
+import { Box, Avatar, Paper } from "@mui/material";
 import User from "../../img/default-user.svg";
+import { Link } from "react-router-dom";
 
 interface IUserFindItem {
-  img?: any,
-  name:string
+  img?: string,
+  name: string,
+  id:string
 }
 
-const UserFindItem = ({ img, name }: IUserFindItem) => {
+const UserFindItem = ({ id, img, name }: IUserFindItem) => {
   return (
-    <Box
+    <Link style={{textDecoration:'none'}} to={`/user/${id}`}>
+    <Paper
+      elevation={20}
       sx={{
         display: "flex",
-        border: "1px solid red",
         maxWidth: "250px",
         p: 2,
         alignItems: "center",
@@ -23,7 +26,8 @@ const UserFindItem = ({ img, name }: IUserFindItem) => {
     >
       <Avatar alt="user-avatar" src={img || User} />
       <Box>{name}</Box>
-    </Box>
+    </Paper>
+    </Link>
   );
 };
 

@@ -83,7 +83,7 @@ function HomePage() {
 
   return (
     <Box sx={{ display: "flex" }}>
-      <AppBar position="fixed">
+      <AppBar position="fixed" sx={{ display: { xs: "block", sm: "none" } }}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -115,28 +115,21 @@ function HomePage() {
           </Typography>
         </DrawerHeader>
         <Divider />
+        <Box sx={{my:3}}>{user.displayName || user.email}</Box>
         <List>{drawerInner}</List>
-        {user && (
-          <>
-            <Box>{user.displayName || user.email}</Box>
-            <Button onClick={() => signOut(auth)}>Sign out</Button>
-          </>
-        )}
-        <Box>
+        <Button onClick={toogleThemeMode} sx={{ mx: "auto" }}>
           {mode === "light" ? (
-            <NightsStayIcon
-              fontSize="large"
-              sx={{ ":hover": { cursor: "pointer" } }}
-              onClick={toogleThemeMode}
-            />
+            <NightsStayIcon fontSize="large" />
           ) : (
-            <WbSunnyIcon
-              fontSize="large"
-              sx={{ ":hover": { cursor: "pointer" } }}
-              onClick={toogleThemeMode}
-            />
+            <WbSunnyIcon fontSize="large" />
           )}
-        </Box>
+        </Button>
+        <Button
+          sx={{ mx: "auto", mt: "auto", mb: 5 }}
+          onClick={() => signOut(auth)}
+        >
+          Sign out
+        </Button>
       </Drawer>
       <Drawer
         open={open}
@@ -146,38 +139,35 @@ function HomePage() {
           display: { xs: "block", sm: "none" },
         }}
       >
-        <DrawerHeader />
+        <DrawerHeader>
+          <Typography variant="h6" sx={{ mx: "auto" }}>
+            <b>Chat Book</b>
+          </Typography>
+        </DrawerHeader>
         <Divider />
+        <Box sx={{my:3}}>{user.displayName || user.email}</Box>
         <List>{drawerInner}</List>
-        {user && (
-          <>
-            <Box>{user.displayName || user.email}</Box>
-            <Button onClick={() => signOut(auth)}>Sign out</Button>
-          </>
-        )}
-        <Box>
+        <Button
+          sx={{ mx: "auto", mt: "auto", mb: 2 }}
+          onClick={() => signOut(auth)}
+        >
+          Sign out
+        </Button>
+        <Button onClick={toogleThemeMode} sx={{ mx: "auto" }}>
           {mode === "light" ? (
-            <NightsStayIcon
-              fontSize="large"
-              sx={{ ":hover": { cursor: "pointer" } }}
-              onClick={toogleThemeMode}
-            />
+            <NightsStayIcon fontSize="large" />
           ) : (
-            <WbSunnyIcon
-              fontSize="large"
-              sx={{ ":hover": { cursor: "pointer" } }}
-              onClick={toogleThemeMode}
-            />
+            <WbSunnyIcon fontSize="large" />
           )}
-        </Box>
+        </Button>
       </Drawer>
       <Box
         component="main"
         sx={{
           flexGrow: 1,
+          p:2
         }}
       >
-        <DrawerHeader />
         <Outlet />
       </Box>
     </Box>
