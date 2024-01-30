@@ -4,8 +4,8 @@ import { HomePage } from "../Component/HomePage/Home";
 import { SigninPage } from "../Component/SigninPage/SigninPage";
 import { LoginPage } from "../Component/LoginPage/LoginPage";
 import { Settings } from "../Component/SettingsPage/Settings";
-// import { MessagesPage } from "./Component/MessagesPage/MessagesPage";
-import {Message} from "../Component/Tempopary/Message";
+import { MessagesPage } from "../Component/MessagesPage/MessagesPage";
+// import {Message} from "../Component/Tempopary/Message";
 import { FriendsList } from "../Component/Tempopary/FriendsList";
 import { UserProfile } from "../Component/Tempopary/UserProfile";
 
@@ -33,7 +33,7 @@ export const authorizedRoutes = [
     children: [
       {
         path: "messages/:reciever",
-        element: <Message />,
+        element: <MessagesPage />,
       },
       {
         path: "user/:id",

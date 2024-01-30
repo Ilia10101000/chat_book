@@ -1,14 +1,17 @@
-import React, { ReactNode, useMemo } from "react";
+import React, { ReactNode, createContext, useMemo } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Button, Container, Box } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
-import WbSunnyIcon from "@mui/icons-material/WbSunny";
-import NightsStayIcon from "@mui/icons-material/NightsStay";
+
 import { PaletteMode } from "@mui/material";
 
 interface ThemeProps {
   children: ReactNode;
 }
+
+type ModeTypeToggle = [PaletteMode, () => void];
+
+export const ModeToogleContext = createContext<ModeTypeToggle>(null);
 
 function Theme({ children }: ThemeProps) {
   const [mode, setMode] = React.useState<PaletteMode>(
@@ -46,45 +49,25 @@ function Theme({ children }: ThemeProps) {
     });
   };
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Box
-        sx={{
-          position: "fixed",
-          top: "13px",
-          right: "15px",
-          zIndex: 10000,
-        }}
-      >
-        {mode === "light" ? (
-          <NightsStayIcon
-            fontSize="large"
-            sx={{ ":hover": { cursor: "pointer" } }}
-            onClick={toogleThemeMode}
-          />
-        ) : (
-          <WbSunnyIcon
-            fontSize="large"
-            sx={{ ":hover": { cursor: "pointer" } }}
-            onClick={toogleThemeMode}
-          />
-        )}
-      </Box>
-      <Container
-        disableGutters={true}
-        maxWidth={false}
-        sx={{
-          minHeight:'100vh',
-          zIndex: -1,
-          background: (theme) =>
-            theme.palette.mode === "light"
-              ? "linear-gradient(45deg, rgba(136,0,255,1) 0%, rgba(53,46,232,1) 23%, rgba(68,212,236,1) 56%, rgba(0,255,76,1) 100%)"
-              : "linear-gradient(45deg, rgba(0,0,4,1) 0%, rgba(13,0,87,1) 31%, rgba(49,0,108,1) 61%, rgba(135,5,5,1) 100%)",
-        }}
-      >
-        {children}
-      </Container>
-    </ThemeProvider>
+    <ModeToogleContext.Provider value={[mode, toogleThemeMode]}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Container
+          disableGutters={true}
+          maxWidth={false}
+          sx={{
+            minHeight: "100vh",
+            zIndex: -1,
+            background: (theme) =>
+              theme.palette.mode === "light"
+                ? "linear-gradient(45deg, rgba(136,0,255,1) 0%, rgba(53,46,232,1) 23%, rgba(68,212,236,1) 56%, rgba(0,255,76,1) 100%)"
+                : "linear-gradient(45deg, rgba(0,0,4,1) 0%, rgba(13,0,87,1) 31%, rgba(49,0,108,1) 61%, rgba(135,5,5,1) 100%)",
+          }}
+        >
+          {children}
+        </Container>
+      </ThemeProvider>
+    </ModeToogleContext.Provider>
   );
 }
 

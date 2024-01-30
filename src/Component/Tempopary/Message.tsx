@@ -1,5 +1,5 @@
-import React, { FormEvent, ReactNode, useContext, useEffect, useState } from "react";
-import { collection, limit, orderBy, query, setDoc, where,doc } from "firebase/firestore";
+import React, { FormEvent, useContext, useEffect, useState } from "react";
+import { collection, limit, query, where } from "firebase/firestore";
 import { useCollection, useCollectionData } from "react-firebase-hooks/firestore";
 import { useParams } from "react-router-dom";
 import { db } from "../../firebase/auth";
@@ -33,8 +33,6 @@ function Message() {
   const [messages, loadingMessages, errorMessages] = useCollectionData(
     collection(db, `chats/${chatData?.docs[0].id}/messages`)
   );
-  console.log(chatData)
-  console.log(messages);
 
   const [messageValue, setMessageValue] = useState<string>('');
 

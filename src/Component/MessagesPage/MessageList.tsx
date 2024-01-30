@@ -1,83 +1,55 @@
-"use client";
-
+import React, {useEffect, useRef} from "react";
 import { Paper, Box } from "@mui/material";
-import { collection, query, orderBy } from "firebase/firestore";
-import { db } from "../../firebase/auth";
-import { useCollection } from "react-firebase-hooks/firestore";
-import Skeleton from "@mui/material/Skeleton";
+import { DocumentData } from "firebase/firestore";
+import { MessageListSkeleton } from "./MessageListSkeleton";
+import { User } from "firebase/auth";
+import { MessageItem } from "./MessageItem";
 
-interface Message {
-  name: string;
+interface IMessageList {
+  messages: DocumentData[],
+  loading: boolean,
+  user:User
 }
 
-export function MessageList() {
+export function MessageList({messages, loading, user}:IMessageList) {
 
-  const [message, loading, error] = useCollection(
-    query(
-      collection(db, "message"),
-      orderBy("time", "asc")
-    )
-  );
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const skeleton = new Array(10)
-    .fill("0")
-    .map((_, index) => (
-      <Skeleton
-        variant="rectangular"
-        width={100}
-        height={70}
-        sx={
-          {
-            borderRadius: '5px',
-            ...(
-              !(index % 2) && { ml: "auto" } 
-          )
-        }
-          
-        }
-      />
-    ));
+  useEffect(() => {
+    containerRef.current.scrollTop = containerRef.current.scrollHeight;
+  })
+
+ 
 
   return (
+    <div style={{
+      width: '100%',
+    height: '100%',
+    overflow: 'hidden'
+    }}>
     <Box
+      ref={containerRef}
       sx={{
+        boxSizing: 'content-box',
         minWidth: "300px",
         maxWidth: "600px",
         marginX: "auto",
         gap: "10px",
-        height:'calc(100vh - 100px)',
+        height:'100vh',
         p: 5,
+        paddingBottom: '100px',
+        paddingLeft:'15px',
         display: "flex",
+        overflowY:'scroll',
         flexDirection: "column",
         background: "rgba(0,0,0,0.5)",
+        
       }}
     >
-      {loading && skeleton}
-      {message?.docs.map((doc, index) => {
-
-        const { text, time } = doc.data();
-
-        const createdAt = `${time.toDate().getHours()}:${time
-          .toDate()
-          .getMinutes()}`;
-        
-        return (
-          <Paper
-            key={index}
-            elevation={20}
-            sx={{
-              p: 2,
-              alignSelf: index % 2 ? "flex-start" : "flex-end",
-              maxWidth: "200px",
-              overflowWrap: "break-word",
-              position:'relative'
-            }}
-          >
-            {text}
-            <div style={{position:'absolute', bottom:'0px', right:'5px',fontSize:'11px', color:'grey', userSelect:'none'}}>{createdAt}</div>
-          </Paper>
-        )})}
-      <Box sx={{ height: "50px" }}></Box>
+      {loading && <MessageListSkeleton/>}
+      {messages?.map((doc) => <MessageItem doc={doc} user={user} />)}
     </Box>
+
+    </div>
   );
 }

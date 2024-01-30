@@ -5,14 +5,18 @@ import SendIcon from "@mui/icons-material/Send";
 import { FormEvent } from "react";
 import { useState } from "react";
 
+interface IMessageFooter{
+  sendMessage:(message:string)=>void
+  
+}
 
-const MessageFooter = () => {
+
+const MessageFooter = ({sendMessage}:IMessageFooter) => {
   const [message, setMessage] = useState("");
 
-  const handleFormSubmit =  (event: FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit =  async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // await addMessage(message);
-    console.log(message)
+    sendMessage(message)
     setMessage("");
   };
 

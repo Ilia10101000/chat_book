@@ -1,7 +1,12 @@
 import React from "react";
+import { Box } from "@mui/material";
 
 function Settings() {
-  return <div>Settings</div>;
+  return (
+    <Box>
+      Settings
+    </Box>
+  );
 }
 
 export { Settings };

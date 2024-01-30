@@ -19,11 +19,13 @@ import EmailIcon from "@mui/icons-material/Email";
 import MenuIcon from "@mui/icons-material/Menu";
 import GroupIcon from "@mui/icons-material/Group";
 import TuneIcon from "@mui/icons-material/Tune";
+import WbSunnyIcon from "@mui/icons-material/WbSunny";
+import NightsStayIcon from "@mui/icons-material/NightsStay";
 import { Link, Outlet } from "react-router-dom";
-import { AuthStateHook, useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase/auth";
-import { User, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import { UserContext } from "../../App";
+import { ModeToogleContext } from "../../theme";
 
 const drawerListItems = [
   { label: "Friends", icon: <GroupIcon />, href: "/friends" },
@@ -72,7 +74,8 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 function HomePage() {
   const [open, setOpen] = useState(false);
 
-  let user = useContext<User>(UserContext)
+  let user = useContext(UserContext);
+  let [mode, toogleThemeMode] = useContext(ModeToogleContext)
 
   const toogleDrawerOpen = () => {
     setOpen((isOpen) => !isOpen);
@@ -119,6 +122,21 @@ function HomePage() {
             <Button onClick={() => signOut(auth)}>Sign out</Button>
           </>
         )}
+        <Box>
+          {mode === "light" ? (
+            <NightsStayIcon
+              fontSize="large"
+              sx={{ ":hover": { cursor: "pointer" } }}
+              onClick={toogleThemeMode}
+            />
+          ) : (
+            <WbSunnyIcon
+              fontSize="large"
+              sx={{ ":hover": { cursor: "pointer" } }}
+              onClick={toogleThemeMode}
+            />
+          )}
+        </Box>
       </Drawer>
       <Drawer
         open={open}
@@ -137,37 +155,33 @@ function HomePage() {
             <Button onClick={() => signOut(auth)}>Sign out</Button>
           </>
         )}
+        <Box>
+          {mode === "light" ? (
+            <NightsStayIcon
+              fontSize="large"
+              sx={{ ":hover": { cursor: "pointer" } }}
+              onClick={toogleThemeMode}
+            />
+          ) : (
+            <WbSunnyIcon
+              fontSize="large"
+              sx={{ ":hover": { cursor: "pointer" } }}
+              onClick={toogleThemeMode}
+            />
+          )}
+        </Box>
       </Drawer>
       <Box
         component="main"
         sx={{
-          flexGrow: 1
+          flexGrow: 1,
         }}
       >
         <DrawerHeader />
-        {/* <div style={{width:'500px'}}>{JSON.stringify(user,null,2)}</div> */}
-        <Outlet/>
+        <Outlet />
       </Box>
     </Box>
   );
 }
 
 export {HomePage}
-
-// import React from "react";
-// import { useAuthState } from "react-firebase-hooks/auth";
-// import { auth } from "../../firebase/auth";
-// import { signOut } from "firebase/auth";
-
-// function HomePage() {
-//   const [user] = useAuthState(auth)
-//   return (
-//     <>
-//       <div>Home page</div>
-//       <button onClick={() => signOut(auth)}>Sign out</button>
-//       <div>{JSON.stringify(user, null, 2)}</div>
-//     </>
-//   );
-// }
-
-// export {HomePage}
