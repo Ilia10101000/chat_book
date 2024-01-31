@@ -1,9 +1,16 @@
 import React, {useEffect, useRef} from "react";
 import { Paper, Box } from "@mui/material";
 import { DocumentData } from "firebase/firestore";
+import {
+  collection,
+  query,
+  orderBy,
+} from "firebase/firestore";
 import { MessageListSkeleton } from "./MessageListSkeleton";
 import { User } from "firebase/auth";
 import { MessageItem } from "./MessageItem";
+import { useCollectionData } from "react-firebase-hooks/firestore";
+import { db } from "../../firebase/auth";
 
 interface IMessageList {
   messages: DocumentData[],
@@ -11,9 +18,16 @@ interface IMessageList {
   user:User
 }
 
-export function MessageList({messages, loading, user}:IMessageList) {
+export function MessageList({id, user}:{id:string, user:User}) {
 
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const [messages, loading, error] = useCollectionData(
+    query(
+      collection(db, `chats/${id}/messages`),
+      orderBy("timestamp")
+    )
+  );
 
   useEffect(() => {
     containerRef.current.scrollTop = containerRef.current.scrollHeight;
