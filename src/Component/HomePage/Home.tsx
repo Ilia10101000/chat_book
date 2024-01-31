@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Divider,
+  Fab,
   IconButton,
   List,
   ListItemButton,
@@ -26,6 +27,7 @@ import { auth } from "../../firebase/auth";
 import { signOut } from "firebase/auth";
 import { UserContext } from "../../App";
 import { ModeToogleContext } from "../../theme";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 const drawerListItems = [
   { label: "Friends", icon: <GroupIcon />, href: "/friends" },
@@ -115,7 +117,9 @@ function HomePage() {
           </Typography>
         </DrawerHeader>
         <Divider />
-        <Box sx={{my:3}}>{user.displayName || user.email}</Box>
+        <Box sx={{ my: 3, textAlign: "center", whiteSpace: "collapse" }}>
+          {user.displayName || user.email}
+        </Box>
         <List>{drawerInner}</List>
         <Button onClick={toogleThemeMode} sx={{ mx: "auto" }}>
           {mode === "light" ? (
@@ -124,12 +128,16 @@ function HomePage() {
             <WbSunnyIcon fontSize="large" />
           )}
         </Button>
-        <Button
-          sx={{ mx: "auto", mt: "auto", mb: 5 }}
+        <Fab
           onClick={() => signOut(auth)}
+          sx={{ mx: "auto", mt: "auto", mb: 2 }}
+          color="secondary"
+          variant="extended"
+          size="small"
         >
-          Sign out
-        </Button>
+          <LogoutIcon sx={{ mr: 1 }} />
+          Log out
+        </Fab>
       </Drawer>
       <Drawer
         open={open}
@@ -145,14 +153,10 @@ function HomePage() {
           </Typography>
         </DrawerHeader>
         <Divider />
-        <Box sx={{my:3}}>{user.displayName || user.email}</Box>
+        <Box sx={{ my: 3, textAlign: "center", whiteSpace: "collapse" }}>
+          {user.displayName || user.email}
+        </Box>
         <List>{drawerInner}</List>
-        <Button
-          sx={{ mx: "auto", mt: "auto", mb: 2 }}
-          onClick={() => signOut(auth)}
-        >
-          Sign out
-        </Button>
         <Button onClick={toogleThemeMode} sx={{ mx: "auto" }}>
           {mode === "light" ? (
             <NightsStayIcon fontSize="large" />
@@ -160,12 +164,19 @@ function HomePage() {
             <WbSunnyIcon fontSize="large" />
           )}
         </Button>
+        <Fab
+          onClick={() => signOut(auth)}
+          sx={{ mx: "auto", mt: "auto", mb: 2 }}
+          color="secondary"
+          size="small"
+        >
+          <LogoutIcon />
+        </Fab>
       </Drawer>
       <Box
         component="main"
         sx={{
-          flexGrow: 1,
-          p:2
+          flexGrow: 1
         }}
       >
         <Outlet />

@@ -22,6 +22,7 @@ function MessagesPage() {
         limit(1)
       )
     );
+    console.log(chatData)
 
   const createChatCollection = async () => {
     await addDoc(collection(db, "chats"), {
@@ -34,11 +35,11 @@ function MessagesPage() {
       if (chatData?.empty) {
         createChatCollection()
       }
-    }, []);
+    });
 
   const [messages, loadingMessages, errorMessages] = useCollectionData(
     query(
-      collection(db, `chats/${chatData?.docs[0].id}/messages`),
+      collection(db, `chats/${chatData?.docs[0]?.id}/messages`),
       orderBy("timestamp")
     )
   );
@@ -51,7 +52,8 @@ function MessagesPage() {
     });
   };
 
-  const data = new Date(2122)
+  console.log(errorChatData)
+  console.log(errorMessages)
 
   if (loadingChatData) {
     return (

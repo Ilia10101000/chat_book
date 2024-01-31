@@ -37,7 +37,6 @@ const MessageFooter = ({sendMessage}:IMessageFooter) => {
         <TextField
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          fullWidth
           multiline
           maxRows={4}
           sx={{ width: { xs: "275px", sm: "375px" } }}

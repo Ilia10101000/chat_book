@@ -22,25 +22,18 @@ export function MessageList({messages, loading, user}:IMessageList) {
  
 
   return (
-    <div style={{
-      width: '100%',
-    height: '100%',
-    overflow: 'hidden'
-    }}>
     <Box
       ref={containerRef}
       sx={{
         boxSizing: 'content-box',
         minWidth: "300px",
         maxWidth: "600px",
-        marginX: "auto",
+        mx: "auto",
         gap: "10px",
-        height:'100vh',
-        p: 5,
+        height:'calc(100vh - 100px)',
         paddingBottom: '100px',
-        paddingLeft:'15px',
         display: "flex",
-        overflowY:'scroll',
+        overflowY:'auto',
         flexDirection: "column",
         background: "rgba(0,0,0,0.5)",
         
@@ -49,7 +42,5 @@ export function MessageList({messages, loading, user}:IMessageList) {
       {loading && <MessageListSkeleton/>}
       {messages?.map((doc) => <MessageItem doc={doc} user={user} />)}
     </Box>
-
-    </div>
   );
 }

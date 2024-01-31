@@ -39,7 +39,6 @@ const FriendsList = () => {
       </div>
     );
   }
-  console.log(list);
 
   return (
     <div
