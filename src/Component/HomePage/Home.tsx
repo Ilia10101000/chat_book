@@ -25,9 +25,9 @@ import NightsStayIcon from "@mui/icons-material/NightsStay";
 import { Link, Outlet } from "react-router-dom";
 import { auth } from "../../firebase/auth";
 import { signOut } from "firebase/auth";
-import { UserContext } from "../../App";
 import { ModeToogleContext } from "../../theme";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useAuth } from "../../hooks/useAuth";
 
 const drawerListItems = [
   { label: "Friends", icon: <GroupIcon />, href: "/friends" },
@@ -76,7 +76,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 function HomePage() {
   const [open, setOpen] = useState(false);
 
-  let user = useContext(UserContext);
+  let user = useAuth();
   let [mode, toogleThemeMode] = useContext(ModeToogleContext)
 
   const toogleDrawerOpen = () => {

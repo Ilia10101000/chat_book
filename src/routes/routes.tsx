@@ -33,10 +33,6 @@ export const authorizedRoutes = [
       {
         path: "messages/:reciever",
         element: <MessagesPage />,
-        // loader: async ({ params }) => {
-        //   const id = params.reciever;
-
-        // }
       },
       {
         path: "user/:id",

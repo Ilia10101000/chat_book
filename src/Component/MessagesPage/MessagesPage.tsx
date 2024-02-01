@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   collection,
@@ -16,40 +16,21 @@ import {
 } from "react-firebase-hooks/firestore";
 import { MessageFooter } from "./MessageFooter";
 import { MessageList } from "./MessageList";
-import { UserContext } from "../../App";
+import CircularProgress from "@mui/material/CircularProgress";
+import { useAuth } from "../../hooks/useAuth";
 import { db } from "../../firebase/auth";
 import { serverTimestamp } from "firebase/firestore";
 
-const checkIsExistChatDoc = (myId: string, friendsId: string) => {
-  return new Promise((res, rej) => {
-    const qRef = query(
-      collection(db, "chats"),
-      where(myId, "==", true),
-      where(friendsId, "==", true),
-      limit(1)
-    );
-
-    getDocs(qRef).then((snap) => {
-      if (snap.empty) {
-        rej();
-        return
-      }
-      let id = snap.docs[0].id;
-      res(id);
-    });
-  });
-};
-
 const createChatDoc = (myId: string, friendsId: string) => {
   return addDoc(collection(db, "chats"), {
-    myId: true,
-    reciever: true,
+    [myId]: true,
+    [friendsId]: true,
   });
 };
 
 function MessagesPage() {
   const { reciever } = useParams();
-  const authUser = useContext(UserContext);
+  const authUser = useAuth();
 
   const [chatSnap, loading, error] = useCollection(
     query(
@@ -61,18 +42,24 @@ function MessagesPage() {
   );
 
   useEffect(() => {
-    if (chatSnap.empty) {
-      addDoc(collection(db, "chats"), {
-        myId: true,
-        reciever: true,
-      }).then(console.log);
+    if (chatSnap?.empty) {
+      createChatDoc(authUser.uid, reciever);
     }
   },[chatSnap])
 
-  if (chatSnap.empty || loading) {
+  if (chatSnap?.empty || loading) {
     return (
-          <div>Loading</div>
-        )
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </div>
+    );
       }
   const sendMessage = async (message:string) => {
     await addDoc(collection(db, `chats/${chatSnap?.docs[0].id}/messages`), {

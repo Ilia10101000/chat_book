@@ -5,6 +5,7 @@ import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase/auth";
+import { useSignInWithGoogle } from "react-firebase-hooks/auth";
 import DefaultUserIcon from '../../img/default-user.svg'
 
 interface IWindow extends Window {
@@ -16,6 +17,8 @@ const windowI: IWindow = window;
 const LoginPage = () => {
   const [signInWithEmailAndPassword] =
     useSignInWithEmailAndPassword(auth);
+  const [signInWithGoogle, user, loading, error] = useSignInWithGoogle(auth);
+
   return (
     <div
       style={{
@@ -49,12 +52,16 @@ const LoginPage = () => {
         <Box>
           <EmailForms handleSubmit={signInWithEmailAndPassword} />
         </Box>
-        <Link to={'/signin'}><Button size="small">Create account</Button></Link>
+        <Link to={"/signin"}>
+          <Button size="small">Create account</Button>
+        </Link>
         <Link to="/reset">
           <Button sx={{ fontSize: "10px" }} color="error">
             I forgot password
           </Button>
         </Link>
+        <Button onClick={() => signInWithGoogle()}>Google</Button>
+        {error && <div>{error.message}</div>}
       </Box>
     </div>
   );

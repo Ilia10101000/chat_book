@@ -1,11 +1,11 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useDebounce } from "use-debounce";
 import { DocumentData } from "firebase/firestore";
 import { useFindFriends } from "./useFindFriends";
 import { UserFindItem } from "./UserFindItem";
 import { TextField } from "@mui/material";
 import { Link } from "react-router-dom";
-import { UserContext } from "../../App";
+import { useAuth } from "../../hooks/useAuth";
 
 interface IUser {
   displayName: string;
@@ -15,7 +15,7 @@ interface IUser {
 }
 
 const FriendsList = () => {
-  const authUser = useContext(UserContext)
+  const authUser = useAuth()
   const [value, setValue] = useState("");
   const [text] = useDebounce(value, 600);
 

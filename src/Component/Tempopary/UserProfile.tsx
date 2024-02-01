@@ -1,15 +1,15 @@
-import { doc } from "firebase/firestore";
 import React from "react";
+import { doc } from "firebase/firestore";
 import { useDocument } from "react-firebase-hooks/firestore";
 import { Link, useParams } from "react-router-dom";
 import { db } from "../../firebase/auth";
 import { Button } from "@mui/material";
+import User from "../../img/default-user.svg";
 
 const UserProfile = () => {
   const { id } = useParams();
 
   const [user, loading, error] = useDocument(doc(db, "users", id));
-  console.log(user);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -21,8 +21,13 @@ const UserProfile = () => {
   const { displayName, email } = user.data();
   return (
     <div>
-      <div>{displayName}</div>
-      <div>{email}</div>
+      <div style={{ display: "flex" }}>
+        <img style={{ display: "flex", margin: " 0px 40px" }} src={User} />
+        <div>
+          <div>{displayName}</div>
+          <div>{email}</div>
+        </div>
+      </div>
       <Link to={`/messages/${id}`}>
         <Button>Start chat</Button>
       </Link>
