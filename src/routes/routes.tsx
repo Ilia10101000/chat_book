@@ -17,20 +17,16 @@ export const unAuthorizedRoutes = [
     element: <LoginPage />,
   },
   {
-    path: "/signin",
-    element: <Signin></Signin>,
+    path: "/signin/*",
+    element: <Signin/>,
     children: [
       {
 
-        path: ':info',
+        path: ':requiredInfo',
         element:<SigninInfo/>
       }
     ]
   },
-  // {
-  //   path: "/signin",
-  //   element: <SigninPage />,
-  // },
   {
     path: "*",
     element: <Navigate to={"/login"} replace />,

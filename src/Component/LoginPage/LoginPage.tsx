@@ -52,7 +52,7 @@ const LoginPage = () => {
         <Box>
           <EmailForms handleSubmit={signInWithEmailAndPassword} />
         </Box>
-        <Link to={"/signin"}>
+        <Link to={"/signin/displayName"}>
           <Button size="small">Create account</Button>
         </Link>
         <Link to="/reset">
