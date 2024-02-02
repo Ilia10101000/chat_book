@@ -1,12 +1,14 @@
 import React from "react";
 import { Route, Navigate } from "react-router-dom";
 import { HomePage } from "../Component/HomePage/Home";
-import { SigninPage } from "../Component/SigninPage/SigninPage";
 import { LoginPage } from "../Component/LoginPage/LoginPage";
 import { Settings } from "../Component/SettingsPage/Settings";
 import { MessagesPage } from "../Component/MessagesPage/MessagesPage";
 import { FriendsList } from "../Component/Tempopary/FriendsList";
 import { UserProfile } from "../Component/Tempopary/UserProfile";
+import { Signin } from "../Component/Tempopary/Signin/Signin";
+import { SigninInfo } from "../Component/Tempopary/Signin/SigninInfo";
+// import { SigninPage } from "../Component/SigninPage/SigninPage";
 
 
 export const unAuthorizedRoutes = [
@@ -16,8 +18,19 @@ export const unAuthorizedRoutes = [
   },
   {
     path: "/signin",
-    element: <SigninPage />,
+    element: <Signin></Signin>,
+    children: [
+      {
+
+        path: ':info',
+        element:<SigninInfo/>
+      }
+    ]
   },
+  // {
+  //   path: "/signin",
+  //   element: <SigninPage />,
+  // },
   {
     path: "*",
     element: <Navigate to={"/login"} replace />,

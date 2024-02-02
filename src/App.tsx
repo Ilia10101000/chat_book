@@ -15,7 +15,6 @@ const UserContext = createContext<User>(null);
 
 const App = () => {
   const [user, loading, error] = useAuthState(auth);
-  console.log(JSON.stringify(user, null, 2));
 
   let availablePaths = user ? authorizedRoutes : unAuthorizedRoutes;
 

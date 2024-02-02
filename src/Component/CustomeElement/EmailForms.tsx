@@ -89,7 +89,6 @@ function EmailForms({ handleSubmit }: IEmailForms) {
         <Button type="submit" variant="contained" disabled={!formik.isValid}>
           Submit
         </Button>
-        {/* <GoogleAuthButton /> */}
       </Stack>
     </form>
   );

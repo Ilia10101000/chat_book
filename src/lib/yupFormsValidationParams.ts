@@ -47,6 +47,13 @@ const emailValidationSchema = Yup.object({
   password: passwordSchema,
 }).shape({});
 
+const newSigninValidationSchema = Yup.object({
+  email: emailSchema,
+  displayName: nameSchema,
+  password: passwordSchema,
+  confirmPassword: passwordSchema
+})
+
 const loginValidationSchema = Yup.object({
   name: nameSchema,
 }).shape({});
@@ -128,6 +135,7 @@ const phoneFormList: Array<IFormsList> = [
 export {
   emailValidationSchema,
   phoneValidationSchema,
+  newSigninValidationSchema,
   resetPasswordSchema,
   emailFormsList,
   resetPasswordFromList,
