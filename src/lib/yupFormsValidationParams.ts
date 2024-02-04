@@ -51,8 +51,10 @@ const newSigninValidationSchema = Yup.object({
   email: emailSchema,
   displayName: nameSchema,
   password: passwordSchema,
-  confirmPassword: passwordSchema
-})
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password"), null], "Passwords must match")
+    .required("Required"),
+});
 
 const loginValidationSchema = Yup.object({
   name: nameSchema,

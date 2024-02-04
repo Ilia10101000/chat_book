@@ -26,17 +26,24 @@ function SigninInfo() {
   if (requiredInfo === "displayName") {
     form = (
       <DisplayNameValue
+        error={
+          signinForm.touched.displayName &&
+          Boolean(signinForm.errors.displayName)
+        }
+        helperText={
+          signinForm.touched.displayName &&
+          signinForm.errors.displayName
+        }
         label={"Type your name"}
         name={"displayName"}
         id={"displayName"}
         value={signinForm.values.displayName}
         onChange={signinForm.handleChange}
-        onBlur={() => {
-          signinForm
-            .setFieldValue(
-              "displayName",
-              transformNameValue(signinForm.values.displayName)
-            )
+        onBlur={(e) => {
+          signinForm.setFieldValue(
+            "displayName",
+            transformNameValue(signinForm.values.displayName)
+          ).then(() => signinForm.handleBlur(e));
         }}
       />
     );
@@ -51,6 +58,9 @@ function SigninInfo() {
           value: signinForm.values.password,
           onChange: signinForm.handleChange,
           onBlur: signinForm.handleBlur,
+          error:
+            signinForm.touched.password && Boolean(signinForm.errors.password),
+          helperText: signinForm.touched.password && signinForm.errors.password,
         }}
         confirmPassword={{
           label: "Confirm password",
@@ -59,6 +69,12 @@ function SigninInfo() {
           value: signinForm.values.confirmPassword,
           onChange: signinForm.handleChange,
           onBlur: signinForm.handleBlur,
+          error:
+            signinForm.touched.confirmPassword &&
+            Boolean(signinForm.errors.confirmPassword),
+          helperText:
+            signinForm.touched.confirmPassword &&
+            signinForm.errors.confirmPassword,
         }}
       />
     );
@@ -66,16 +82,21 @@ function SigninInfo() {
   if (requiredInfo === "email") {
     form = (
       <EmailValue
+        error={signinForm.touched.email && Boolean(signinForm.errors.email)}
+        helperText={signinForm.touched.email && signinForm.errors.email}
         label={"Enter your email"}
         name={"email"}
+        autoComplete="off"
         id={"email"}
         value={signinForm.values.email}
         onChange={signinForm.handleChange}
-        onBlur={() => {
-          signinForm.setFieldValue(
-            "email",
-            transformEmailValue(signinForm.values.email)
-          );
+        onBlur={(e) => {
+          signinForm
+            .setFieldValue(
+              "email",
+              transformEmailValue(signinForm.values.email)
+            )
+            .then(() => signinForm.handleBlur(e));
         }}
       />
     );
