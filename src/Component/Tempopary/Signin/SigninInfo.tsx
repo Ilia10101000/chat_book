@@ -7,6 +7,7 @@ import {
   PasswordValue,
   EmailValue,
   PhotoURLValue,
+  SigninSubmitList,
 } from "./SigninValueFields";
 
 
@@ -34,6 +35,7 @@ function SigninInfo() {
           signinForm.touched.displayName &&
           signinForm.errors.displayName
         }
+        autoComplete='off'
         label={"Type your name"}
         name={"displayName"}
         id={"displayName"}
@@ -102,7 +104,21 @@ function SigninInfo() {
     );
   }
   if (requiredInfo === "photoURL") {
-    form = <PhotoURLValue />;
+    form = (
+      <PhotoURLValue
+        id={"photoURL"}
+        name={"photoURL"}
+        value={signinForm.values.photoURL}
+        onChange={signinForm.setFieldValue}
+      />
+    );
+  }
+  if (requiredInfo === "submit") {
+    form = (
+      <SigninSubmitList
+        values={signinForm.values}
+      />
+    );
   }
 
   return form ? (

@@ -14,34 +14,35 @@ const SigninContext = createContext<
 >(null);
 
 function Signin() {
-
   const signinForm = useFormik({
     initialValues: {
-      displayName: "",
-      photoURL: "",
+      displayName: localStorage.getItem("displayNameSignInValue") || "",
+      photoURL: localStorage.getItem("photoURLSignInValue") || "",
       password: "",
       confirmPassword: "",
-      email: "",
+      email: localStorage.getItem("emailSignInValue") || "",
     },
     onSubmit: () => console.log(signinForm.values),
 
     validationSchema: newSigninValidationSchema,
   });
 
+  console.log(signinForm);
+
   return (
     <SigninContext.Provider value={signinForm}>
       <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "baseline",
-        paddingTop: "40px",
-        width: "100%",
-        minHeight: "100vh",
-      }}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "baseline",
+          paddingTop: "40px",
+          width: "100%",
+          minHeight: "100vh",
+        }}
       >
-      <Outlet />
-    </div>
+        <Outlet />
+      </div>
     </SigninContext.Provider>
   );
 }
