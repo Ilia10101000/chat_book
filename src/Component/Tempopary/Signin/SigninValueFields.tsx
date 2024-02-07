@@ -9,12 +9,12 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
 import { storage, ref } from "../../../firebase/auth";
 import { useSigninValue } from "./Signin";
-import { uploadBytes, getDownloadURL } from "firebase/storage";
+import { uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { useDownloadURL } from "react-firebase-hooks/storage";
 import User from "../../../img/default-user.svg";
+import Avatar from "react-avatar-edit";
 
 function DisplayNameValue(props: any) {
-  const defVal = useDeferredValue(props.value);
   const navigate = useNavigate();
 
   const goForward = () => {
@@ -22,10 +22,8 @@ function DisplayNameValue(props: any) {
     navigate("/signin/password");
   };
 
-  const goBack = () => navigate(-1);
   return (
     <>
-      <Button onClick={goBack}>Go back</Button>
       <TextField {...props} />
       <Button onClick={goForward} disabled={props.error}>
         Submit
@@ -35,16 +33,13 @@ function DisplayNameValue(props: any) {
 }
 function PasswordValue({ mainPassword, confirmPassword }: any) {
   const [isShownPassword, setIsShownPassword] = useState(false);
-  const navigate = useNavigate();
 
   const toogleVisibilityPassword = () => setIsShownPassword((value) => !value);
-  const goBack = () => navigate(-1);
 
   const [password1, password2] = [mainPassword.value, confirmPassword.value];
 
   return (
     <>
-      <Button onClick={goBack}>Go back</Button>
       <TextField
         type={isShownPassword ? "text" : "password"}
         {...mainPassword}
@@ -80,12 +75,8 @@ function PasswordValue({ mainPassword, confirmPassword }: any) {
   );
 }
 function EmailValue(props: any) {
-  const navigate = useNavigate();
-
-  const goBack = () => navigate(-1);
   return (
     <>
-      <Button onClick={goBack}>Go back</Button>
       <TextField {...props} />
       <Button disabled={!props.value || props.error}>
         <Link style={{ textDecoration: "none" }} to="/signin/photoURL">
@@ -107,69 +98,40 @@ function PhotoURLValue({
   onChange: (field: string, fileURL: string) => void;
 }) {
   const navigate = useNavigate();
-  const goBack = () => navigate(-1);
 
-  let { email } = useSigninValue().values;
+  // const storageFilePath = `temporary/${email || "temporaryEmail"}/avatar`;
 
-  const storageFilePath = `temporary/${email || "temporaryEmail"}/avatar`;
+  const [photoFile] = useState(null);
+  const [showEditor, setShowEditor] = useState(true)
+  const [preview, setPreview] = useState(null);
 
-  const [error, setError] = useState("");
-
-  const storageRef = ref(storage, storageFilePath);
-  const [valueURL, loading] = useDownloadURL(storageRef);
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files[0]) {
-      try {
-        await uploadBytes(storageRef, e.target.files[0]);
-        const URL = await getDownloadURL(storageRef);
-        localStorage.setItem("photoURLSignInValue", URL);
-        onChange("photoURL", URL);
-      } catch (error) {
-        setError(error.message);
-      }
-    }
+  const onCrop = (view) => {
+    setPreview(view);
   };
 
+  const deletePhoto = () => {
+    setPreview(null);
+  }
+
   return (
-    <div>
-      <Button onClick={goBack}>Go back</Button>
-      <div>
-        {value && <span>Selected file: {value}</span>}
-        <div>
-          <label>
-            <input
-              id={id}
-              name={name}
-              accept="image/*"
-              type="file"
-              onChange={handleFileChange}
-              style={{ display: "none" }}
-            />
-            <Button
-              component="span"
-              sx={{ display: "flex", gap: 2, mx: "auto" }}
-            >
-              Choose photo
-              <InsertPhotoIcon />
-            </Button>
-          </label>
-        </div>
-      </div>
-      {!loading && (
-        <img
-          style={{ width: "300px" }}
-          src={valueURL || value || User}
-          alt="avatar"
-        />
+    <div
+      style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+    >
+      {!preview && (
+        <Avatar width={200} height={250} src={photoFile} onCrop={onCrop} />
       )}
-      {error && <div>{error}</div>}
-      <Button><Link to={'/signin/submit'}>Submit</Link></Button>
+      {preview && <img style={{ width: "250px" }} src={preview} alt="avatar" />}
+      {preview && <Button onClick={deletePhoto}>Delete photo</Button>}
+      <Button onClick={() => navigate("/signin/submit")}>Submit</Button>
     </div>
   );
 }
 
-function SigninSubmitList({ values }: { values: { email: string, displayName: string, photoURL: string } }) {
+function SigninSubmitList({
+  values,
+}: {
+  values: { email: string; displayName: string; photoURL: string };
+}) {
   const { email, displayName, photoURL } = values;
 
   return (
@@ -177,7 +139,7 @@ function SigninSubmitList({ values }: { values: { email: string, displayName: st
       <div>{email}</div>
       <div>{displayName}</div>
       <div>
-        <img style={{width:'300px'}} src={photoURL} alt="sdf" />
+        <img style={{ width: "300px" }} src={photoURL} alt="sdf" />
       </div>
     </>
   );

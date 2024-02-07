@@ -1,7 +1,7 @@
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import React, { ReactNode } from "react";
 import { useSigninValue } from "./Signin";
-import { useParams, Navigate } from "react-router-dom";
+import { useParams, Navigate, useNavigate } from "react-router-dom";
 import {
   DisplayNameValue,
   PasswordValue,
@@ -21,6 +21,8 @@ const transformNameValue = (value: string) => {
 function SigninInfo() {
   const { requiredInfo } = useParams();
   const signinForm = useSigninValue();
+    const navigate = useNavigate();
+    const goBack = () => navigate(-1);
 
   let form: ReactNode | null = null;
 
@@ -138,6 +140,7 @@ function SigninInfo() {
         boxShadow: 5,
       }}
     >
+      <Button onClick={goBack}>Go back</Button>
       {form}
     </Box>
   ) : (
