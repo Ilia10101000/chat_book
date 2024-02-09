@@ -4,7 +4,6 @@ import { useSigninValue } from "./Signin";
 import { useParams, Navigate, useNavigate } from "react-router-dom";
 import {
   DisplayNameValue,
-  PasswordValue,
   EmailValue,
   PhotoURLValue,
   SigninSubmitList,
@@ -52,9 +51,47 @@ function SigninInfo() {
       />
     );
   }
-  if (requiredInfo === "password") {
+
+  if (requiredInfo === "email") {
     form = (
-      <PasswordValue
+      <EmailValue
+        error={signinForm.touched.email && Boolean(signinForm.errors.email)}
+        helperText={signinForm.touched.email && signinForm.errors.email}
+        displayName={signinForm.values.displayName}
+        label={"Enter your email"}
+        name={"email"}
+        autoComplete="off"
+        id={"email"}
+        value={signinForm.values.email}
+        onChange={signinForm.handleChange}
+        onBlur={(e) => {
+          signinForm
+            .setFieldValue(
+              "email",
+              transformEmailValue(signinForm.values.email)
+            )
+            .then(() => signinForm.handleBlur(e));
+        }}
+      />
+    );
+  }
+  if (requiredInfo === "photoURL") {
+    form = (
+      <PhotoURLValue
+        displayName={signinForm.values.displayName}
+        value={signinForm.values.photoURL}
+        onChange={(data_url: string) =>
+          signinForm.setFieldValue("photoURL", data_url)
+        }
+      />
+    );
+  }
+  if (requiredInfo === "submit") {
+    form = (
+      <SigninSubmitList
+        isValid={signinForm.isValid}
+        handleSubmit={signinForm.handleSubmit}
+        values={signinForm.values}
         mainPassword={{
           label: "Set password",
           name: "password",
@@ -80,43 +117,6 @@ function SigninInfo() {
             signinForm.touched.confirmPassword &&
             signinForm.errors.confirmPassword,
         }}
-      />
-    );
-  }
-  if (requiredInfo === "email") {
-    form = (
-      <EmailValue
-        error={signinForm.touched.email && Boolean(signinForm.errors.email)}
-        helperText={signinForm.touched.email && signinForm.errors.email}
-        label={"Enter your email"}
-        name={"email"}
-        autoComplete="off"
-        id={"email"}
-        value={signinForm.values.email}
-        onChange={signinForm.handleChange}
-        onBlur={(e) => {
-          signinForm
-            .setFieldValue(
-              "email",
-              transformEmailValue(signinForm.values.email)
-            )
-            .then(() => signinForm.handleBlur(e));
-        }}
-      />
-    );
-  }
-  if (requiredInfo === "photoURL") {
-    form = (
-      <PhotoURLValue
-        value={signinForm.values.photoURL}
-        onChange={(data_url:string) => signinForm.setFieldValue("photoURL",data_url)}
-      />
-    );
-  }
-  if (requiredInfo === "submit") {
-    form = (
-      <SigninSubmitList
-        values={signinForm.values}
       />
     );
   }

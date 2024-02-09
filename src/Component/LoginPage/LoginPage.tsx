@@ -15,9 +15,9 @@ interface IWindow extends Window {
 const windowI: IWindow = window;
 
 const LoginPage = () => {
-  const [signInWithEmailAndPassword] =
+  const [signInWithEmailAndPassword,logedUser,loginLoading,loginError] =
     useSignInWithEmailAndPassword(auth);
-  const [signInWithGoogle, user, loading, error] = useSignInWithGoogle(auth);
+  const [signInWithGoogle, googleLogedUser, loading, googleAuthError] = useSignInWithGoogle(auth);
 
   return (
     <div
@@ -61,7 +61,8 @@ const LoginPage = () => {
           </Button>
         </Link>
         <Button onClick={() => signInWithGoogle()}>Google</Button>
-        {error && <div>{error.message}</div>}
+        {loginError && <div>{loginError.message}</div>}
+        {googleAuthError && <div>{googleAuthError.message}</div>}
       </Box>
     </div>
   );
