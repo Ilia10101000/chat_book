@@ -3,7 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import InputAdornment from "@mui/material/InputAdornment";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
@@ -87,42 +86,54 @@ function EmailValue(props: any) {
   );
 }
 function PhotoURLValue({
-  id,
-  name,
   value,
   onChange,
 }: {
-  id: string;
-  name: string;
   value: string;
-  onChange: (field: string, fileURL: string) => void;
+  onChange: (data_url: string) => void;
 }) {
   const navigate = useNavigate();
 
-  // const storageFilePath = `temporary/${email || "temporaryEmail"}/avatar`;
-
   const [photoFile] = useState(null);
-  const [showEditor, setShowEditor] = useState(true)
   const [preview, setPreview] = useState(null);
+  const [showEditor, setShowEditor] = useState(value ? false : true)
 
   const onCrop = (view) => {
     setPreview(view);
   };
 
+  const handleClose = () => {
+    setShowEditor(false)
+  }
+
   const deletePhoto = () => {
     setPreview(null);
+    onChange(null)
+    setShowEditor(true)
+  }
+  const handleSubmit = () => {
+    if(preview){
+      onChange(preview)
+    }
+    navigate("/signin/submit")
   }
 
   return (
     <div
       style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
-      {!preview && (
-        <Avatar width={200} height={250} src={photoFile} onCrop={onCrop} />
+      {showEditor && (
+        <Avatar width={200} height={250} src={photoFile} onCrop={onCrop} onClose={handleClose}/>
       )}
-      {preview && <img style={{ width: "250px" }} src={preview} alt="avatar" />}
-      {preview && <Button onClick={deletePhoto}>Delete photo</Button>}
-      <Button onClick={() => navigate("/signin/submit")}>Submit</Button>
+      {!showEditor && (
+        <>
+        <img style={{ width: "250px" }} src={value || preview} alt="avatar" />
+        <Button onClick={deletePhoto}>Delete photo</Button>
+        </>
+
+      )
+      }
+      <Button onClick={handleSubmit}>{value || preview?'Submit':'Skip'}</Button>
     </div>
   );
 }
@@ -139,7 +150,7 @@ function SigninSubmitList({
       <div>{email}</div>
       <div>{displayName}</div>
       <div>
-        <img style={{ width: "300px" }} src={photoURL} alt="sdf" />
+        <img style={{ width: "300px" }} src={photoURL || User} alt="sdf" />
       </div>
     </>
   );

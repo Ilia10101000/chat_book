@@ -108,10 +108,8 @@ function SigninInfo() {
   if (requiredInfo === "photoURL") {
     form = (
       <PhotoURLValue
-        id={"photoURL"}
-        name={"photoURL"}
         value={signinForm.values.photoURL}
-        onChange={signinForm.setFieldValue}
+        onChange={(data_url:string) => signinForm.setFieldValue("photoURL",data_url)}
       />
     );
   }
