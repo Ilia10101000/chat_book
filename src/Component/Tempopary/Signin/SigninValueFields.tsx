@@ -26,9 +26,9 @@ function DisplayNameValue(props: any) {
     </>
   );
 }
-function EmailValue(props: any) {
+function EmailValue({displayName, ...props}: any) {
   const navigate = useNavigate();
-  if (!props.displayName) {
+  if (!displayName) {
     return <Navigate to={"/signin/displayName"} />;
   }
   const goForward = () => {
@@ -110,12 +110,14 @@ function PhotoURLValue({
 }
 
 function SigninSubmitList({
+  error,
   isValid,
   mainPassword,
   confirmPassword,
   values,
   handleSubmit,
 }: {
+  error: string | null,
   isValid: boolean;
   mainPassword: any;
   confirmPassword: any;
@@ -128,21 +130,13 @@ function SigninSubmitList({
   };
 }) {
   const { email, displayName, photoURL } = values;
-  const [error, setError] = useState("");
   const [isShownPassword, setIsShownPassword] = useState(false);
+
   if (!displayName) {
     return <Navigate to={"/signin/displayName"} />;
   }
 
   const toogleVisibilityPassword = () => setIsShownPassword((value) => !value);
-
-  const handleSubmitSignInUser = () => {
-    try {
-      handleSubmit();
-    } catch (error) {
-      setError(error.message);
-    }
-  };
 
   return (
     <>
@@ -168,7 +162,7 @@ function SigninSubmitList({
         type={isShownPassword ? "text" : "password"}
         {...confirmPassword}
       />
-      <Button disabled={!isValid} onClick={handleSubmitSignInUser}>
+      <Button disabled={!isValid} onClick={handleSubmit}>
         Confirm
       </Button>
       {error && <div>{error}</div>}

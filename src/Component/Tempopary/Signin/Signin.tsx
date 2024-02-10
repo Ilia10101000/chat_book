@@ -1,5 +1,5 @@
 import { FormikProps, useFormik } from "formik";
-import React, { createContext, useEffect, useContext } from "react";
+import React, { createContext, useEffect, useContext, useState } from "react";
 import { newSigninValidationSchema } from "../../../lib/yupFormsValidationParams";
 import { Outlet } from "react-router-dom";
 import { 
@@ -10,17 +10,20 @@ import { storage, ref, auth } from "../../../firebase/auth";
 import { getDownloadURL, uploadString } from "firebase/storage";
 
 
-const SigninContext = createContext<
-  FormikProps<{
+const SigninContext = createContext<{
+  signinForm: FormikProps<{
     displayName: string;
     photoURL: string;
     password: string;
     confirmPassword: string;
     email: string;
-  }>
->(null);
+  }>,
+  error:string | null
+}>(null);
 
 function Signin() {
+
+  const [error, setError] = useState<string | null>(null);
 
   const signinForm = useFormik({
     initialValues: {
@@ -31,6 +34,9 @@ function Signin() {
       email: localStorage.getItem("emailSignInValue") || "",
     },
     onSubmit: async () => {
+      if (error) {
+        setError(null)
+      }
       try {
         const { displayName, photoURL, password, email } = signinForm.values;
 
@@ -54,8 +60,7 @@ function Signin() {
           });
         }
       } catch (error) {
-        console.log("4000$");
-        throw new Error(error.message);
+        setError(error.message);
       }
     },
 
@@ -64,14 +69,13 @@ function Signin() {
 
   useEffect(() => {
     return () => {
-      localStorage.removeItem('photoURL')
-      localStorage.removeItem('email')
+      localStorage.removeItem("photoURLSignInValue");
+      localStorage.removeItem("emailSignInValue");
       localStorage.removeItem("displayNameSignInValue");
-      localStorage.removeItem("password");
     }
   },[])
   return (
-    <SigninContext.Provider value={signinForm}>
+    <SigninContext.Provider value={{signinForm,error}}>
       <div
         style={{
           display: "flex",

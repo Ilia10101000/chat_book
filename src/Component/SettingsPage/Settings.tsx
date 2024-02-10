@@ -32,7 +32,11 @@ function Settings() {
         gap: "20px",
       }}
     >
-      <img src={photoURL} alt="avatar" />
+      <img style={{
+        width: '200px',
+        height: '200px',
+        borderRadius:'50%'
+      }} src={photoURL || User} alt="avatar" />
       <TextField
         value={profileFormValue.values.displayName}
         onChange={profileFormValue.handleChange}
