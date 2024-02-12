@@ -6,8 +6,9 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-import { storage, ref, auth } from "../../../firebase/auth";
+import { storage, ref, auth, db } from "../../../firebase/auth";
 import { getDownloadURL, uploadString } from "firebase/storage";
+import { doc, setDoc } from "firebase/firestore"; 
 
 
 const SigninContext = createContext<{
@@ -18,12 +19,14 @@ const SigninContext = createContext<{
     confirmPassword: string;
     email: string;
   }>,
-  error:string | null
+  error: string | null,
+  loading:boolean
 }>(null);
 
 function Signin() {
 
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const signinForm = useFormik({
     initialValues: {
@@ -34,6 +37,7 @@ function Signin() {
       email: localStorage.getItem("emailSignInValue") || "",
     },
     onSubmit: async () => {
+      setLoading(true)
       if (error) {
         setError(null)
       }
@@ -51,16 +55,25 @@ function Signin() {
             photoURL,
             "data_url"
           );
-          const photourl = await getDownloadURL(
+          const photourlLink = await getDownloadURL(
             ref(storage, `avatar/${userCredentials.user.uid}/avatar`)
           );
           await updateProfile(auth.currentUser, {
             displayName,
-            photoURL: photourl,
+            photoURL: photourlLink,
+          });
+          await setDoc(doc(db, "users", userCredentials.user.uid), {
+            id: userCredentials.user.uid,
+            displayName,
+            email,
+            photoURL: photourlLink,
           });
         }
       } catch (error) {
         setError(error.message);
+      }
+      finally {
+        setLoading(false)
       }
     },
 
@@ -75,7 +88,7 @@ function Signin() {
     }
   },[])
   return (
-    <SigninContext.Provider value={{signinForm,error}}>
+    <SigninContext.Provider value={{signinForm,error,loading}}>
       <div
         style={{
           display: "flex",

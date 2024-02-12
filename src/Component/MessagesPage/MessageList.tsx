@@ -24,7 +24,7 @@ export function MessageList({id, user}:{id:string, user:User}) {
 
   const [messages, loading, error] = useCollectionData(
     query(
-      collection(db, `chats/${id}/messages`),
+      collection(db, `chats/${id}/messages`),                       
       orderBy("timestamp")
     )
   );
@@ -54,7 +54,7 @@ export function MessageList({id, user}:{id:string, user:User}) {
       }}
     >
       {loading && <MessageListSkeleton/>}
-      {messages?.map((doc) => <MessageItem doc={doc} user={user} />)}
+      {messages?.map((doc, index) => <MessageItem key={index} doc={doc} user={user} />)}
     </Box>
   );
 }

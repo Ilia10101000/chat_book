@@ -6,6 +6,7 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
+import CircularProgress from "@mui/material/CircularProgress";
 import User from "../../../img/default-user.svg";
 import Avatar from "react-avatar-edit";
 
@@ -110,6 +111,7 @@ function PhotoURLValue({
 }
 
 function SigninSubmitList({
+  loading,
   error,
   isValid,
   mainPassword,
@@ -117,6 +119,7 @@ function SigninSubmitList({
   values,
   handleSubmit,
 }: {
+  loading:boolean,
   error: string | null,
   isValid: boolean;
   mainPassword: any;
@@ -165,6 +168,7 @@ function SigninSubmitList({
       <Button disabled={!isValid} onClick={handleSubmit}>
         Confirm
       </Button>
+      {loading && <CircularProgress color="success"/>}
       {error && <div>{error}</div>}
     </>
   );

@@ -1,7 +1,12 @@
-import React from "react";
-import { Box, Divider, List, styled, Typography, Drawer } from "@mui/material";
+import React, { useDeferredValue, useState } from "react";
+import {
+  Box, Divider, List, styled, Typography, Drawer, TextField
+} from "@mui/material";
 
 function MessageListDrawer({ open, onClose, width }) {
+
+  const [value, setValue] = useState('');
+
   const DrawerHeader = styled("div")(({ theme }) => ({
     display: "flex",
     alignItems: "center",
@@ -15,9 +20,9 @@ function MessageListDrawer({ open, onClose, width }) {
       onClose={onClose}
       variant="temporary"
       sx={{
-        width: `${width}px`,
+        width: `${width + 50}px`,
         "& .MuiDrawer-paper": {
-          width: `${width}px`,
+          width: `${width + 50}px`,
         },
       }}
     >
@@ -28,9 +33,9 @@ function MessageListDrawer({ open, onClose, width }) {
       </DrawerHeader>
       <Divider />
       <Box sx={{ my: 3, textAlign: "center", whiteSpace: "collapse" }}>
-        4000$
+        <TextField value={value} onChange={e => setValue(e.target.value)}/>
       </Box>
-      <List>7000$</List>
+      <List></List>
     </Drawer>
   );
 }

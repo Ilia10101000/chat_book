@@ -4,7 +4,7 @@ import User from "../../img/default-user.svg";
 import { Link } from "react-router-dom";
 
 interface IUserFindItem {
-  img?: string,
+  img: string | null,
   name: string,
   id:string
 }

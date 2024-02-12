@@ -18,11 +18,14 @@ const UserProfile = () => {
     return <div>Some error has occured</div>;
   }
 
-  const { displayName, email } = user.data();
+  const { displayName, email,photoURL } = user.data();
   return (
     <div>
       <div style={{ display: "flex" }}>
-        <img style={{ display: "flex", margin: " 0px 40px" }} src={User} />
+        <img
+          style={{ display: "flex", margin: " 0px 40px" }}
+          src={photoURL || User}
+        />
         <div>
           <div>{displayName}</div>
           <div>{email}</div>

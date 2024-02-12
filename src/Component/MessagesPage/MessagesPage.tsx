@@ -6,9 +6,11 @@ import {
   query,
   where,
   addDoc,
+  setDoc,
   orderBy,
   getDocs,
   QuerySnapshot,
+  doc,
 } from "firebase/firestore";
 import {
   useCollection,
@@ -21,11 +23,19 @@ import { useAuth } from "../../hooks/useAuth";
 import { db } from "../../firebase/auth";
 import { serverTimestamp } from "firebase/firestore";
 
-const createChatDoc = (myId: string, friendsId: string) => {
-  return addDoc(collection(db, "chats"), {
-    [myId]: true,
-    [friendsId]: true,
-  });
+const createChatDoc = async (myId: string, friendsId: string) => {
+  try {
+   const createdDoc = await addDoc(collection(db, "chats"), {
+     [myId]: true,
+     [friendsId]: true,
+   });
+    await setDoc(doc(db, `users/${myId}`, createdDoc.id), {
+      companion: friendsId,
+    });
+    
+  } catch (error) {
+    
+  }
 };
 
 function MessagesPage() {

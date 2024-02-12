@@ -19,7 +19,7 @@ const transformNameValue = (value: string) => {
 
 function SigninInfo() {
   const { requiredInfo } = useParams();
-  const {signinForm, error} = useSigninValue();
+  const {signinForm, error, loading} = useSigninValue();
     const navigate = useNavigate();
     const goBack = () => navigate(-1);
 
@@ -89,6 +89,7 @@ function SigninInfo() {
   if (requiredInfo === "submit") {
     form = (
       <SigninSubmitList
+        loading={loading}
         error={error}
         isValid={signinForm.isValid}
         handleSubmit={signinForm.handleSubmit}

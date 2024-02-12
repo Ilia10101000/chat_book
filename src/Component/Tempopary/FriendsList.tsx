@@ -10,7 +10,7 @@ import { useAuth } from "../../hooks/useAuth";
 interface IUser {
   displayName: string;
   email: string;
-  emailVerified: string;
+  photoURL: string;
   id: string;
 }
 
@@ -20,7 +20,7 @@ const FriendsList = () => {
   const [text] = useDebounce(value, 600);
 
   let list = useFindFriends( text );
-  let result: DocumentData[] | React.ReactNode | null;
+  let result: React.ReactNode | null;
 
   if (!list) {
     result = <div>You dont have a friends</div>;
@@ -34,7 +34,7 @@ const FriendsList = () => {
         }}
       >
         {list.filter(user => user.id !== authUser.uid).map((user: IUser) => (
-            <UserFindItem key={user.id} id={user.id} name={user.displayName} />
+          <UserFindItem key={user.id} id={user.id} name={user.displayName} img={user.photoURL} />
         ))}
       </div>
     );
