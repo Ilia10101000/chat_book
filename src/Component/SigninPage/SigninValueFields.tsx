@@ -7,7 +7,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
 import CircularProgress from "@mui/material/CircularProgress";
-import User from "../../../img/default-user.svg";
+import User from "../../img/default-user.svg";
 import Avatar from "react-avatar-edit";
 
 function DisplayNameValue(props: any) {

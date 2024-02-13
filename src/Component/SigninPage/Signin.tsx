@@ -1,15 +1,11 @@
 import { FormikProps, useFormik } from "formik";
 import React, { createContext, useEffect, useContext, useState } from "react";
-import { newSigninValidationSchema } from "../../../lib/yupFormsValidationParams";
+import { newSigninValidationSchema } from "../../lib/yupFormsValidationParams";
 import { Outlet } from "react-router-dom";
-import { 
-  createUserWithEmailAndPassword,
-  updateProfile,
-} from "firebase/auth";
-import { storage, ref, auth, db } from "../../../firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { storage, ref, auth, db } from "../../firebase/auth";
 import { getDownloadURL, uploadString } from "firebase/storage";
-import { doc, setDoc } from "firebase/firestore"; 
-
+import { doc, setDoc } from "firebase/firestore";
 
 const SigninContext = createContext<{
   signinForm: FormikProps<{
@@ -18,13 +14,12 @@ const SigninContext = createContext<{
     password: string;
     confirmPassword: string;
     email: string;
-  }>,
-  error: string | null,
-  loading:boolean
+  }>;
+  error: string | null;
+  loading: boolean;
 }>(null);
 
 function Signin() {
-
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -37,9 +32,9 @@ function Signin() {
       email: localStorage.getItem("emailSignInValue") || "",
     },
     onSubmit: async () => {
-      setLoading(true)
+      setLoading(true);
       if (error) {
-        setError(null)
+        setError(null);
       }
       try {
         const { displayName, photoURL, password, email } = signinForm.values;
@@ -71,9 +66,8 @@ function Signin() {
         }
       } catch (error) {
         setError(error.message);
-      }
-      finally {
-        setLoading(false)
+      } finally {
+        setLoading(false);
       }
     },
 
@@ -85,10 +79,10 @@ function Signin() {
       localStorage.removeItem("photoURLSignInValue");
       localStorage.removeItem("emailSignInValue");
       localStorage.removeItem("displayNameSignInValue");
-    }
-  },[])
+    };
+  }, []);
   return (
-    <SigninContext.Provider value={{signinForm,error,loading}}>
+    <SigninContext.Provider value={{ signinForm, error, loading }}>
       <div
         style={{
           display: "flex",

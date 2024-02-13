@@ -14,10 +14,10 @@ import { auth } from "../../firebase/auth";
 import { signOut } from "firebase/auth";
 import { ModeToogleContext } from "../../theme";
 import { useAuth } from "../../hooks/useAuth";
-import { MobileDrawer } from "./MobileDrawer";
-import { DesktopDrawer } from "./DesktopDrawer";
+import { MobileDrawer } from "../Drawers/MobileDrawer";
+import { DesktopDrawer } from "../Drawers/DesktopDrawer";
 import { MobileAppBar } from "./AppBar";
-import { MessageListDrawer } from "./MessageListDrawer";
+import { MessageListDrawer } from "../Drawers/MessageListDrawer";
 
 const makeDrawerInner = (drawerListItems: any ) : ReactNode => {
   return drawerListItems.map(({ mode, label, icon, ...modeAction }) => {
