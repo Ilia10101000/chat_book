@@ -9,9 +9,10 @@ import {
   setDoc,
   updateDoc,
   doc,
+  orderBy,
 } from "firebase/firestore";
 import {
-  useCollection,
+  useCollectionData,
 } from "react-firebase-hooks/firestore";
 import { MessageFooter } from "./MessageFooter";
 import { MessageList } from "./MessageList";
@@ -20,48 +21,20 @@ import { useAuth } from "../../hooks/useAuth";
 import { db } from "../../firebase/auth";
 import { serverTimestamp } from "firebase/firestore";
 
-const createChatDoc = async (myId: string, friendsId: string) => {
-  try {
-    const createdDoc = await addDoc(collection(db, "chats"), {
-     private: true,
-     [myId]: true,
-     [friendsId]: true,
-   });
-    await setDoc(doc(db, `users/${myId}`, createdDoc.id), {
-      companion: friendsId,
-    });
-    await setDoc(doc(db, `users/${friendsId}`, createdDoc.id), {
-      companion: myId,
-    });
-    
-  } catch (error) {
-    
-  }
-};
-
 function MessagesPage() {
-  const { reciever } = useParams();
+  const { chatId } = useParams();
   const authUser = useAuth();
 
-  const [chatSnap, loading, error] = useCollection(
+  const [messages, loading, error] = useCollectionData(
     query(
       collection(db, "chats"),
-      where("private", "==", true),
-      where(authUser.uid, "==", true),
-      where(reciever, "==", true),
-      limit(1)
+      orderBy('timestamp')
     )
   );
 
-  useEffect(() => {
-    if (chatSnap?.empty) {
-      createChatDoc(authUser.uid, reciever);
-    }
-  }, [chatSnap]);
+  console.log(messages)
 
-  // https://www.instagram.com/direct/t/117107633006820/
-
-  if (chatSnap?.empty || loading) {
+  if (loading) {
     return (
       <div
         style={{
@@ -75,13 +48,28 @@ function MessagesPage() {
       </div>
     );
   }
+  if (error) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+        }}
+      >
+        Some error occured! try again
+      </div>
+    );
+  }
   const sendMessage = async (message: string) => {
-    await addDoc(collection(db, `chats/${chatSnap?.docs[0].id}/messages`), {
+    await addDoc(collection(db, `chats/${chatId}/messages`), {
       senderId: authUser.uid,
       text: message,
       timestamp: serverTimestamp(),
+      isReaded: false
     });
-    await updateDoc(doc(db, `chats/${chatSnap?.docs[0].id}`), {
+    await updateDoc(doc(db, `chats/${chatId}`), {
       lastMessage: message,
     });
   };
@@ -89,8 +77,8 @@ function MessagesPage() {
   return (
     <div>
       <MessageList
-        id={chatSnap.docs[0].id}
-        isEmpty={chatSnap?.empty}
+        messages={messages}
+        isEmpty={messages.length === 0}
         user={authUser}
       />
       <MessageFooter sendMessage={sendMessage} />
@@ -99,3 +87,37 @@ function MessagesPage() {
 }
 
 export { MessagesPage };
+
+
+
+/*
+
+{
+  user1:{
+    name:string,
+    uid:string,
+    existingChats:[]
+  }
+}
+
+
+
+
+{
+  chats:[]
+}
+
+
+
+{
+user2:{
+  name:string,
+  uid:string,
+  existingChats:[]
+}
+}
+
+
+
+
+*/

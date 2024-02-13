@@ -8,6 +8,7 @@ import { FriendsList } from "../Component/FriendsPage/FriendsList";
 import { UserProfile } from "../Component/FriendsPage/UserProfile";
 import { Signin } from "../Component/SigninPage/Signin";
 import { SigninInfo } from "../Component/SigninPage/SigninInfo";
+import { MiddlewareCheckComponent } from "../Component/MessagesPage/MiddlewareCheckMessage";
 
 export const unAuthorizedRoutes = [
   {
@@ -37,6 +38,10 @@ export const authorizedRoutes = [
     children: [
       {
         path: "messages/:reciever",
+        element: <MiddlewareCheckComponent />,
+      },
+      {
+        path: "chats/:chatId",
         element: <MessagesPage />,
       },
       {
