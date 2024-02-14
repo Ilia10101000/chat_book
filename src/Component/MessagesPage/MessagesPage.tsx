@@ -26,13 +26,8 @@ function MessagesPage() {
   const authUser = useAuth();
 
   const [messages, loading, error] = useCollectionData(
-    query(
-      collection(db, "chats"),
-      orderBy('timestamp')
-    )
+    query(collection(db, `chats/${chatId}/messages`), orderBy("timestamp"))
   );
-
-  console.log(messages)
 
   if (loading) {
     return (
@@ -67,7 +62,7 @@ function MessagesPage() {
       senderId: authUser.uid,
       text: message,
       timestamp: serverTimestamp(),
-      isReaded: false
+      isReaded: false,
     });
     await updateDoc(doc(db, `chats/${chatId}`), {
       lastMessage: message,
@@ -87,8 +82,6 @@ function MessagesPage() {
 }
 
 export { MessagesPage };
-
-
 
 /*
 

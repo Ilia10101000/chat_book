@@ -24,11 +24,11 @@ const createChatDoc = async (myId: string, friendsId: string) => {
     });
     await setDoc(doc(db, `users/${myId}/existingChats`, createdDoc.id), {
       companion: friendsId,
-      chatID: createdDoc,
+      chatId: createdDoc.id,
     });
     await setDoc(doc(db, `users/${friendsId}/existingChats`, createdDoc.id), {
       companion: myId,
-      chatID: createdDoc,
+      chatId: createdDoc.id,
     });
   } catch (error) {}
 };

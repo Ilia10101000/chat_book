@@ -3,10 +3,21 @@ import {
   Box, Divider, List, styled, Typography, Drawer, TextField
 } from "@mui/material";
 import { useCollectionData } from "react-firebase-hooks/firestore";
+import { useAuth } from "../../hooks/useAuth";
+import { collection } from "firebase/firestore";
+import { db } from "../../firebase/auth";
+import { MessageListItemLink } from "./MessageListItemLink";
 
 function MessageListDrawer({ open, onClose, width }) {
 
-  // const [messagesList,loading,error] = useCollectionData()
+  const user = useAuth()
+
+  const [messagesList, loading, error] = useCollectionData(collection(db, `users/${user.uid}/existingChats`));
+  console.log(messagesList)
+  
+  let result = messagesList?.map(({ companion, chatId }, index) => (
+    <MessageListItemLink key={index} companion={companion} chatId={chatId} />
+  ));
 
   const [value, setValue] = useState('');
 
@@ -18,7 +29,7 @@ function MessageListDrawer({ open, onClose, width }) {
     ...theme.mixins.toolbar,
   }));
   return (
-      <Drawer
+    <Drawer
       open={open}
       onClose={onClose}
       variant="temporary"
@@ -36,9 +47,9 @@ function MessageListDrawer({ open, onClose, width }) {
       </DrawerHeader>
       <Divider />
       <Box sx={{ my: 3, textAlign: "center", whiteSpace: "collapse" }}>
-        <TextField value={value} onChange={e => setValue(e.target.value)}/>
+        <TextField value={value} onChange={(e) => setValue(e.target.value)} />
       </Box>
-      <List></List>
+      <List>{result}</List>
     </Drawer>
   );
 }
