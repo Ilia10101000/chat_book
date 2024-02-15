@@ -23,9 +23,6 @@ const MessageFooter = ({sendMessage}:IMessageFooter) => {
   return (
     <Paper
       sx={{
-        position: "fixed",
-        bottom: 0,
-        width: { xs: "100%", sm: "calc(100% - 200px)" },
         display: "flex",
         justifyContent: "center",
       }}

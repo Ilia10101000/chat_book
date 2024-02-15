@@ -1,15 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React from "react";
+import { Navigate, useLocation, useParams } from "react-router-dom";
 import {
   collection,
-  limit,
   query,
-  where,
   addDoc,
-  setDoc,
   updateDoc,
   doc,
-  orderBy,
+  orderBy
 } from "firebase/firestore";
 import {
   useCollectionData,
@@ -17,18 +14,23 @@ import {
 import { MessageFooter } from "./MessageFooter";
 import { MessageList } from "./MessageList";
 import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
 import { useAuth } from "../../hooks/useAuth";
 import { db } from "../../firebase/auth";
 import { serverTimestamp } from "firebase/firestore";
+import { MessageAppBar } from "./MessageAppBar";
 
 function MessagesPage() {
   const { chatId } = useParams();
   const authUser = useAuth();
+  const { state: companion } = useLocation();
 
   const [messages, loading, error] = useCollectionData(
     query(collection(db, `chats/${chatId}/messages`), orderBy("timestamp"))
   );
-
+  if (!companion) {
+    return <Navigate to='/'/>
+  }
   if (loading) {
     return (
       <div
@@ -70,47 +72,22 @@ function MessagesPage() {
   };
 
   return (
-    <div>
+    <Box
+      sx={{
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <MessageAppBar companion={companion}/>
       <MessageList
         messages={messages}
         isEmpty={messages.length === 0}
         user={authUser}
       />
       <MessageFooter sendMessage={sendMessage} />
-    </div>
+    </Box>
   );
 }
 
 export { MessagesPage };
-
-/*
-
-{
-  user1:{
-    name:string,
-    uid:string,
-    existingChats:[]
-  }
-}
-
-
-
-
-{
-  chats:[]
-}
-
-
-
-{
-user2:{
-  name:string,
-  uid:string,
-  existingChats:[]
-}
-}
-
-
-
-
-*/

@@ -1,4 +1,4 @@
-import React,{ReactNode} from "react";
+import React,{ReactNode, useEffect} from "react";
 import {
   Box,
   ListItemButton,
@@ -10,8 +10,10 @@ import EmailIcon from "@mui/icons-material/Email";
 import GroupIcon from "@mui/icons-material/Group";
 import TuneIcon from "@mui/icons-material/Tune";
 import { Link, Outlet } from "react-router-dom";
-import { auth } from "../../firebase/auth";
+import { auth, realTimeDB } from "../../firebase/auth";
 import { signOut } from "firebase/auth";
+import { serverTimestamp } from "firebase/firestore";
+import {ref, set } from "firebase/database";
 import { ModeToogleContext } from "../../theme";
 import { useAuth } from "../../hooks/useAuth";
 import { MobileDrawer } from "../Drawers/MobileDrawer";
@@ -79,6 +81,19 @@ const makeDrawerInner = (drawerListItems: any ) : ReactNode => {
 
 const drawerWidth = 200;
 
+const setIsUserOnline = async (userId: string, isOnline: boolean) => {
+  try {
+    set(ref(realTimeDB, `users/${userId}`), {
+      isOnline,
+      lastVisit: serverTimestamp(),
+    });
+    
+  } catch (error) {
+    console.log(error.message)
+  }
+};
+
+
 function HomePage() {
   let user = useAuth();
   
@@ -97,6 +112,13 @@ function HomePage() {
   const signOutApp = () => {
     signOut(auth);
   }
+
+  useEffect(() => {
+    setIsUserOnline(user.uid, true)
+    return () => {
+      setIsUserOnline(user.uid, false)
+    }
+  },[])
 
   const drawerListItems = [
     { mode: "link", label: "Friends", icon: <GroupIcon />, href: "/friends" },

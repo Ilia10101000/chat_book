@@ -5,13 +5,13 @@ import {
   Divider,
   Fab,
   List,
-  styled,
   Typography,
   Drawer,
 } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import NightsStayIcon from "@mui/icons-material/NightsStay";
+import DrawerAppHeader from "./DrawerAppHeader";
 
 interface IMobileDrawer {
   open: boolean;
@@ -33,14 +33,6 @@ function MobileDrawer({
   userInfo,
 }: IMobileDrawer) {
 
-  const DrawerHeader = styled("div")(({ theme }) => ({
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    padding: theme.spacing(0, 1),
-    ...theme.mixins.toolbar,
-  }));
-
   return (
     <Drawer
       open={open}
@@ -50,11 +42,11 @@ function MobileDrawer({
         display: { xs: "block", sm: "none" },
       }}
     >
-      <DrawerHeader>
+      <DrawerAppHeader>
         <Typography variant="h6" sx={{ mx: "auto" }}>
           <b>Chat Book</b>
         </Typography>
-      </DrawerHeader>
+      </DrawerAppHeader>
       <Divider />
       <Box sx={{ my: 3, textAlign: "center", whiteSpace: "collapse" }}>
         {userInfo}

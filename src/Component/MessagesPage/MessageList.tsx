@@ -30,17 +30,19 @@ export function MessageList({ messages, user, isEmpty }: IMessageList) {
     <Box
       ref={containerRef}
       sx={{
-        boxSizing: "content-box",
+        boxSizing: "border-box",
         minWidth: "300px",
-        maxWidth: "600px",
+        maxWidth: "800px",
         mx: "auto",
         gap: "10px",
-        height: "calc(100vh - 100px)",
+        height: "calc(100vh - 50px)",
         paddingBottom: "100px",
         display: "flex",
         overflowY: "auto",
         flexDirection: "column",
-        background: "rgba(0,0,0,0.5)",
+        background: "rgba(0,0,0,0.3)",
+        p: 1,
+        flexGrow:1
       }}
     >
       {result}

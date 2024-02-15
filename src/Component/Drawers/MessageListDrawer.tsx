@@ -1,33 +1,39 @@
-import React, { useDeferredValue, useState } from "react";
+import React, { useState, ReactNode } from "react";
 import {
-  Box, Divider, List, styled, Typography, Drawer, TextField
+  Box,
+  Divider,
+  List,
+  Typography,
+  Drawer,
+  TextField,
+  CircularProgress,
 } from "@mui/material";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { useAuth } from "../../hooks/useAuth";
 import { collection } from "firebase/firestore";
 import { db } from "../../firebase/auth";
 import { MessageListItemLink } from "./MessageListItemLink";
+import DrawerAppHeader from "./DrawerAppHeader";
 
 function MessageListDrawer({ open, onClose, width }) {
+  const user = useAuth();
 
-  const user = useAuth()
+  const [messagesList, loading, error] = useCollectionData(
+    collection(db, `users/${user.uid}/existingChats`)
+  );
 
-  const [messagesList, loading, error] = useCollectionData(collection(db, `users/${user.uid}/existingChats`));
-  console.log(messagesList)
-  
-  let result = messagesList?.map(({ companion, chatId }, index) => (
-    <MessageListItemLink key={index} companion={companion} chatId={chatId} />
-  ));
+  let result: ReactNode;
+  const [value, setValue] = useState("");
 
-  const [value, setValue] = useState('');
+  if (messagesList) {
+    result = messagesList?.map(({ companion, chatId }, index) => (
+      <MessageListItemLink key={index} companion={companion} chatId={chatId} />
+    ));
+  }
+  if (loading) {
+    result = <CircularProgress />;
+  }
 
-  const DrawerHeader = styled("div")(({ theme }) => ({
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    padding: theme.spacing(0, 1),
-    ...theme.mixins.toolbar,
-  }));
   return (
     <Drawer
       open={open}
@@ -40,11 +46,11 @@ function MessageListDrawer({ open, onClose, width }) {
         },
       }}
     >
-      <DrawerHeader>
+      <DrawerAppHeader>
         <Typography variant="h6" sx={{ mx: "auto" }}>
           <b>Message</b>
         </Typography>
-      </DrawerHeader>
+      </DrawerAppHeader>
       <Divider />
       <Box sx={{ my: 3, textAlign: "center", whiteSpace: "collapse" }}>
         <TextField value={value} onChange={(e) => setValue(e.target.value)} />
