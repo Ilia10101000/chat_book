@@ -20,9 +20,11 @@ type IisOnlineSnapShot = {
 };
 
 function MessageListItemLink({
+  onClose,
   companion,
   chatId,
 }: {
+  onClose: () => void;
   companion: string;
   chatId: string;
 }) {
@@ -71,7 +73,7 @@ function MessageListItemLink({
         state={user}
         style={{ textDecoration: "none", color: "inherit" }}
       >
-        <ListItemButton sx={{ p: 0 }}>
+        <ListItemButton onClick={onClose} sx={{ p: 0 }}>
           <ListItem>
             <ListItemAvatar sx={{ mr: 2 }}>
               <Badge

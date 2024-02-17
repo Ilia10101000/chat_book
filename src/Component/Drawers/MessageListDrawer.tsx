@@ -27,7 +27,7 @@ function MessageListDrawer({ open, onClose, width }) {
 
   if (messagesList) {
     result = messagesList?.map(({ companion, chatId }, index) => (
-      <MessageListItemLink key={index} companion={companion} chatId={chatId} />
+      <MessageListItemLink key={index} companion={companion} chatId={chatId} onClose={onClose} />
     ));
   }
   if (loading) {

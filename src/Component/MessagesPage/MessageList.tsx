@@ -33,6 +33,7 @@ export function MessageList({ messages, user, isEmpty }: IMessageList) {
         boxSizing: "border-box",
         minWidth: "300px",
         maxWidth: "800px",
+        width:'100%',
         mx: "auto",
         gap: "10px",
         height: "calc(100vh - 50px)",
@@ -42,7 +43,7 @@ export function MessageList({ messages, user, isEmpty }: IMessageList) {
         flexDirection: "column",
         background: "rgba(0,0,0,0.3)",
         p: 1,
-        flexGrow:1
+        flexGrow:5
       }}
     >
       {result}

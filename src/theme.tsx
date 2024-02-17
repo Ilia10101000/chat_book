@@ -15,7 +15,7 @@ export const ModeToogleContext = createContext<ModeTypeToggle>(null);
 
 function Theme({ children }: ThemeProps) {
   const [mode, setMode] = React.useState<PaletteMode>(
-    localStorage.getItem("theme") as PaletteMode || "light"
+    (localStorage.getItem("theme") as PaletteMode) || "light"
   );
 
   const theme = useMemo(() => {
@@ -34,9 +34,9 @@ function Theme({ children }: ThemeProps) {
         },
         MuiStack: {
           defaultProps: {
-            useFlexGap:true
-          }
-        }
+            useFlexGap: true,
+          },
+        },
       },
     });
   }, [mode]);
@@ -44,8 +44,8 @@ function Theme({ children }: ThemeProps) {
   const toogleThemeMode = () => {
     setMode((prevMode) => {
       const nextMode = prevMode === "light" ? "dark" : "light";
-      localStorage.setItem('theme', nextMode);
-      return nextMode
+      localStorage.setItem("theme", nextMode);
+      return nextMode;
     });
   };
   return (
@@ -56,8 +56,9 @@ function Theme({ children }: ThemeProps) {
           disableGutters={true}
           maxWidth={false}
           sx={{
+            minWidth: "360px",
             minHeight: "100vh",
-            zIndex: -1,
+            // zIndex: -1,
             background: (theme) =>
               theme.palette.mode === "light"
                 ? "linear-gradient(45deg, rgba(136,0,255,1) 0%, rgba(53,46,232,1) 23%, rgba(68,212,236,1) 56%, rgba(0,255,76,1) 100%)"
