@@ -24,10 +24,6 @@ const MessageFooter = ({ sendMessage }: IMessageFooter) => {
   return (
     <Paper
       sx={{
-        // display: "flex",
-        // justifyContent: "center",
-        // minWidth: "360px",
-        // width: "100%",
         p: 2,
       }}
     >
@@ -37,7 +33,13 @@ const MessageFooter = ({ sendMessage }: IMessageFooter) => {
           onChange={(e) => setMessage(e.target.value)}
           multiline
           maxRows={4}
-          sx={{ width: "100%" }}
+          sx={{
+            width: "100%",
+            "& .MuiInputBase-root": {
+              borderRadius: '30px',
+              p:1
+            },
+          }}
           InputProps={{
             startAdornment: (
               <Box sx={{ mr: 1 }}>

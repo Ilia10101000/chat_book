@@ -22,14 +22,14 @@ import { MessageAppBar } from "./MessageAppBar";
 
 function MessagesPage() {
   const { chatId } = useParams();
-  const authUser = useAuth();
   const { state: companion } = useLocation();
+  const authUser = useAuth();
 
   const [messages, loading, error] = useCollectionData(
     query(collection(db, `chats/${chatId}/messages`), orderBy("timestamp"))
   );
   if (!companion) {
-    return <Navigate to='/'/>
+    return <Navigate to="/" />;
   }
   if (loading) {
     return (

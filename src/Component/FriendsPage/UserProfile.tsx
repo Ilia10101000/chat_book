@@ -9,7 +9,7 @@ import User from "../../img/default-user.svg";
 const UserProfile = () => {
   const { id } = useParams();
 
-  const [user, loading, error] = useDocument(doc(db, "users", id));
+  const [userPersonalData, loading, error] = useDocument(doc(db, "users", id));
 
   if (loading) {
     return <div>Loading...</div>;
@@ -17,21 +17,20 @@ const UserProfile = () => {
   if (error) {
     return <div>Some error has occured</div>;
   }
-
-  const { displayName, email,photoURL } = user.data();
+  const user = userPersonalData.data()
   return (
     <div>
       <div style={{ display: "flex" }}>
         <img
           style={{ display: "flex", margin: " 0px 40px" }}
-          src={photoURL || User}
+          src={user.photoURL || User}
         />
         <div>
-          <div>{displayName}</div>
-          <div>{email}</div>
+          <div>{user.displayName}</div>
+          <div>{user.email}</div>
         </div>
       </div>
-      <Link to={`/messages/${id}`}>
+      <Link to={`/messages/${id}`} state={user}>
         <Button>Start chat</Button>
       </Link>
     </div>

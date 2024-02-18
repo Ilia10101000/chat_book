@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
   collection,
   limit,
@@ -36,7 +36,8 @@ const createChatDoc = async (myId: string, friendsId: string) => {
 function MiddlewareCheckComponent() {
   const { reciever } = useParams();
   const authUser = useAuth();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const { state : user } = useLocation();
 
   const [chatSnap, loading, error] = useCollection(
     query(
@@ -54,7 +55,7 @@ function MiddlewareCheckComponent() {
     }
     if (chatSnap && !chatSnap.empty) {
       const chatId = chatSnap.docs[0].id
-      navigate(`/chats/${chatId}`);
+      navigate(`/chats/${chatId}`, { state: user , replace:true});
     }
   }, [chatSnap]);
 
