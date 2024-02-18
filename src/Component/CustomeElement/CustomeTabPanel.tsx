@@ -1,5 +1,4 @@
 import * as React from "react";
-import Box from "@mui/material/Box";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -17,13 +16,9 @@ function CustomTabPanel(props: TabPanelProps) {
       id={`simple-tabpanel-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 2 }}>
-          {children}
-        </Box>
-      )}
+      {value === index && <div style={{ padding: "16px" }}>{children}</div>}
     </div>
   );
 }
 
-export {CustomTabPanel}
+export { CustomTabPanel };
