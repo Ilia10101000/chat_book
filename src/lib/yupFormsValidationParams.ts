@@ -29,6 +29,10 @@ const passwordSchema = Yup.string()
   .max(40, "Your password too long")
   .required("Set password for your account");
 
+const confirmPassword = Yup.string()
+  .oneOf([Yup.ref("password"), null], "Passwords must match")
+  .required("Required");
+
 const phoneSchema = Yup.string()
   .min(18, "Enter valid phone")
   .matches(
@@ -51,13 +55,15 @@ const newSigninValidationSchema = Yup.object({
   email: emailSchema,
   displayName: nameSchema,
   password: passwordSchema,
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password"), null], "Passwords must match")
-    .required("Required"),
+  confirmPassword: confirmPassword,
+});
+const updatePasswordValidationSchema = Yup.object({
+  password: passwordSchema,
+  confirmPassword: confirmPassword,
 });
 
 const loginValidationSchema = Yup.object({
-  name: nameSchema,
+  displayName: nameSchema,
 }).shape({});
 
 const phoneValidationSchema = Yup.object({
@@ -142,4 +148,6 @@ export {
   emailFormsList,
   resetPasswordFromList,
   phoneFormList,
+  loginValidationSchema,
+  updatePasswordValidationSchema,
 };

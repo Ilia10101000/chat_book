@@ -56,7 +56,6 @@ function PhotoURLValue({
 }) {
   const navigate = useNavigate();
 
-  const [photoFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [showEditor, setShowEditor] = useState(value ? false : true);
 
@@ -92,7 +91,6 @@ function PhotoURLValue({
         <Avatar
           width={200}
           height={250}
-          src={photoFile}
           onCrop={onCrop}
           onClose={handleClose}
         />
