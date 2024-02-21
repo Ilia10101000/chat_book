@@ -12,6 +12,7 @@ import { useObjectVal } from "react-firebase-hooks/database";
 import { ref } from "firebase/database";
 import { realTimeDB } from "../../firebase/auth";
 import User from "../../img/default-user.svg";
+import { Link } from 'react-router-dom';
 
 type IisOnlineSnapShot = {
   isOnline: boolean;
@@ -29,13 +30,15 @@ function MessageAppBar({ companion }) {
       <Toolbar>
         <ListItem sx={{ p: 0 }}>
           <ListItemAvatar sx={{ mr: 2 }}>
-            <IconButton sx={{ p: 0 }}>
-              <Avatar
-                alt={companion.displayName || companion.email}
-                src={companion.photoURL || User}
-                sx={{ width: 56, height: 56 }}
-              />
-            </IconButton>
+            <Link to={`/user/${companion.id}`}>
+              <IconButton sx={{ p: 0 }}>
+                <Avatar
+                  alt={companion.displayName || companion.email}
+                  src={companion.photoURL || User}
+                  sx={{ width: 56, height: 56 }}
+                />
+              </IconButton>
+            </Link>
           </ListItemAvatar>
           <ListItemText
             secondaryTypographyProps={{
@@ -44,7 +47,7 @@ function MessageAppBar({ companion }) {
               textOverflow: "ellipsis",
             }}
             primary={companion.displayName || companion.email}
-            secondary={isOnline? 'online': null}
+            secondary={isOnline ? "online" : null}
           />
         </ListItem>
       </Toolbar>

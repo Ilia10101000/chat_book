@@ -13,7 +13,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { collection } from "firebase/firestore";
 import { db } from "../../firebase/auth";
 import { MessageListItemLink } from "./MessageListItemLink";
-import DrawerAppHeader from "./DrawerAppHeader";
+import DrawerAppHeader from "../Drawers/DrawerAppHeader";
 
 function MessageListDrawer({ open, onClose, width }) {
   const user = useAuth();
@@ -27,7 +27,12 @@ function MessageListDrawer({ open, onClose, width }) {
 
   if (messagesList) {
     result = messagesList?.map(({ companion, chatId }, index) => (
-      <MessageListItemLink key={index} companion={companion} chatId={chatId} onClose={onClose} />
+      <MessageListItemLink
+        key={index}
+        companion={companion}
+        chatId={chatId}
+        onClose={onClose}
+      />
     ));
   }
   if (loading) {

@@ -1,23 +1,60 @@
-import React from "react";
-import { doc } from "firebase/firestore";
-import { useDocument } from "react-firebase-hooks/firestore";
+import React, { useEffect, useState } from "react";
+import { doc, setDoc } from "firebase/firestore";
+import { useDocumentData } from "react-firebase-hooks/firestore";
 import { Link, useParams } from "react-router-dom";
 import { db } from "../../firebase/auth";
 import { Button } from "@mui/material";
 import User from "../../img/default-user.svg";
+import { useAuth } from "../../hooks/useAuth";
 
 const UserProfile = () => {
   const { id } = useParams();
 
-  const [userPersonalData, loading, error] = useDocument(doc(db, "users", id));
+  const authUser = useAuth()
+
+  const [user, loading, errorloading] = useDocumentData(doc(db, "users", id));
+  const [waitingRequestProcessing, setWaitingRequestProcessing] = useState(false);
+  const [handleError, setHandleError] = useState(null);
+
+  useEffect(() => {
+    if (handleError) {
+      setTimeout(() => {
+        setHandleError(null)
+      },2000)
+    }
+  },[handleError])
 
   if (loading) {
     return <div>Loading...</div>;
   }
-  if (error) {
+  if (errorloading) {
     return <div>Some error has occured</div>;
   }
-  const user = userPersonalData.data()
+
+
+  const addToFriends = async () => {
+    setWaitingRequestProcessing(true);
+    try {
+      await setDoc(doc(db, `users/${authUser.uid}/sentFriendsRequests`, user.id), {
+        id: user.id,
+        displayName: user.displayName,
+        photoURL:user.photoURL || ''
+      })
+      await setDoc(
+        doc(db, `users/${user.id}/receivedFriendsRequests`, authUser.uid),
+        {
+          id: authUser.uid,
+          displayName: authUser.displayName,
+          photoURL: authUser.photoURL || "",
+        }
+      );
+    } catch (error) {
+      setHandleError(error.message)
+    } finally {
+      setWaitingRequestProcessing(false);
+    }
+  }
+
   return (
     <div>
       <div style={{ display: "flex" }}>
@@ -33,6 +70,9 @@ const UserProfile = () => {
       <Link to={`/messages/${id}`} state={user}>
         <Button>Start chat</Button>
       </Link>
+      <Button disabled={waitingRequestProcessing} onClick={addToFriends}>
+        Add to friends
+      </Button>
     </div>
   );
 };

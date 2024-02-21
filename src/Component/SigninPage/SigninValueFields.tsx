@@ -147,6 +147,7 @@ function SigninSubmitList({
         <img style={{ width: "300px" }} src={photoURL || User} alt="sdf" />
       </div>
       <TextField
+      sx={{width:'280px'}}
         type={isShownPassword ? "text" : "password"}
         {...mainPassword}
         InputProps={{
@@ -160,6 +161,7 @@ function SigninSubmitList({
         }}
       />
       <TextField
+      sx={{width:'280px'}}
         type={isShownPassword ? "text" : "password"}
         {...confirmPassword}
       />

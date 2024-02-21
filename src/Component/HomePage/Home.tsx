@@ -1,10 +1,5 @@
-import React,{ReactNode, useEffect} from "react";
-import {
-  Box,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-} from "@mui/material";
+import React, { ReactNode, useEffect } from "react";
+import { Box, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { useContext, useState } from "react";
 import EmailIcon from "@mui/icons-material/Email";
 import GroupIcon from "@mui/icons-material/Group";
@@ -13,15 +8,16 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import { auth, realTimeDB } from "../../firebase/auth";
 import { signOut } from "firebase/auth";
 import { serverTimestamp } from "firebase/firestore";
-import {ref, set } from "firebase/database";
+import { ref, set } from "firebase/database";
 import { ModeToogleContext } from "../../theme";
 import { useAuth } from "../../hooks/useAuth";
 import { MobileDrawer } from "../Drawers/MobileDrawer";
 import { DesktopDrawer } from "../Drawers/DesktopDrawer";
 import { MobileAppBar } from "./AppBar";
-import { MessageListDrawer } from "../Drawers/MessageListDrawer";
+import { MessageListDrawer } from "../MessagesPage/MessageListDrawer";
+import { FriendsListDrawer } from "../FriendsPage/riendsListDrawer";
 
-const makeDrawerInner = (drawerListItems: any ) : ReactNode => {
+const makeDrawerInner = (drawerListItems: any): ReactNode => {
   return drawerListItems.map(({ mode, label, icon, ...modeAction }) => {
     if (mode === "link") {
       return (
@@ -87,20 +83,19 @@ const setIsUserOnline = async (userId: string, isOnline: boolean) => {
       isOnline,
       lastVisit: serverTimestamp(),
     });
-    
   } catch (error) {
-    console.log(error.message)
+    console.log(error.message);
   }
 };
 
-
 function HomePage() {
   let user = useAuth();
-  
+
   const [isOpenMobileDrawer, setIsOpenMobileDrawer] = useState(false);
-  const [showMessageDrawer, setShowMessageDrawer] = useState(false)
-  
-  let [mode, toogleThemeMode] = useContext(ModeToogleContext)
+  const [showMessageDrawer, setShowMessageDrawer] = useState(false);
+  const [showFriendsDrawer, setShowFriendsDrawer] = useState(false);
+
+  let [mode, toogleThemeMode] = useContext(ModeToogleContext);
 
   const toogleDrawerOpen = () => {
     setIsOpenMobileDrawer((isOpen) => !isOpen);
@@ -108,20 +103,28 @@ function HomePage() {
   const toogleMessageDrawerOpen = () => {
     setShowMessageDrawer((isOpen) => !isOpen);
   };
+  const toogleFriendsDrawerOpen = () => {
+    setShowFriendsDrawer((isOpen) => !isOpen);
+  };
 
   const signOutApp = () => {
     signOut(auth);
-  }
+  };
 
   useEffect(() => {
-    setIsUserOnline(user.uid, true)
+    setIsUserOnline(user.uid, true);
     return () => {
-      setIsUserOnline(user.uid, false)
-    }
-  },[])
+      setIsUserOnline(user.uid, false);
+    };
+  }, []);
 
   const drawerListItems = [
-    { mode: "link", label: "Friends", icon: <GroupIcon />, href: "/friends" },
+    {
+      mode: "button",
+      label: "Friends",
+      icon: <GroupIcon />,
+      handleClick: toogleFriendsDrawerOpen,
+    },
     {
       mode: "button",
       label: "Message",
@@ -158,6 +161,11 @@ function HomePage() {
         onClose={toogleMessageDrawerOpen}
         width={drawerWidth}
       />
+      <FriendsListDrawer
+        open={showFriendsDrawer}
+        onClose={toogleFriendsDrawerOpen}
+        width={drawerWidth}
+      />
       <Box
         component="main"
         sx={{
@@ -170,4 +178,4 @@ function HomePage() {
   );
 }
 
-export {HomePage}
+export { HomePage };

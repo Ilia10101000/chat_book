@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useDebounce } from "use-debounce";
 import { DocumentData } from "firebase/firestore";
 import { useFindFriends } from "./useFindFriends";
-import { UserFindItem } from "./UserFindItem";
+import { Friend } from "./Friend";
 import { TextField } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
@@ -14,16 +14,16 @@ interface IUser {
   id: string;
 }
 
-const FriendsList = () => {
-  const authUser = useAuth()
-  const [value, setValue] = useState("");
-  const [text] = useDebounce(value, 600);
+const FriendsList = ({friendsList}) => {
+  // const authUser = useAuth()
+  // const [value, setValue] = useState("");
+  // const [text] = useDebounce(value, 600);
 
-  let list = useFindFriends( text );
+  // let list = useFindFriends( text );
   let result: React.ReactNode | null;
 
-  if (!list) {
-    result = <div>You dont have a friends</div>;
+  if (!friendsList.length) {
+    result = <div>Find your friends</div>;
   } else {
     result = (
       <div
@@ -33,9 +33,16 @@ const FriendsList = () => {
           gap: "20px",
         }}
       >
-        {list.filter(user => user.id !== authUser.uid).map((user: IUser) => (
-          <UserFindItem key={user.id} id={user.id} name={user.displayName} img={user.photoURL} />
-        ))}
+        {friendsList
+          // .filter((user) => user.id !== authUser.uid)
+          .map((user: IUser) => (
+            <Friend
+              key={user.id}
+              id={user.id}
+              displayName={user.displayName}
+              photoURL={user.photoURL}
+            />
+          ))}
       </div>
     );
   }
@@ -43,10 +50,10 @@ const FriendsList = () => {
   return (
     <div
       style={{
-        padding: "50px",
+        padding: "10px",
       }}
     >
-      <TextField
+      {/* <TextField
         sx={{ mb: 3 }}
         type="text"
         value={value}
@@ -54,7 +61,7 @@ const FriendsList = () => {
         onChange={(e) => setValue(e.target.value)}
         autoFocus
         autoComplete="off"
-      />
+      /> */}
       {result}
     </div>
   );

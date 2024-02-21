@@ -52,10 +52,10 @@ export const authorizedRoutes = [
         path: "settings",
         element: <Settings />,
       },
-      {
-        path: "friends",
-        element: <FriendsList />,
-      },
+      // {
+      //   path: "friends",
+      //   element: <FriendsList />,
+      // },
     ],
   },
   {

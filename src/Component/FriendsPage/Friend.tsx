@@ -4,12 +4,12 @@ import User from "../../img/default-user.svg";
 import { Link } from "react-router-dom";
 
 interface IUserFindItem {
-  img: string | null,
-  name: string,
+  photoURL: string | null,
+  displayName: string,
   id:string
 }
 
-const UserFindItem = ({ id, img, name }: IUserFindItem) => {
+const Friend = ({ id, photoURL, displayName }: IUserFindItem) => {
   return (
     <Link style={{textDecoration:'none'}} to={`/user/${id}`}>
     <Paper
@@ -24,11 +24,11 @@ const UserFindItem = ({ id, img, name }: IUserFindItem) => {
         textDecoration:'none'
       }}
     >
-      <Avatar alt="user-avatar" src={img || User} />
-      <Box>{name}</Box>
+      <Avatar alt="user-avatar" src={photoURL || User} />
+      <Box>{displayName}</Box>
     </Paper>
     </Link>
   );
 };
 
-export {UserFindItem}
+export {Friend}
