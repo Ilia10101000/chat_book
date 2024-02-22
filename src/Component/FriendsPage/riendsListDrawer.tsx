@@ -19,17 +19,18 @@ import { db } from "../../firebase/auth";
 import { FriendsList } from "./FriendsList";
 import { RequestList } from "./RequestList";
 import DrawerAppHeader from "../Drawers/DrawerAppHeader";
+import {USERS,RECEIVED_FRIENDS_REQUESTS,FRIENDS_LIST} from '../../firebase_storage_path_constants/firebase_storage_path_constants'
 
 function FriendsListDrawer({ open, onClose, width }) {
 
   const user = useAuth();
-  const [value, setValue] = useState("");
+  // const [value, setValue] = useState("");
   const [tabNumber, setTabNumber] = useState(0);
   const [friendsList, loadingFL, errorFL] = useCollectionData(
-    collection(db, `users/${user.uid}/friendsList`)
+    collection(db, `${USERS}/${user.uid}/${FRIENDS_LIST}`)
   );
   const [receivedFriendsRequest, loadingRFR, errorRFR] = useCollectionData(
-    collection(db, `users/${user.uid}/receivedFriendsRequests`)
+    collection(db, `${USERS}/${user.uid}/${RECEIVED_FRIENDS_REQUESTS}`)
   );
 
   let result: ReactNode;

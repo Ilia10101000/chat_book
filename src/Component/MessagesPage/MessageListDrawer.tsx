@@ -14,19 +14,20 @@ import { collection } from "firebase/firestore";
 import { db } from "../../firebase/auth";
 import { MessageListItemLink } from "./MessageListItemLink";
 import DrawerAppHeader from "../Drawers/DrawerAppHeader";
+import { USERS,EXISTING_CHATS } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
 
 function MessageListDrawer({ open, onClose, width }) {
   const user = useAuth();
 
-  const [messagesList, loading, error] = useCollectionData(
-    collection(db, `users/${user.uid}/existingChats`)
+  const [existingChatsList, loading, error] = useCollectionData(
+    collection(db, `${USERS}/${user.uid}/${EXISTING_CHATS}`)
   );
 
   let result: ReactNode;
   const [value, setValue] = useState("");
 
-  if (messagesList) {
-    result = messagesList?.map(({ companion, chatId }, index) => (
+  if (existingChatsList) {
+    result = existingChatsList?.map(({ companion, chatId }, index) => (
       <MessageListItemLink
         key={index}
         companion={companion}

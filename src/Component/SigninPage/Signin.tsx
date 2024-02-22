@@ -6,6 +6,7 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { storage, ref, auth, db } from "../../firebase/auth";
 import { getDownloadURL, uploadString } from "firebase/storage";
 import { doc, setDoc } from "firebase/firestore";
+import { USERS, AVATAR } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
 
 const SigninContext = createContext<{
   signinForm: FormikProps<{
@@ -46,18 +47,18 @@ function Signin() {
         );
         if (photoURL) {
           await uploadString(
-            ref(storage, `avatar/${userCredentials.user.uid}/avatar`),
+            ref(storage, `${AVATAR}/${userCredentials.user.uid}/${AVATAR}`),
             photoURL,
             "data_url"
           );
           const photourlLink = await getDownloadURL(
-            ref(storage, `avatar/${userCredentials.user.uid}/avatar`)
+            ref(storage, `${AVATAR}/${userCredentials.user.uid}/${AVATAR}`)
           );
           await updateProfile(auth.currentUser, {
             displayName,
             photoURL: photourlLink,
           });
-          await setDoc(doc(db, "users", userCredentials.user.uid), {
+          await setDoc(doc(db, USERS, userCredentials.user.uid), {
             id: userCredentials.user.uid,
             displayName,
             email,

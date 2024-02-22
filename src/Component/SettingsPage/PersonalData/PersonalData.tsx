@@ -11,6 +11,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { loginValidationSchema } from "../../../lib/yupFormsValidationParams";
+import { AVATAR, USERS } from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
 
 interface IPersonalData {
   displayName: string;
@@ -75,18 +76,18 @@ function PersonalData({
     try {
       if (!photoURL && preview) {
         await uploadString(
-          ref(storage, `avatar/${uid}/avatar`),
+          ref(storage, `${AVATAR}/${uid}/${AVATAR}`),
           preview,
           "data_url"
         );
 
         const photourlLink = await getDownloadURL(
-          ref(storage, `avatar/${uid}/avatar`)
+          ref(storage, `${AVATAR}/${uid}/${AVATAR}`)
         );
 
         changedUserData.photoURL = photourlLink;
       }
-      await updateDoc(doc(db, "users", uid), changedUserData);
+      await updateDoc(doc(db, USERS, uid), changedUserData);
       await updateProfile(auth.currentUser, changedUserData);
       updatePage();
     } catch (error) {

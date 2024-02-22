@@ -13,6 +13,7 @@ import { ref } from "firebase/database";
 import { realTimeDB } from "../../firebase/auth";
 import User from "../../img/default-user.svg";
 import { Link } from 'react-router-dom';
+import { USERS_RT } from '../../firebase_storage_path_constants/firebase_storage_path_constants';
 
 type IisOnlineSnapShot = {
   isOnline: boolean;
@@ -21,7 +22,7 @@ type IisOnlineSnapShot = {
 
 function MessageAppBar({ companion }) {
   const [isOnlineSnapShot, loading, error] = useObjectVal<IisOnlineSnapShot>(
-    ref(realTimeDB, `users/${companion.id}`));
+    ref(realTimeDB, `${USERS_RT}/${companion.id}`));
   
   const isOnline = isOnlineSnapShot?.isOnline;
 

@@ -59,7 +59,6 @@ function SecurityData({
       passwordForm.resetForm()
       setSuccess(true);
     } catch (error) {
-      console.log(error);
       if (error.message == "Firebase: Error (auth/requires-recent-login).") {
         handleOpenAskReload();
         return;

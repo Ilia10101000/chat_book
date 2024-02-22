@@ -14,6 +14,7 @@ import { ref } from "firebase/database";
 import { realTimeDB } from "../../firebase/auth";
 import { useObjectVal } from "react-firebase-hooks/database";
 import Badge from "@mui/material/Badge";
+import { USERS, CHATS, USERS_RT } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
 
 type IisOnlineSnapShot = {
   isOnline: boolean;
@@ -29,12 +30,13 @@ function MessageListItemLink({
   chatId: string;
 }) {
   const [isOnlineSnapShot, loading, error] = useObjectVal<IisOnlineSnapShot>(
-    ref(realTimeDB, `users/${companion}`)
+    ref(realTimeDB, `${USERS_RT}/${companion}`)
   );
-  const [user, loadingURL] = useDocumentData(doc(db, `users/${companion}`));
-  const [lastMessage, loadingLM] = useDocumentData(doc(db, `chats/${chatId}`));
+  const [user, loadingURL] = useDocumentData(doc(db, `${USERS}/${companion}`));
+  const [lastMessage, loadingLM] = useDocumentData(
+    doc(db, `${CHATS}/${chatId}`)
+  );
   const isOnline = isOnlineSnapShot?.isOnline;
-  console.log(isOnlineSnapShot)
 
   if (loadingLM || loadingURL) {
     return (

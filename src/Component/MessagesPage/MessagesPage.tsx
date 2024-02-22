@@ -19,14 +19,15 @@ import { useAuth } from "../../hooks/useAuth";
 import { db } from "../../firebase/auth";
 import { serverTimestamp } from "firebase/firestore";
 import { MessageAppBar } from "./MessageAppBar";
+import { CHATS, MESSAGES } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
 
 function MessagesPage() {
   const { chatId } = useParams();
   const { state: companion } = useLocation();
   const authUser = useAuth();
 
-  const [messages, loading, error] = useCollectionData(
-    query(collection(db, `chats/${chatId}/messages`), orderBy("timestamp"))
+  const [messagesList, loading, error] = useCollectionData(
+    query(collection(db, `${CHATS}/${chatId}/${MESSAGES}`), orderBy("timestamp"))
   );
   if (!companion) {
     return <Navigate to="/" />;
@@ -60,13 +61,13 @@ function MessagesPage() {
     );
   }
   const sendMessage = async (message: string) => {
-    await addDoc(collection(db, `chats/${chatId}/messages`), {
+    await addDoc(collection(db, `${CHATS}/${chatId}/${MESSAGES}`), {
       senderId: authUser.uid,
       text: message,
       timestamp: serverTimestamp(),
       isReaded: false,
     });
-    await updateDoc(doc(db, `chats/${chatId}`), {
+    await updateDoc(doc(db, `${CHATS}/${chatId}`), {
       lastMessage: message,
     });
   };
@@ -81,8 +82,8 @@ function MessagesPage() {
     >
       <MessageAppBar companion={companion}/>
       <MessageList
-        messages={messages}
-        isEmpty={messages.length === 0}
+        messages={messagesList}
+        isEmpty={messagesList.length === 0}
         user={authUser}
       />
       <MessageFooter sendMessage={sendMessage} />

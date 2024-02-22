@@ -1,10 +1,10 @@
+import React, { createContext } from "react";
 import { ErrorPage } from "./Component/Error/Error";
 import {
   unAuthorizedRoutes,
   authorizedRoutes,
   renderRoutes,
 } from "./routes/routes";
-import React, { createContext } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "./firebase/auth";
 import { Routes, Route } from "react-router-dom";

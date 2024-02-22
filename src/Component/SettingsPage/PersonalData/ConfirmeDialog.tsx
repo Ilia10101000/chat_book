@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { deleteObject } from "firebase/storage";
 import { storage, ref } from "../../../firebase/auth";
-import { getAuth, updateProfile } from "firebase/auth";
+import { updateProfile } from "firebase/auth";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -9,12 +9,13 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { useAuth } from "../../../hooks/useAuth";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase/auth";
+import { AVATAR, USERS } from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
 
 function PhotoURLDialog({ open, handleClose, handleError, updatePage }) {
   const [pending, setPending] = useState(false);
   const user = useAuth();
 
-  const photoRef = ref(storage, `avatar/${user.uid}/avatar`);
+  const photoRef = ref(storage, `${AVATAR}/${user.uid}/${AVATAR}`);
 
   const deleteUserPhoto = async () => {
     setPending(true);
@@ -23,7 +24,7 @@ function PhotoURLDialog({ open, handleClose, handleError, updatePage }) {
       await updateProfile(user, {
         photoURL: "",
       });
-      await updateDoc(doc(db, "users", user.uid), { photoURL: "" });
+      await updateDoc(doc(db, USERS, user.uid), { photoURL: "" });
       updatePage();
     } catch (error) {
       handleError(error.message);

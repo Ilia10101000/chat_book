@@ -14,22 +14,26 @@ import { useCollection } from "react-firebase-hooks/firestore";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useAuth } from "../../hooks/useAuth";
 import { db } from "../../firebase/auth";
+import { CHATS, EXISTING_CHATS, USERS } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
 
 const createChatDoc = async (myId: string, friendsId: string) => {
   try {
-    const createdDoc = await addDoc(collection(db, "chats"), {
+    const createdDoc = await addDoc(collection(db, CHATS), {
       private: true,
       [myId]: true,
       [friendsId]: true,
     });
-    await setDoc(doc(db, `users/${myId}/existingChats`, createdDoc.id), {
+    await setDoc(doc(db, `${USERS}/${myId}/${EXISTING_CHATS}`, createdDoc.id), {
       companion: friendsId,
       chatId: createdDoc.id,
     });
-    await setDoc(doc(db, `users/${friendsId}/existingChats`, createdDoc.id), {
-      companion: myId,
-      chatId: createdDoc.id,
-    });
+    await setDoc(
+      doc(db, `${USERS}/${friendsId}/${EXISTING_CHATS}`, createdDoc.id),
+      {
+        companion: myId,
+        chatId: createdDoc.id,
+      }
+    );
   } catch (error) {}
 };
 
@@ -41,7 +45,7 @@ function MiddlewareCheckComponent() {
 
   const [chatSnap, loading, error] = useCollection(
     query(
-      collection(db, "chats"),
+      collection(db, CHATS),
       where("private", "==", true),
       where(authUser.uid, "==", true),
       where(reciever, "==", true),

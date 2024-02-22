@@ -16,6 +16,7 @@ import { DesktopDrawer } from "../Drawers/DesktopDrawer";
 import { MobileAppBar } from "./AppBar";
 import { MessageListDrawer } from "../MessagesPage/MessageListDrawer";
 import { FriendsListDrawer } from "../FriendsPage/riendsListDrawer";
+import { USERS_RT } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
 
 const makeDrawerInner = (drawerListItems: any): ReactNode => {
   return drawerListItems.map(({ mode, label, icon, ...modeAction }) => {
@@ -79,7 +80,7 @@ const drawerWidth = 200;
 
 const setIsUserOnline = async (userId: string, isOnline: boolean) => {
   try {
-    set(ref(realTimeDB, `users/${userId}`), {
+    set(ref(realTimeDB, `${USERS_RT}/${userId}`), {
       isOnline,
       lastVisit: serverTimestamp(),
     });
