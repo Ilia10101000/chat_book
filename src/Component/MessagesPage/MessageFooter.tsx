@@ -7,6 +7,7 @@ import { useState } from "react";
 import SentimentSatisfiedAltOutlinedIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import PanoramaOutlinedIcon from "@mui/icons-material/PanoramaOutlined";
+import EmojiPicker,{EmojiClickData} from "emoji-picker-react";
 
 interface IMessageFooter {
   sendMessage: (message: string) => void;
@@ -14,12 +15,21 @@ interface IMessageFooter {
 
 const MessageFooter = ({ sendMessage }: IMessageFooter) => {
   const [message, setMessage] = useState("");
+  const [isOpenEmoji, setIsOpenEmoji] = useState(false)
 
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     sendMessage(message);
     setMessage("");
   };
+
+  const toogleEmojiView = () => {
+    setIsOpenEmoji(open => !open)
+  }
+
+  const handleEmojiClick = (emojiData: EmojiClickData) => {
+    setMessage(message => message + emojiData.emoji)
+  }
 
   return (
     <Paper
@@ -28,6 +38,7 @@ const MessageFooter = ({ sendMessage }: IMessageFooter) => {
       }}
     >
       <form onSubmit={handleFormSubmit}>
+        <EmojiPicker open={isOpenEmoji} onEmojiClick={handleEmojiClick} />
         <TextField
           value={message}
           onChange={(e) => setMessage(e.target.value)}
@@ -36,14 +47,14 @@ const MessageFooter = ({ sendMessage }: IMessageFooter) => {
           sx={{
             width: "100%",
             "& .MuiInputBase-root": {
-              borderRadius: '30px',
-              p:1
+              borderRadius: "30px",
+              p: 1,
             },
           }}
           InputProps={{
             startAdornment: (
               <Box sx={{ mr: 1 }}>
-                <IconButton>
+                <IconButton onClick={toogleEmojiView}>
                   <SentimentSatisfiedAltOutlinedIcon />
                 </IconButton>
               </Box>

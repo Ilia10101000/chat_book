@@ -21,12 +21,17 @@ function MessageListDrawer({ open, onClose, width }) {
 
   const [existingChatsList, loading, error] = useCollectionData(
     collection(db, `${USERS}/${user.uid}/${EXISTING_CHATS}`)
-  );
+    );
+    const [value, setValue] = useState("");
 
   let result: ReactNode;
-  const [value, setValue] = useState("");
 
-  if (existingChatsList) {
+  if (loading) {
+    result = <CircularProgress />;
+  } else if (error) {
+    result = <div>Some error occured</div>
+  }
+  else {
     result = existingChatsList?.map(({ companion, chatId }, index) => (
       <MessageListItemLink
         key={index}
@@ -35,9 +40,6 @@ function MessageListDrawer({ open, onClose, width }) {
         onClose={onClose}
       />
     ));
-  }
-  if (loading) {
-    result = <CircularProgress />;
   }
 
   return (

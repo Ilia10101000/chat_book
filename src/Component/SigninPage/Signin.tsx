@@ -63,6 +63,7 @@ function Signin() {
             displayName,
             email,
             photoURL: photourlLink,
+            searchQuery: displayName.toLowerCase()
           });
         }
       } catch (error) {

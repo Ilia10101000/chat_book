@@ -67,10 +67,11 @@ function PersonalData({
 
   async function handleSubmitChangeUserData () {
     
-    const changedUserData: { displayName?: string; photoURL?: string } = {};
+    const changedUserData: { displayName?: string; photoURL?: string, searchQuery?:string } = {};
 
     if (displayName !== displayNameForm.values.displayName) {
       changedUserData.displayName = displayNameForm.values.displayName;
+      changedUserData.searchQuery = displayNameForm.values.displayName.toLowerCase();
     }
 
     try {

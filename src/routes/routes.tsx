@@ -4,7 +4,7 @@ import { HomePage } from "../Component/HomePage/Home";
 import { LoginPage } from "../Component/LoginPage/LoginPage";
 import { Settings } from "../Component/SettingsPage/Settings";
 import { MessagesPage } from "../Component/MessagesPage/MessagesPage";
-import { FriendsList } from "../Component/FriendsPage/FriendsList";
+import { FriendsList } from "../Component/FriendsPage/FriendsList/FriendsList";
 import { UserProfile } from "../Component/UserPage/UserProfile";
 import { Signin } from "../Component/SigninPage/Signin";
 import { SigninInfo } from "../Component/SigninPage/SigninInfo";

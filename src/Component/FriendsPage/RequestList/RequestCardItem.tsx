@@ -6,25 +6,24 @@ import {
   ListItemAvatar,
   ListItemText,
 } from "@mui/material";
-import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
-import User from "../../img/default-user.svg";
+import User from "../../../img/default-user.svg";
 import { useNavigate } from "react-router-dom";
 
-function RequestCardItem({ id, displayName, photoURL, onClose }) {
+function RequestCardItem({ friendUser, onClose, handleRequest, icon }) {
 
     const navigate = useNavigate();
 
     const handleViewUserProfile = () => {
         onClose();
-        navigate(`user/${id}`)
+        navigate(`user/${friendUser.id}`)
     }
   return (
     <ListItem sx={{ p: 0 }}>
       <IconButton onClick={handleViewUserProfile} sx={{ p: 0, mr: 2 }}>
         <ListItemAvatar>
           <Avatar
-            alt={displayName}
-            src={photoURL || User}
+            alt={friendUser.displayName}
+            src={friendUser.photoURL || User}
             sx={{ width: 56, height: 56 }}
           />
         </ListItemAvatar>
@@ -40,11 +39,9 @@ function RequestCardItem({ id, displayName, photoURL, onClose }) {
           overflow: "hidden",
           textOverflow: "ellipsis",
         }}
-        primary={displayName}
+        primary={friendUser.displayName}
       />
-      <IconButton>
-        <PersonAddAlt1Icon fontSize="small" />
-      </IconButton>
+      <IconButton onClick={() => handleRequest(friendUser)}>{icon}</IconButton>
     </ListItem>
   );
 }
