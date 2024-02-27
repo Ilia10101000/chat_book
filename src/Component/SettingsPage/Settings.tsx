@@ -11,8 +11,8 @@ import Alert from "@mui/material/Alert";
 
 function Settings() {
   const { displayName, email, photoURL, uid } = useAuth();
-  const [tabNumber, setTabNumber] = useState(0);
   const [error, setError] = useState("");
+  const [tabNumber, setTabNumber] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabNumber(newValue);

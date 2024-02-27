@@ -2,6 +2,7 @@
 
 const USERS_D = "users";
 const CHATS_D = "chats";
+const POSTS = 'posts';
 
 // Personal user collections
 
@@ -35,4 +36,5 @@ export {
   USERS_RT,
   CHATS_RT,
   AVATAR_S,
+  POSTS
 };
