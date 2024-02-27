@@ -1,10 +1,9 @@
 import React from "react";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { db } from "../../firebase/auth";
-import { useNavigate } from "react-router-dom";
 import { ListItem, IconButton, ListItemAvatar, ListItemText, Avatar, CircularProgress, List, ListItemButton } from "@mui/material";
 import { collection, query, where, limit } from "firebase/firestore";
-import { USERS } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
+import { USERS_D } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
 import User from '../../img/default-user.svg'
 
 
@@ -57,7 +56,7 @@ function UserCard({ handleClick, ...user }:IUserCard) {
 const useFindUsers = ({text, authUserId, handleClick} :IUseFindUsers ) => {
   const [list, loading, error] = useCollectionData(
     query(
-      collection(db, USERS),
+      collection(db, USERS_D),
       where("searchQuery", ">=", text),
       where("searchQuery", "<=", text + "\uf8ff"),
       limit(5)

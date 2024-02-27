@@ -7,7 +7,7 @@ import {
   FRIENDS_LIST,
   RECEIVED_FRIENDS_REQUESTS,
   SENT_FRIENDS_REQUESTS,
-  USERS,
+  USERS_D,
 } from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
 
 function ReceivedRequestList({ requestList, onClose, authUser }) {
@@ -17,23 +17,23 @@ function ReceivedRequestList({ requestList, onClose, authUser }) {
       await deleteDoc(
         doc(
           db,
-          `${USERS}/${authUser.id}/${RECEIVED_FRIENDS_REQUESTS}`,
+          `${USERS_D}/${authUser.id}/${RECEIVED_FRIENDS_REQUESTS}`,
           friendUserData.id
         )
       );
       await deleteDoc(
         doc(
           db,
-          `${USERS}/${friendUserData.id}/${SENT_FRIENDS_REQUESTS}`,
+          `${USERS_D}/${friendUserData.id}/${SENT_FRIENDS_REQUESTS}`,
           authUser.id
         )
       );
       await setDoc(
-        doc(db, `${USERS}/${authUser.id}/${FRIENDS_LIST}`, friendUserData.id),
+        doc(db, `${USERS_D}/${authUser.id}/${FRIENDS_LIST}`, friendUserData.id),
         friendUserData
       );
       await setDoc(
-        doc(db, `${USERS}/${friendUserData.id}/${FRIENDS_LIST}`, authUser.id),
+        doc(db, `${USERS_D}/${friendUserData.id}/${FRIENDS_LIST}`, authUser.id),
         authUser
       );
     } catch (error) {

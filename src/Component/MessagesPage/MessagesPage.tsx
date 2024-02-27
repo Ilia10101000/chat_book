@@ -19,7 +19,38 @@ import { useAuth } from "../../hooks/useAuth";
 import { db } from "../../firebase/auth";
 import { serverTimestamp } from "firebase/firestore";
 import { MessageAppBar } from "./MessageAppBar";
-import { CHATS, MESSAGES } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
+import { ref, storage } from "../../firebase/auth";
+import { uploadString, getDownloadURL  } from "firebase/storage";
+import { CHATS_D, CHATS_S, MESSAGES } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
+
+
+const fileToDataURL = async (file: File) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+
+    reader.onerror = (error) => {
+      reject(error);
+    };
+
+    reader.readAsDataURL(file);
+  });
+};
+const generateUniqueFileName = (userId: string) => {
+  return `${Date.now()}-${userId}-${Math.floor(Math.random() * 10000) + 1}`;
+}
+
+const filesToDataURLs = async (files: File[]) => {
+  const promises = files.map((file) => fileToDataURL(file));
+
+  const dataURLs = await Promise.all(promises);
+
+  return dataURLs;
+};
+
 
 function MessagesPage() {
   const { chatId } = useParams();
@@ -27,20 +58,20 @@ function MessagesPage() {
   const authUser = useAuth();
 
   const [messagesList, loading, error] = useCollectionData(
-    query(collection(db, `${CHATS}/${chatId}/${MESSAGES}`), orderBy("timestamp"))
-  );
-  if (!companion) {
-    return <Navigate to="/" />;
-  }
+    query(collection(db, `${CHATS_D}/${chatId}/${MESSAGES}`), orderBy("timestamp"))
+    );
+    if (!companion) {
+      return <Navigate to="/" />;
+    }
   if (loading) {
     return (
       <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
-        }}
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+      }}
       >
         <CircularProgress />
       </div>
@@ -49,25 +80,54 @@ function MessagesPage() {
   if (error) {
     return (
       <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
-        }}
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+      }}
       >
         Some error occured! try again
       </div>
     );
   }
+  const sendImages = async (imageList:File[]) => {
+    try {
+      const imagesDateURL = await filesToDataURLs(imageList);
+      const imageListWithUniqueId = imagesDateURL.map((dataURL) => ({
+        id: generateUniqueFileName(authUser.uid),
+        data:dataURL
+      }));
+      const imageURLS = await Promise.all(
+        imageListWithUniqueId.map(async (imageDataURL:{id:string,data:string}) => {
+          const imageRef = ref(storage, `${CHATS_S}/${chatId}/${imageDataURL.id}`);
+          await uploadString(imageRef, imageDataURL.data, 'data_url');
+          const url = await getDownloadURL(imageRef);
+          return url
+        })
+      );
+      await Promise.all(imageURLS.map(async (url) => {
+        await addDoc(collection(db, `${CHATS_D}/${chatId}/${MESSAGES}`), {
+          senderId: authUser.uid,
+          type:'image',
+          content: url,
+          timestamp: serverTimestamp(),
+          isReaded: false,
+        });
+      }))
+    } catch (error) {
+      console.log(error.message)
+    }
+  };
   const sendMessage = async (message: string) => {
-    await addDoc(collection(db, `${CHATS}/${chatId}/${MESSAGES}`), {
+    await addDoc(collection(db, `${CHATS_D}/${chatId}/${MESSAGES}`), {
       senderId: authUser.uid,
-      text: message,
+      type:"text",
+      content: message,
       timestamp: serverTimestamp(),
       isReaded: false,
     });
-    await updateDoc(doc(db, `${CHATS}/${chatId}`), {
+    await updateDoc(doc(db, `${CHATS_D}/${chatId}`), {
       lastMessage: message,
     });
   };
@@ -80,13 +140,13 @@ function MessagesPage() {
         flexDirection: "column",
       }}
     >
-      <MessageAppBar companion={companion}/>
+      <MessageAppBar companion={companion} />
       <MessageList
         messages={messagesList}
         isEmpty={messagesList.length === 0}
         user={authUser}
       />
-      <MessageFooter sendMessage={sendMessage} />
+      <MessageFooter sendImages={sendImages} sendMessage={sendMessage} />
     </Box>
   );
 }

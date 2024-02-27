@@ -1,7 +1,7 @@
 // Root collections
 
-const USERS = "users";
-const CHATS = "chats";
+const USERS_D = "users";
+const CHATS_D = "chats";
 
 // Personal user collections
 
@@ -20,11 +20,13 @@ const CHATS_RT = "chats"
 
 // Firebase storage root path
 
-const AVATAR = "avatar";
+const AVATAR_S = "avatar";
+const CHATS_S = "chats";
 
 export {
-  USERS,
-  CHATS,
+  USERS_D,
+  CHATS_D,
+  CHATS_S,
   EXISTING_CHATS,
   RECEIVED_FRIENDS_REQUESTS,
   SENT_FRIENDS_REQUESTS,
@@ -32,5 +34,5 @@ export {
   MESSAGES,
   USERS_RT,
   CHATS_RT,
-  AVATAR,
+  AVATAR_S,
 };

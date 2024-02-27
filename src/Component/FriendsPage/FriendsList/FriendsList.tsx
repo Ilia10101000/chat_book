@@ -7,7 +7,7 @@ import { collection } from "firebase/firestore";
 import { List, TextField, Box } from "@mui/material";
 import { db } from "../../../firebase/auth";
 import {
-  USERS,
+  USERS_D,
   FRIENDS_LIST,
 } from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
 import { useNavigate } from "react-router-dom";
@@ -33,7 +33,7 @@ const FriendsList = ({ authUser, onClose }) => {
   });
 
   const [friendsList, loadingFL, errorFL] = useCollectionData(
-    collection(db, `${USERS}/${authUser.id}/${FRIENDS_LIST}`)
+    collection(db, `${USERS_D}/${authUser.id}/${FRIENDS_LIST}`)
   );
   let resultFriendsList: React.ReactNode | null;
 

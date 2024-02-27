@@ -6,7 +6,7 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { storage, ref, auth, db } from "../../firebase/auth";
 import { getDownloadURL, uploadString } from "firebase/storage";
 import { doc, setDoc } from "firebase/firestore";
-import { USERS, AVATAR } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
+import { USERS_D, AVATAR_S } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
 
 const SigninContext = createContext<{
   signinForm: FormikProps<{
@@ -47,18 +47,18 @@ function Signin() {
         );
         if (photoURL) {
           await uploadString(
-            ref(storage, `${AVATAR}/${userCredentials.user.uid}/${AVATAR}`),
+            ref(storage, `${AVATAR_S}/${userCredentials.user.uid}/${AVATAR_S}`),
             photoURL,
             "data_url"
           );
           const photourlLink = await getDownloadURL(
-            ref(storage, `${AVATAR}/${userCredentials.user.uid}/${AVATAR}`)
+            ref(storage, `${AVATAR_S}/${userCredentials.user.uid}/${AVATAR_S}`)
           );
           await updateProfile(auth.currentUser, {
             displayName,
             photoURL: photourlLink,
           });
-          await setDoc(doc(db, USERS, userCredentials.user.uid), {
+          await setDoc(doc(db, USERS_D, userCredentials.user.uid), {
             id: userCredentials.user.uid,
             displayName,
             email,

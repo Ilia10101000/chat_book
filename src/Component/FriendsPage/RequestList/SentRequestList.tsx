@@ -6,7 +6,7 @@ import { db } from "../../../firebase/auth";
 import {
   RECEIVED_FRIENDS_REQUESTS,
   SENT_FRIENDS_REQUESTS,
-  USERS,
+  USERS_D,
 } from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
 
 function SentRequestList({ requestList, onClose, authUser }) {
@@ -16,14 +16,14 @@ function SentRequestList({ requestList, onClose, authUser }) {
       await deleteDoc(
         doc(
           db,
-          `${USERS}/${authUser.id}/${SENT_FRIENDS_REQUESTS}`,
+          `${USERS_D}/${authUser.id}/${SENT_FRIENDS_REQUESTS}`,
           friendUserData.id
         )
       );
       await deleteDoc(
         doc(
           db,
-          `${USERS}/${friendUserData.id}/${RECEIVED_FRIENDS_REQUESTS}`,
+          `${USERS_D}/${friendUserData.id}/${RECEIVED_FRIENDS_REQUESTS}`,
           authUser.id
         )
       );

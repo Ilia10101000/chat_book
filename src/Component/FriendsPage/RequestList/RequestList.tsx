@@ -7,7 +7,7 @@ import { ReceivedRequestList } from "./ReceivedRequestList";
 import { collection } from "firebase/firestore";
 import { db } from "../../../firebase/auth";
 import {
-  USERS,
+  USERS_D,
   RECEIVED_FRIENDS_REQUESTS,
   SENT_FRIENDS_REQUESTS,
 } from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
@@ -17,10 +17,10 @@ function RequestList({ authUser, onClose }) {
   const [tabNumber, setTabNumber] = useState(0);
   
   const [receivedFriendsRequest, loadingRFR, errorRFR] = useCollectionData(
-    collection(db, `${USERS}/${authUser.id}/${RECEIVED_FRIENDS_REQUESTS}`)
+    collection(db, `${USERS_D}/${authUser.id}/${RECEIVED_FRIENDS_REQUESTS}`)
   );
   const [sentFriendsRequest, loadingSFR, errorSFR] = useCollectionData(
-    collection(db, `${USERS}/${authUser.id}/${SENT_FRIENDS_REQUESTS}`)
+    collection(db, `${USERS_D}/${authUser.id}/${SENT_FRIENDS_REQUESTS}`)
   );
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabNumber(newValue);

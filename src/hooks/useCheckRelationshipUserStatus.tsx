@@ -9,21 +9,21 @@ import {
   NO_CONTACT,
   LOADING
 } from "../Component/UserPage/contact_status";
-import { FRIENDS_LIST, RECEIVED_FRIENDS_REQUESTS, SENT_FRIENDS_REQUESTS, USERS } from '../firebase_storage_path_constants/firebase_storage_path_constants';
+import { FRIENDS_LIST, RECEIVED_FRIENDS_REQUESTS, SENT_FRIENDS_REQUESTS, USERS_D } from '../firebase_storage_path_constants/firebase_storage_path_constants';
 
 
 
 function useCheckRelationshipUserStatus( authUserId:string, checkingUserId:string, handleError:(message:string) => void ) {
   const [isFriend, loadingIF, errorIF] = useDocument(
-    doc(db, `/${USERS}/${authUserId}/${FRIENDS_LIST}/${checkingUserId}`)
+    doc(db, `/${USERS_D}/${authUserId}/${FRIENDS_LIST}/${checkingUserId}`)
   );
   const [isSentFriendRequest, loadingISFR, errorISFR] = useDocument(
-    doc(db, `/${USERS}/${authUserId}/${SENT_FRIENDS_REQUESTS}/${checkingUserId}`)
+    doc(db, `/${USERS_D}/${authUserId}/${SENT_FRIENDS_REQUESTS}/${checkingUserId}`)
   );
   const [isReceivedFriendRequest, loadingIRFR, errorIRFR] = useDocument(
     doc(
       db,
-      `/${USERS}/${authUserId}/${RECEIVED_FRIENDS_REQUESTS}/${checkingUserId}`
+      `/${USERS_D}/${authUserId}/${RECEIVED_FRIENDS_REQUESTS}/${checkingUserId}`
     )
   );
   if (errorIF || errorISFR || errorIRFR) {

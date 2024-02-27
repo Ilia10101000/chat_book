@@ -9,13 +9,13 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { useAuth } from "../../../hooks/useAuth";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase/auth";
-import { AVATAR, USERS } from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
+import { AVATAR_S, USERS_D } from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
 
 function PhotoURLDialog({ open, handleClose, handleError, updatePage }) {
   const [pending, setPending] = useState(false);
   const user = useAuth();
 
-  const photoRef = ref(storage, `${AVATAR}/${user.uid}/${AVATAR}`);
+  const photoRef = ref(storage, `${AVATAR_S}/${user.uid}/${AVATAR_S}`);
 
   const deleteUserPhoto = async () => {
     setPending(true);
@@ -24,7 +24,7 @@ function PhotoURLDialog({ open, handleClose, handleError, updatePage }) {
       await updateProfile(user, {
         photoURL: "",
       });
-      await updateDoc(doc(db, USERS, user.uid), { photoURL: "" });
+      await updateDoc(doc(db, USERS_D, user.uid), { photoURL: "" });
       updatePage();
     } catch (error) {
       handleError(error.message);

@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect } from "react";
 import { Box, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import EmailIcon from "@mui/icons-material/Email";
 import GroupIcon from "@mui/icons-material/Group";
 import TuneIcon from "@mui/icons-material/Tune";
@@ -9,7 +9,7 @@ import { auth, realTimeDB } from "../../firebase/auth";
 import { signOut } from "firebase/auth";
 import { serverTimestamp } from "firebase/firestore";
 import { ref, set } from "firebase/database";
-import { ModeToogleContext } from "../../theme";
+import { useTheme } from "../../theme";
 import { useAuth } from "../../hooks/useAuth";
 import { MobileDrawer } from "../Drawers/MobileDrawer";
 import { DesktopDrawer } from "../Drawers/DesktopDrawer";
@@ -17,9 +17,6 @@ import { MobileAppBar } from "./AppBar";
 import { MessageListDrawer } from "../MessagesPage/MessageListDrawer";
 import { FriendsListDrawer } from "../FriendsPage/riendsListDrawer";
 import { USERS_RT } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
-import  Picker  from "@emoji-mart/react";
-import data from "@emoji-mart/data";
-import EmojiPicker from "emoji-picker-react";
 
 const makeDrawerInner = (drawerListItems: any): ReactNode => {
   return drawerListItems.map(({ mode, label, icon, ...modeAction }) => {
@@ -99,7 +96,7 @@ function HomePage() {
   const [showMessageDrawer, setShowMessageDrawer] = useState(false);
   const [showFriendsDrawer, setShowFriendsDrawer] = useState(false);
 
-  let [mode, toogleThemeMode] = useContext(ModeToogleContext);
+  let [mode, toogleThemeMode] = useTheme()
 
   const toogleDrawerOpen = () => {
     setIsOpenMobileDrawer((isOpen) => !isOpen);
@@ -184,14 +181,6 @@ function HomePage() {
           flexGrow: 1,
         }}
       >
-        <div style={{ display: "flex" }}>
-          {/* <Picker
-            data={data}
-            onEmodjiSelect={console.log}
-            noCountryFlags={true}
-          /> */}
-          {/* <EmojiPicker onEmojiClick={console.log} /> */}
-        </div>
         <Outlet />
       </Box>
     </Box>
