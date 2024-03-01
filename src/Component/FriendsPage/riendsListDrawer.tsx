@@ -6,7 +6,7 @@ import { CustomTabPanel } from "../CustomeElement/CustomeTabPanel";
 import { useAuth } from "../../hooks/useAuth";
 import { FriendsList } from "./FriendsList/FriendsList";
 import { RequestList } from "./RequestList/RequestList";
-import DrawerAppHeader from "../Drawers/DrawerAppHeader";
+import DrawerAppHeader from "../Drawer/DrawerAppHeader";
 
 function FriendsListDrawer({ open, onClose, width }) {
   const user = useAuth();
@@ -51,7 +51,7 @@ function FriendsListDrawer({ open, onClose, width }) {
           <Tab label="Request" />
         </Tabs>
       </Box>
-      <CustomTabPanel style={{padding:"0px"}} value={tabNumber} index={0}>
+      <CustomTabPanel style={{ padding: "0px" }} value={tabNumber} index={0}>
         <FriendsList authUser={authUserData} onClose={onClose} />
       </CustomTabPanel>
       <CustomTabPanel value={tabNumber} index={1}>

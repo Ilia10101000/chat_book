@@ -150,7 +150,7 @@ function PersonalData({
       <Button
         disabled={
           Boolean(displayNameForm.errors.displayName) || (
-          displayNameForm.values.displayName == displayName && photoURL
+          displayNameForm.values.displayName.trim() == displayName) && (photoURL
             ? !preview && !showEditor
             : !preview && showEditor)
         }

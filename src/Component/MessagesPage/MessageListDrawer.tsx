@@ -13,25 +13,27 @@ import { useAuth } from "../../hooks/useAuth";
 import { collection } from "firebase/firestore";
 import { db } from "../../firebase/auth";
 import { MessageListItemLink } from "./MessageListItemLink";
-import DrawerAppHeader from "../Drawers/DrawerAppHeader";
-import { USERS_D,EXISTING_CHATS } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
+import DrawerAppHeader from "../Drawer/DrawerAppHeader";
+import {
+  USERS_D,
+  EXISTING_CHATS,
+} from "../../firebase_storage_path_constants/firebase_storage_path_constants";
 
 function MessageListDrawer({ open, onClose, width }) {
   const user = useAuth();
 
   const [existingChatsList, loading, error] = useCollectionData(
     collection(db, `${USERS_D}/${user.uid}/${EXISTING_CHATS}`)
-    );
-    const [value, setValue] = useState("");
+  );
+  const [value, setValue] = useState("");
 
   let result: ReactNode;
 
   if (loading) {
     result = <CircularProgress />;
   } else if (error) {
-    result = <div>Some error occured</div>
-  }
-  else {
+    result = <div>Some error occured</div>;
+  } else {
     result = existingChatsList?.map(({ companion, chatId }, index) => (
       <MessageListItemLink
         key={index}

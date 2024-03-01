@@ -36,5 +36,5 @@ export {
   USERS_RT,
   CHATS_RT,
   AVATAR_S,
-  POSTS
+  POSTS,
 };

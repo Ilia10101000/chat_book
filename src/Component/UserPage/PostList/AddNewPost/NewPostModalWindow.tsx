@@ -1,0 +1,123 @@
+import React, { useEffect, useRef, useState } from "react";
+import Modal from "@mui/material/Modal";
+import CloseIcon from "@mui/icons-material/Close";
+import { SxProps, Theme } from "@mui/material";
+import Alert from "@mui/material/Alert";
+import { Box, IconButton } from "@mui/material";
+import { EditorNewPost } from "./EditorNewPost";
+import { useDrop } from "react-dnd";
+import { NativeTypes } from "react-dnd-html5-backend";
+import { ChoosePhotoField } from "./ChoosePhotoField";
+
+const style: SxProps<Theme> = {
+  position: "relative",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: {xs:'250px', sm:'450px'},
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 2,
+  display: "flex",
+  flexDirection: "column",
+  gap: "20px",
+  alignItems: "center",
+};
+
+function NewPostModalWindow({ open, onClose }) {
+  const [error, setError] = useState("");
+  const [postsImage, setPostsImage] = useState(null);
+
+  const [{ canDrop, isOver }, drop] = useDrop({
+    accept: NativeTypes.FILE,
+    drop(item: any) {
+      if (item.files.length >= 1) {
+        const file = item.files[0];
+        if (file.type.startsWith("image/")) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            setPostsImage(e.target.result);
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+    },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    }),
+  });
+
+  const isActive = canDrop && isOver;
+
+  const handleRemoveImage = () => {
+    setPostsImage(null);
+  };
+
+  const handleChangePostImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    setPostsImage(e.target.files[0]);
+  };
+
+  const handleError = (message) => {
+    setError(message)
+  }
+
+  useEffect(() => {
+    if (error) {
+      setTimeout(() => {
+        setError("");
+      }, 2000);
+    }
+  }, [error]);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const setInputClick = () => {
+    if (inputRef.current) {
+      inputRef.current.click();
+    }
+  };
+
+  return (
+    <Modal open={open}>
+      <Box sx={style}>
+        <IconButton
+          onClick={onClose}
+          sx={{ position: "absolute", right: "-30px", top: "-30px" }}
+        >
+          <CloseIcon />
+        </IconButton>
+        {postsImage ? (
+          <EditorNewPost
+            onClose={onClose}
+            postsImage={postsImage}
+            handleClose={handleRemoveImage}
+            handleError={handleError}
+          />
+        ) : (
+          <ChoosePhotoField
+            ref={drop}
+            isActive={isActive}
+            handleClick={setInputClick}
+          />
+        )}
+        {error && (
+          <Alert sx={{ position: "absolute", top: "-50px" }} severity="error">
+            {error}
+          </Alert>
+        )}
+        <input
+          ref={inputRef}
+          onChange={handleChangePostImage}
+          accept="image/*"
+          type="file"
+          style={{ display: "none" }}
+        />
+      </Box>
+    </Modal>
+  );
+}
+
+export { NewPostModalWindow };

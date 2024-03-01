@@ -4,6 +4,8 @@ import { useState } from "react";
 import EmailIcon from "@mui/icons-material/Email";
 import GroupIcon from "@mui/icons-material/Group";
 import TuneIcon from "@mui/icons-material/Tune";
+import AddToPhotosOutlinedIcon from "@mui/icons-material/AddToPhotosOutlined";
+import NewspaperIcon from "@mui/icons-material/Newspaper";
 import { Link, Outlet } from "react-router-dom";
 import { auth, realTimeDB } from "../../firebase/auth";
 import { signOut } from "firebase/auth";
@@ -11,12 +13,14 @@ import { serverTimestamp } from "firebase/firestore";
 import { ref, set } from "firebase/database";
 import { useTheme } from "../../theme";
 import { useAuth } from "../../hooks/useAuth";
-import { MobileDrawer } from "../Drawers/MobileDrawer";
-import { DesktopDrawer } from "../Drawers/DesktopDrawer";
+import { AppDrawer } from "../Drawer/AppDrawer";
 import { MobileAppBar } from "./AppBar";
 import { MessageListDrawer } from "../MessagesPage/MessageListDrawer";
 import { FriendsListDrawer } from "../FriendsPage/riendsListDrawer";
 import { USERS_RT } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
+import { NewPostModalWindow } from "../UserPage/PostList/AddNewPost/NewPostModalWindow";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 const makeDrawerInner = (drawerListItems: any): ReactNode => {
   return drawerListItems.map(({ mode, label, icon, ...modeAction }) => {
@@ -95,16 +99,20 @@ function HomePage() {
   const [isOpenMobileDrawer, setIsOpenMobileDrawer] = useState(false);
   const [showMessageDrawer, setShowMessageDrawer] = useState(false);
   const [showFriendsDrawer, setShowFriendsDrawer] = useState(false);
+  const [showAddNewPostModel, setShowAddNewPostModel] = useState(false);
 
-  let [mode, toogleThemeMode] = useTheme()
+  let [mode, toogleThemeMode] = useTheme();
 
-  const toogleDrawerOpen = () => {
+  function toogleDrawerOpen()  {
     setIsOpenMobileDrawer((isOpen) => !isOpen);
   };
-  const toogleMessageDrawerOpen = () => {
+  function toogleShowAddNewPostModel() {
+    setShowAddNewPostModel((isOpen) => !isOpen);
+  };
+  function toogleMessageDrawerOpen() {
     setShowMessageDrawer((isOpen) => !isOpen);
   };
-  const toogleFriendsDrawerOpen = () => {
+  function toogleFriendsDrawerOpen() {
     setShowFriendsDrawer((isOpen) => !isOpen);
   };
 
@@ -122,6 +130,18 @@ function HomePage() {
   const drawerListItems = [
     {
       mode: "button",
+      label: "Main ",
+      icon: <NewspaperIcon />,
+      handleClick: toogleMessageDrawerOpen,
+    },
+    {
+      mode: "button",
+      label: "Add post",
+      icon: <AddToPhotosOutlinedIcon />,
+      handleClick: toogleShowAddNewPostModel,
+    },
+    {
+      mode: "button",
       label: "Friends",
       icon: <GroupIcon />,
       handleClick: toogleFriendsDrawerOpen,
@@ -137,33 +157,18 @@ function HomePage() {
 
   const drawerInner = makeDrawerInner(drawerListItems);
 
-  const customTheme = {
-    emoji: {
-      background: 'transparent', // Цвет фона смайлика
-      hover: '#f0f0f0', // Цвет при наведении на смайлик
-    },
-  };
-
-
   return (
     <Box sx={{ display: "flex" }}>
       <MobileAppBar toogleDrawerOpen={toogleDrawerOpen} />
-      <DesktopDrawer
+      <AppDrawer
+        open={isOpenMobileDrawer}
+        onClose={toogleDrawerOpen}
         width={drawerWidth}
         drawerInner={drawerInner}
         mode={mode}
         toogleThemeMode={toogleThemeMode}
         signOut={signOutApp}
-        userInfo={user.displayName || user.email}
-      />
-      <MobileDrawer
-        open={isOpenMobileDrawer}
-        onClose={toogleDrawerOpen}
-        drawerInner={drawerInner}
-        mode={mode}
-        toogleThemeMode={toogleThemeMode}
-        signOut={signOutApp}
-        userInfo={user.displayName || user.email}
+        userInfo={user}
       />
       <MessageListDrawer
         open={showMessageDrawer}
@@ -181,6 +186,14 @@ function HomePage() {
           flexGrow: 1,
         }}
       >
+        {showAddNewPostModel && (
+          <DndProvider backend={HTML5Backend}>
+            <NewPostModalWindow
+              open={showAddNewPostModel}
+              onClose={toogleShowAddNewPostModel}
+            />
+          </DndProvider>
+        )}
         <Outlet />
       </Box>
     </Box>

@@ -2,7 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { Box, Divider } from "@mui/material";
 import { useAuth } from "../../hooks/useAuth";
-import { collection, doc } from "firebase/firestore";
+import { collection, doc, orderBy, query } from "firebase/firestore";
 import { db } from "../../firebase/auth";
 import {
   useDocumentData,
@@ -27,11 +27,15 @@ const UserProfile = () => {
     doc(db, USERS_D, id)
   );
   const [posts, loadingPosts, errorLoadingPosts] = useCollectionData(
-    collection(db, `${USERS_D}/${id}/${POSTS}`)
+    query(
+      collection(db, `${USERS_D}/${id}/${POSTS}`),
+      orderBy("timestamp", "desc")
+    )
   );
   const [friends, loadingFriends, errorLoadingFriends] = useCollectionData(
     collection(db, `${USERS_D}/${id}/${FRIENDS_LIST}`)
   );
+  console.log(posts)
 
   if (loading || loadingPosts || loadingFriends) {
     return <div>Loading...</div>;
@@ -42,7 +46,7 @@ const UserProfile = () => {
       sx={{
         backgroundColor: "rgba(0,0,0,0.2)",
         mx: "auto",
-        px: 3,
+        px: 1,
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",

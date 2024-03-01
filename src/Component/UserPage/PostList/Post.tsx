@@ -1,9 +1,12 @@
+import { ImageListItem } from '@mui/material'
 import React from 'react'
 
-function Post() {
+function Post({id,text,imageURL}) {
   return (
-    <div>Post</div>
-  )
+    <ImageListItem>
+      <img src={imageURL} loading="lazy" alt={id} />
+    </ImageListItem>
+  );
 }
 
 export {Post}
