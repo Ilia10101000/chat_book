@@ -11,18 +11,24 @@ import {
 } from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
 import { PostModalWindow } from "./PostModalWindow";
 
+type IUser = {
+  id: string;
+  photoURL: string;
+  email: string;
+  displayName: string;
+};
 interface IOwnPosts {
   posts: DocumentData[];
-  userId: string;
+  user: IUser;
 }
 
-function OwnPosts({ posts, userId }: IOwnPosts) {
+function OwnPosts({ posts, user }: IOwnPosts) {
   const [selectedPost, setSelectedPost] = useState(null);
 
   const deletePicture = async (imageId: string) => {
     try {
-      await deleteDoc(doc(db, `${USERS_D}/${userId}/${POSTS}`, imageId));
-      await deleteObject(ref(storage, `${POSTS}/${userId}/${imageId}`));
+      await deleteDoc(doc(db, `${USERS_D}/${user.id}/${POSTS}`, imageId));
+      await deleteObject(ref(storage, `${POSTS}/${user.id}/${imageId}`));
     } catch (error) {
       console.log(error.message);
     }
@@ -40,7 +46,6 @@ function OwnPosts({ posts, userId }: IOwnPosts) {
         sx={{
           width: "100%",
           height: "100%",
-          backgroundColor: "rgba(255,255,255,0.1)",
         }}
         cols={3}
         gap={9}
@@ -53,7 +58,7 @@ function OwnPosts({ posts, userId }: IOwnPosts) {
         open={selectedPost}
         post={selectedPost}
         closeModal={handleCloseModal}
-        userId={userId}
+        user={user}
       />
     </>
   );

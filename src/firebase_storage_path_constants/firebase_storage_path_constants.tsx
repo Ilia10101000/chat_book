@@ -3,6 +3,7 @@
 const USERS_D = "users";
 const CHATS_D = "chats";
 const POSTS = 'posts';
+const COMMENTS = 'comments'
 
 // Personal user collections
 
@@ -37,4 +38,5 @@ export {
   CHATS_RT,
   AVATAR_S,
   POSTS,
+  COMMENTS,
 };

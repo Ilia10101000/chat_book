@@ -4,6 +4,8 @@ import {ImageListItem } from '@mui/material';
 function Post({ post, handleSelect }) {
   return (
     <ImageListItem sx={{
+      backgroundColor: '#000',
+      p:'2px',
       '&:hover': {
       cursor:'pointer'
     }}} onClick={() => handleSelect(post)}>

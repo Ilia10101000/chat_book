@@ -59,7 +59,7 @@ const UserProfile = () => {
         friendsCount={friends.length}
         postsCount={posts.length}
       />
-      <PostList userId={id} postsList={posts} />
+      <PostList user={user} postsList={posts} />
     </Box>
   );
 };

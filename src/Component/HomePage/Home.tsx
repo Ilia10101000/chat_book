@@ -33,19 +33,29 @@ const makeDrawerInner = (drawerListItems: any): ReactNode => {
           minHeight: 48,
           justifyContent: "initial",
           px: 2.5,
+          boxSizing: 'border-box',
+          overflowX: 'hidden',
+          whiteSpace:'nowrap'
         }}
       >
         <ListItemIcon
           sx={{
             minWidth: 0,
-            mr:3,
+            mr: 3,
             justifyContent: "center",
           }}
         >
           {icon}
         </ListItemIcon>
         <ListItemText
-          sx={{ display: { xs: "block", sm: "none", md: "block" } }}
+          sx={{
+            display: { xs: "block", sm: "none", md: "block" },
+            transition: (theme) =>
+              theme.transitions.create("display", {
+                easing: theme.transitions.easing.easeIn,
+                duration: theme.transitions.duration.leavingScreen,
+              }),
+          }}
           primary={label}
         />
       </ListItemButton>

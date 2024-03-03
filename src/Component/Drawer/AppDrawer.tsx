@@ -43,13 +43,18 @@ function AppDrawer({
   return (
     <>
       <Drawer
-        variant={isXs?"temporary":"permanent"}
+        variant={isXs ? "temporary" : "permanent"}
         open={isXs ? open : true}
         onClose={isXs ? onClose : undefined}
         sx={{
           width: { xs: "200px", sm: "65px", md: "200px" },
           "& .MuiDrawer-paper": {
             width: { xs: "200px", sm: "65px", md: "200px" },
+            transition: (theme) =>
+              theme.transitions.create("width", {
+                easing: theme.transitions.easing.easeIn,
+                duration: theme.transitions.duration.leavingScreen,
+              }),
           },
         }}
       >
@@ -57,23 +62,25 @@ function AppDrawer({
           <Typography
             variant="h6"
             sx={{
-              mx: "auto",
+              ml: {xs:3,sm:0,md:3},
               display: { xs: "block", sm: "none", md: "block" },
+              whiteSpace:'nowrap'
             }}
           >
             <b>Chat Book</b>
           </Typography>
           <Avatar
             sx={{
-              display: { xs: "none", sm: "block", md: "none" },
-              width: "100%",
-              height: "100%",
-              filter:mode === "dark"? "invert(100%)":'',
+              mx: { xs: "auto", sm: "auto", md: "none" },
+              width: "60px",
+              height: "60px",
+              filter: mode === "dark" ? "invert(100%)" : "",
+              userSelect:'none'
             }}
             src={BrandIcon}
           />
         </DrawerAppHeader>
-        <Divider/>
+        <Divider />
         <Fab
           sx={{
             mx: "auto",
