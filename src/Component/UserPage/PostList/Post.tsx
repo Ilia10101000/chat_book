@@ -1,12 +1,21 @@
-import { ImageListItem } from '@mui/material'
-import React from 'react'
+import React from 'react';
+import {ImageListItem } from '@mui/material';
 
-function Post({id,text,imageURL}) {
+function Post({ post, handleSelect }) {
   return (
-    <ImageListItem>
-      <img src={imageURL} loading="lazy" alt={id} />
-    </ImageListItem>
+    <ImageListItem sx={{
+      '&:hover': {
+      cursor:'pointer'
+    }}} onClick={() => handleSelect(post)}>
+      
+        <img
+          style={{ objectFit: "contain" }}
+          src={post.imageURL}
+          loading="lazy"
+          alt={post.id}
+        />
+      </ImageListItem>
   );
 }
 
-export {Post}
+export { Post }

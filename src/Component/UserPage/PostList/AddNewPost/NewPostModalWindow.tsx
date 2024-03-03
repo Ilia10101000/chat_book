@@ -14,7 +14,7 @@ const style: SxProps<Theme> = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: {xs:'250px', sm:'450px'},
+  width: {xs:'380px', sm:'500px',md:'750px'},
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,

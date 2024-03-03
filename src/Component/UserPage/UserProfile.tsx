@@ -35,7 +35,6 @@ const UserProfile = () => {
   const [friends, loadingFriends, errorLoadingFriends] = useCollectionData(
     collection(db, `${USERS_D}/${id}/${FRIENDS_LIST}`)
   );
-  console.log(posts)
 
   if (loading || loadingPosts || loadingFriends) {
     return <div>Loading...</div>;
@@ -60,7 +59,7 @@ const UserProfile = () => {
         friendsCount={friends.length}
         postsCount={posts.length}
       />
-      <PostList postsList={posts} />
+      <PostList userId={id} postsList={posts} />
     </Box>
   );
 };

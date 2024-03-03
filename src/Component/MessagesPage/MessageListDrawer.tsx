@@ -19,7 +19,7 @@ import {
   EXISTING_CHATS,
 } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
 
-function MessageListDrawer({ open, onClose, width }) {
+function MessageListDrawer({ open, onClose }) {
   const user = useAuth();
 
   const [existingChatsList, loading, error] = useCollectionData(
@@ -50,9 +50,9 @@ function MessageListDrawer({ open, onClose, width }) {
       onClose={onClose}
       variant="temporary"
       sx={{
-        width: `${width + 50}px`,
+        width: "250px",
         "& .MuiDrawer-paper": {
-          width: `${width + 50}px`,
+          width: "250px",
         },
       }}
     >

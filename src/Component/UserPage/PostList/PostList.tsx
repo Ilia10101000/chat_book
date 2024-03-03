@@ -9,9 +9,10 @@ import { OwnPosts } from "./OwnPosts";
 
 interface IPosList {
   postsList: DocumentData[];
+  userId: string;
 }
 
-function PostList({ postsList }: IPosList) {
+function PostList({ postsList, userId }: IPosList) {
   const [tabNumber, setTabNumber] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -26,7 +27,7 @@ function PostList({ postsList }: IPosList) {
         </Tabs>
       </Box>
       <CustomTabPanel style={{padding:'5px'}} value={tabNumber} index={0}>
-        <OwnPosts posts={postsList} />
+        <OwnPosts userId={userId} posts={postsList} />
       </CustomTabPanel>
       <CustomTabPanel value={tabNumber} index={1}>
         2

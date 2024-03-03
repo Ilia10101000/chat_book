@@ -12,7 +12,7 @@ import {
   POSTS,
   USERS_D,
 } from "../../../../firebase_storage_path_constants/firebase_storage_path_constants";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 
 interface IEditorNewPost {
@@ -72,7 +72,7 @@ function EditorNewPost({
     try {
       await uploadString(storageRef, savedImage, "data_url");
       const postsImageURL = await getDownloadURL(storageRef);
-      await addDoc(collection(db, `${USERS_D}/${authUser.uid}/${POSTS}`), {
+      await setDoc(doc(db, `${USERS_D}/${authUser.uid}/${POSTS}/${postsId}`), {
         id: postsId,
         imageURL: postsImageURL,
         text,
@@ -93,7 +93,6 @@ function EditorNewPost({
         <Box
           sx={{
             minWidth: "100%",
-            mx: "auto",
             position: "relative",
           }}
         >

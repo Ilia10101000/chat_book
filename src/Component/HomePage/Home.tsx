@@ -24,6 +24,32 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 
 const makeDrawerInner = (drawerListItems: any): ReactNode => {
   return drawerListItems.map(({ mode, label, icon, ...modeAction }) => {
+
+    let button = (
+      <ListItemButton
+        onClick={mode === "button" ? modeAction.handleClick : undefined}
+        key={label}
+        sx={{
+          minHeight: 48,
+          justifyContent: "initial",
+          px: 2.5,
+        }}
+      >
+        <ListItemIcon
+          sx={{
+            minWidth: 0,
+            mr:3,
+            justifyContent: "center",
+          }}
+        >
+          {icon}
+        </ListItemIcon>
+        <ListItemText
+          sx={{ display: { xs: "block", sm: "none", md: "block" } }}
+          primary={label}
+        />
+      </ListItemButton>
+    );
     if (mode === "link") {
       return (
         <Link
@@ -31,56 +57,15 @@ const makeDrawerInner = (drawerListItems: any): ReactNode => {
           to={modeAction.href}
           style={{ textDecoration: "none", color: "inherit" }}
         >
-          <ListItemButton
-            key={label}
-            sx={{
-              minHeight: 48,
-              justifyContent: "initial",
-              px: 2.5,
-            }}
-          >
-            <ListItemIcon
-              sx={{
-                minWidth: 0,
-                mr: 3,
-                justifyContent: "center",
-              }}
-            >
-              {icon}
-            </ListItemIcon>
-            <ListItemText primary={label} />
-          </ListItemButton>
+          {button}
         </Link>
       );
     }
     if (mode === "button") {
-      return (
-        <ListItemButton
-          onClick={modeAction.handleClick}
-          key={label}
-          sx={{
-            minHeight: 48,
-            justifyContent: "initial",
-            px: 2.5,
-          }}
-        >
-          <ListItemIcon
-            sx={{
-              minWidth: 0,
-              mr: 3,
-              justifyContent: "center",
-            }}
-          >
-            {icon}
-          </ListItemIcon>
-          <ListItemText primary={label} />
-        </ListItemButton>
-      );
+      return button
     }
   });
 };
-
-const drawerWidth = 200;
 
 const setIsUserOnline = async (userId: string, isOnline: boolean) => {
   try {
@@ -163,7 +148,6 @@ function HomePage() {
       <AppDrawer
         open={isOpenMobileDrawer}
         onClose={toogleDrawerOpen}
-        width={drawerWidth}
         drawerInner={drawerInner}
         mode={mode}
         toogleThemeMode={toogleThemeMode}
@@ -173,12 +157,10 @@ function HomePage() {
       <MessageListDrawer
         open={showMessageDrawer}
         onClose={toogleMessageDrawerOpen}
-        width={drawerWidth}
       />
       <FriendsListDrawer
         open={showFriendsDrawer}
         onClose={toogleFriendsDrawerOpen}
-        width={drawerWidth}
       />
       <Box
         component="main"

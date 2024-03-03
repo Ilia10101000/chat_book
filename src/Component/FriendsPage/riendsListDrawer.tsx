@@ -8,7 +8,7 @@ import { FriendsList } from "./FriendsList/FriendsList";
 import { RequestList } from "./RequestList/RequestList";
 import DrawerAppHeader from "../Drawer/DrawerAppHeader";
 
-function FriendsListDrawer({ open, onClose, width }) {
+function FriendsListDrawer({ open, onClose }) {
   const user = useAuth();
 
   const authUserData = {
@@ -28,9 +28,9 @@ function FriendsListDrawer({ open, onClose, width }) {
       onClose={onClose}
       variant="temporary"
       sx={{
-        width: `${width + 50}px`,
+        width:"250px",
         "& .MuiDrawer-paper": {
-          width: `${width + 50}px`,
+          width:"250px",
         },
       }}
     >

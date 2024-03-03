@@ -1,73 +1,107 @@
-import React, { forwardRef, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
+import { useTheme, Theme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import AvatarEdit from "react-avatar-editor";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Slider from "@mui/material/Slider";
-import RedoIcon from "@mui/icons-material/Redo";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import CheckIcon from "@mui/icons-material/Check";
+import AspectRatioIcon from "@mui/icons-material/AspectRatio";
+import SpeedDial from "@mui/material/SpeedDial";
+import SpeedDialAction from "@mui/material/SpeedDialAction";
+import Crop169Icon from "@mui/icons-material/Crop169";
+import Crop54Icon from "@mui/icons-material/Crop54";
+import CropSquareIcon from "@mui/icons-material/CropSquare";
 
 interface IAvatarEditor {
   postsImage: File;
   handleSave: (editorRef: React.MutableRefObject<any>) => void;
 }
 
-export const CustomeAvatarEditor = 
+const ratios = [
+  { label: "1:1", value: 1 },
+  { label: "5:4", value: 1.25 },
+  { label: "16:9", value: 1.77 },
+];
 
-  ({ postsImage, handleSave }: IAvatarEditor,) => {
-    const [rotateDeg, setRotateDeg] = useState(0);
-    const [scaledImage, setScaledImage] = useState(1);
+export const CustomeAvatarEditor = ({ postsImage, handleSave }: IAvatarEditor,) => {
 
-    const editorRef = useRef(null);
+  const theme = useTheme();
 
-    const handleChangeRotate = (e: Event, newValue: number) => {
-      setRotateDeg(newValue);
-    };
-    const handleChangeScale = (e: Event, newValue: number) => {
-      setScaledImage(newValue);
-    };
+  const [imageRatio, setImageRatio] = useState<number>(1);
 
-    return (
-      <div style={{display:'flex',flexDirection:'column', alignItems:'center'}}>
-        <AvatarEdit
-          ref={editorRef}
-          image={postsImage}
-          width={250}
-          height={250}
-          rotate={rotateDeg}
-          border={100}
-          scale={scaledImage}
-        />
-        <Stack spacing={2} direction="row" sx={{ mb: 1, display:'flex', justifyContent:'center' }} alignItems="center">
-          <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center">
-            <RedoIcon />
-            <Slider
-              size="small"
-              value={rotateDeg}
-              max={360}
-              onChange={handleChangeRotate}
-              valueLabelDisplay="auto"
-              sx={{ width: "100px" }}
+  const isXs = useMediaQuery(theme.breakpoints.between("xs", "md"));
+  const isSm = useMediaQuery(theme.breakpoints.between("sm", "md"));
+  const isMdAndLarger = useMediaQuery(theme.breakpoints.up("md"));
+
+  let editorWidth: number = ((isXs && 250) || (isSm && 450) || (isMdAndLarger && 650));
+  let editorHeight = editorWidth / imageRatio;
+
+  const [scaledImage, setScaledImage] = useState(1);
+
+  const editorRef = useRef(null);
+
+  const handleChangeScale = (e: Event, newValue: number) => {
+    setScaledImage(newValue);
+  };
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        minWidth: "100%",
+      }}
+    >
+      <AvatarEdit
+        color={[0, 0, 0, 0.8]}
+        ref={editorRef}
+        image={postsImage}
+        width={editorWidth}
+        height={editorHeight}
+        border={50}
+        scale={scaledImage}
+      />
+      <Stack spacing={3} direction="row" sx={{ mb: 1 }} alignItems="center">
+        <div>
+          <ZoomInIcon fontSize="small" />
+          <Slider
+            size="small"
+            value={scaledImage}
+            min={1}
+            max={2}
+            step={0.01}
+            onChange={handleChangeScale}
+            valueLabelDisplay="auto"
+            sx={{ width: "100px" }}
+          />
+        </div>
+        <SpeedDial
+          ariaLabel="SpeedDial basic example"
+          sx={{ position: "absolute", bottom: 16, right: 16 }}
+          icon={<AspectRatioIcon />}
+        >
+          {ratios.map((ratio) => (
+            <SpeedDialAction
+              key={ratio.label}
+              icon={ratio.label}
+              onClick={() => setImageRatio(ratio.value)}
             />
-          </Stack>
-          <Stack spacing={0} direction="row" sx={{ mb: 1 }} alignItems="center">
-            <ZoomInIcon fontSize="small" />
-            <Slider
-              size="small"
-              value={scaledImage}
-              min={0.5}
-              max={2}
-              step={0.01}
-              onChange={handleChangeScale}
-              valueLabelDisplay="auto"
-              sx={{ width: "100px" }}
-            />
-          </Stack>
-        </Stack>
-        <Button startIcon={<CheckIcon/>} size='small' variant="contained" color="success" onClick={() => handleSave(editorRef)}>
-          Submit
-        </Button>
-      </div>
-    );
-  }
+          ))}
+        </SpeedDial>
+      </Stack>
+      <Button
+        startIcon={<CheckIcon />}
+        size="small"
+        variant="contained"
+        color="success"
+        onClick={() => handleSave(editorRef)}
+      >
+        Submit
+      </Button>
+    </div>
+  );
+}
 ;

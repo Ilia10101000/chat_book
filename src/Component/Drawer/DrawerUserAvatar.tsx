@@ -53,7 +53,6 @@ const getFirstNamesLetters = (name: string) => {
 }
 
 function UserAvatar({ photoURL, userName, style = {} }: IUserAvatar) {
-  console.log(userName);
   if (photoURL) {
     return <Avatar sx={{ ...style }} src={photoURL} />;
   } else {

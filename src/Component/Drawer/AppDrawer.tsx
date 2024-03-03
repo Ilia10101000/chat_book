@@ -6,6 +6,7 @@ import {
   Typography,
   Drawer,
   useMediaQuery,
+  Avatar
 } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useTheme } from "@mui/material/styles";
@@ -14,11 +15,11 @@ import { ThemeSwitch } from "../CustomeElement/SwitchTheme";
 import { UserAvatar } from "./DrawerUserAvatar";
 import { User } from "firebase/auth";
 import { Link } from "react-router-dom";
+import BrandIcon from '../../img/pngwing.com.png'
 
 interface IAppDrawer {
   open: boolean;
   onClose: () => void;
-  width: number;
   drawerInner: ReactNode;
   mode: string;
   toogleThemeMode: () => void;
@@ -29,7 +30,6 @@ interface IAppDrawer {
 function AppDrawer({
   open,
   onClose,
-  width,
   drawerInner,
   mode,
   toogleThemeMode,
@@ -42,30 +42,55 @@ function AppDrawer({
 
   return (
     <>
-    <Drawer
-      variant={isXs ? "temporary" : "permanent"}
-      open={isXs?open:true}
-      onClose={isXs?onClose:undefined}
-      sx={{
-        width: isXs ? null : `${width}px`,
-        "& .MuiDrawer-paper": {
-          width: `${width}px`,
-        },
-      }}
-    >
+      <Drawer
+        variant={isXs?"temporary":"permanent"}
+        open={isXs ? open : true}
+        onClose={isXs ? onClose : undefined}
+        sx={{
+          width: { xs: "200px", sm: "65px", md: "200px" },
+          "& .MuiDrawer-paper": {
+            width: { xs: "200px", sm: "65px", md: "200px" },
+          },
+        }}
+      >
         <DrawerAppHeader>
-          <Typography variant="h6" sx={{ mx: "auto" }}>
+          <Typography
+            variant="h6"
+            sx={{
+              mx: "auto",
+              display: { xs: "block", sm: "none", md: "block" },
+            }}
+          >
             <b>Chat Book</b>
           </Typography>
+          <Avatar
+            sx={{
+              display: { xs: "none", sm: "block", md: "none" },
+              width: "100%",
+              height: "100%",
+              filter:mode === "dark"? "invert(100%)":'',
+            }}
+            src={BrandIcon}
+          />
         </DrawerAppHeader>
-        <Divider />
-        <Fab sx={{ mx: "auto", my: 3 }}>
+        <Divider/>
+        <Fab
+          sx={{
+            mx: "auto",
+            my: 3,
+            width: { xs: "56px", sm: "50px", md: "56px" },
+            height: { xs: "56px", sm: "50px", md: "56px" },
+          }}
+        >
           <Link
             style={{ color: "inherit", textDecoration: "none" }}
             to={`/user/${userInfo.uid}`}
           >
             <UserAvatar
-              style={{ width: "50px", height: "50px" }}
+              style={{
+                width: { xs: "50px", sm: "45px", md: "50px" },
+                height: { xs: "50px", sm: "45px", md: "50px" },
+              }}
               photoURL={userInfo.photoURL}
               userName={userInfo.displayName || userInfo.email}
             />
@@ -73,7 +98,7 @@ function AppDrawer({
         </Fab>
         <List>{drawerInner}</List>
         <ThemeSwitch
-          sx={{ mx: "auto" }}
+          sx={{ mx: "auto", mt: 3 }}
           checked={mode === "dark"}
           onChange={toogleThemeMode}
         />
@@ -84,8 +109,11 @@ function AppDrawer({
           variant="extended"
           size="small"
         >
-          <LogoutIcon sx={{ mr: 1 }} />
-          <Typography sx={{ display: { xs: "none",sm:'block' } }} variant="body2">
+          <LogoutIcon sx={{ mr: { xs: 0, sm: 0, md: 1 } }} />
+          <Typography
+            sx={{ display: { xs: "none", sm: "none", md: "block" } }}
+            variant="body2"
+          >
             Log out
           </Typography>
         </Fab>
