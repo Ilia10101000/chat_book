@@ -4,6 +4,8 @@ const USERS_D = "users";
 const CHATS_D = "chats";
 const POSTS = 'posts';
 const COMMENTS = 'comments'
+const LIKES = 'likes'
+const MARKED_PERSONS = 'marked_persons'
 
 // Personal user collections
 
@@ -39,4 +41,6 @@ export {
   AVATAR_S,
   POSTS,
   COMMENTS,
+  LIKES,
+  MARKED_PERSONS,
 };

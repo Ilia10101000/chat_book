@@ -6,7 +6,11 @@ import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { useTheme } from "../../../../theme";
 
-function AddPostComment({ addComment }) {
+interface IAddPostComment {
+  addComment: (comment: string) => void;
+}
+
+function AddPostComment({ addComment }: IAddPostComment) {
   const [comment, setComment] = useState("");
   const [isOpenEmoji, setIsOpenEmoji] = useState(false);
   const [mode] = useTheme();
@@ -18,7 +22,7 @@ function AddPostComment({ addComment }) {
   };
   const handleAddComment = () => {
     addComment(comment);
-    setComment('')
+    setComment("");
   };
   const toogleEmojiView = () => {
     setIsOpenEmoji((open) => !open);

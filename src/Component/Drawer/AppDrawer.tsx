@@ -67,7 +67,7 @@ function AppDrawer({
               whiteSpace:'nowrap'
             }}
           >
-            <b>Chat Book</b>
+            <b>ChatBook</b>
           </Typography>
           <Avatar
             sx={{

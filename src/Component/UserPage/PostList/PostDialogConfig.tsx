@@ -4,12 +4,21 @@ import {
   IconButton,
   List,
   ListItem,
-    ListItemButton,
-  Button
+  ListItemButton,
 } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
-function PostDialogConfig() {
+interface IPostDialogConfig {
+  isShownComments: boolean;
+  handleShowComments: (value: boolean) => void;
+  handleDeletePost: () => void;
+}
+
+function PostDialogConfig({
+  isShownComments,
+  handleShowComments,
+  handleDeletePost,
+}: IPostDialogConfig) {
   const [showDialog, setShowDialog] = useState(false);
 
   const handleClose = () => {
@@ -18,6 +27,11 @@ function PostDialogConfig() {
   const handleOpen = () => {
     setShowDialog(true);
   };
+
+  const toogleVisibleComments = () => {
+    handleShowComments(isShownComments ? false : true);
+    handleClose();
+  };
   return (
     <>
       <IconButton onClick={handleOpen}>
@@ -25,13 +39,18 @@ function PostDialogConfig() {
       </IconButton>
       <Dialog open={showDialog} onClose={handleClose}>
         <List sx={{ p: 0 }}>
-          <ListItem sx={{ p: 0, }}>
-            <ListItemButton sx={{ color: "#ff0000" }}>
-              Remove post
+          <ListItem sx={{ p: 0 }}>
+            <ListItemButton
+              onClick={handleDeletePost}
+              sx={{ color: "#ff0000" }}
+            >
+              Delete post
             </ListItemButton>
           </ListItem>
-          <ListItem sx={{ p: 0, }}>
-            <ListItemButton>Hide comments</ListItemButton>
+          <ListItem sx={{ p: 0 }}>
+            <ListItemButton onClick={toogleVisibleComments}>
+              {isShownComments ? "Hide" : "Show"} comments
+            </ListItemButton>
           </ListItem>
         </List>
       </Dialog>

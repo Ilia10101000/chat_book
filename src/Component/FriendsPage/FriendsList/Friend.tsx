@@ -7,8 +7,7 @@ import {
   ListItemText,
   ListItemButton,
 } from "@mui/material";
-import User from "../../../img/default-user.svg";
-import { Link } from "react-router-dom";
+import { UserAvatar } from "../../Drawer/DrawerUserAvatar";
 
 interface IUserFindItem {
   photoURL: string | null;
@@ -22,14 +21,10 @@ const Friend = ({ id, photoURL, displayName, handleClick }: IUserFindItem) => {
     <ListItemButton sx={{p:0}} onClick={() => handleClick(id)}>
       <ListItem>
         <ListItemAvatar sx={{ mr: 2 }}>
-          <Avatar
-            alt={displayName}
-            src={photoURL || User}
-            sx={{ width: 56, height: 56 }}
-          />
+          <UserAvatar userName={displayName} photoURL={photoURL} />
         </ListItemAvatar>
         <ListItemText
-          secondaryTypographyProps={{
+          primaryTypographyProps={{
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",

@@ -4,11 +4,12 @@ import { HomePage } from "../Component/HomePage/Home";
 import { LoginPage } from "../Component/LoginPage/LoginPage";
 import { Settings } from "../Component/SettingsPage/Settings";
 import { MessagesPage } from "../Component/MessagesPage/MessagesPage";
-import { FriendsList } from "../Component/FriendsPage/FriendsList/FriendsList";
 import { UserProfile } from "../Component/UserPage/UserProfile";
 import { Signin } from "../Component/SigninPage/Signin";
 import { SigninInfo } from "../Component/SigninPage/SigninInfo";
 import { MiddlewareCheckComponent } from "../Component/MessagesPage/MiddlewareCheckMessage";
+import { ExamplePage } from "../Component/UserPage/ExamplePage";
+import { PostModalWindow } from "../Component/UserPage/PostList/PostModalWindow";
 
 export const unAuthorizedRoutes = [
   {
@@ -45,17 +46,19 @@ export const authorizedRoutes = [
         element: <MessagesPage />,
       },
       {
-        path: "user/:id",
+        path: "user/:userId",
         element: <UserProfile />,
+        children: [
+          {
+            path: "post/:postId",
+            element:<PostModalWindow/>
+          }
+        ]
       },
       {
         path: "settings",
         element: <Settings />,
       },
-      // {
-      //   path: "friends",
-      //   element: <FriendsList />,
-      // },
     ],
   },
   {

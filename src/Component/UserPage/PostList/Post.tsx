@@ -8,7 +8,7 @@ function Post({ post, handleSelect }) {
       p:'2px',
       '&:hover': {
       cursor:'pointer'
-    }}} onClick={() => handleSelect(post)}>
+    }}} onClick={() => handleSelect(post.id)}>
       
         <img
           style={{ objectFit: "contain" }}

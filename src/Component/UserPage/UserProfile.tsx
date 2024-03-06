@@ -1,6 +1,6 @@
 import React from "react";
-import { useParams } from "react-router-dom";
-import { Box, Divider } from "@mui/material";
+import { Link, Outlet, useParams } from "react-router-dom";
+import { Box } from "@mui/material";
 import { useAuth } from "../../hooks/useAuth";
 import { collection, doc, orderBy, query } from "firebase/firestore";
 import { db } from "../../firebase/auth";
@@ -17,23 +17,23 @@ import {
 import { PostList } from "./PostList/PostList";
 
 const UserProfile = () => {
-  const { id } = useParams();
+  const { userId } = useParams();
 
   const authUser = useAuth();
 
-  const isOwnPage = authUser.uid === id;
+  const isOwnPage = authUser.uid === userId;
 
   const [user, loading, errorLoadingUser] = useDocumentData(
-    doc(db, USERS_D, id)
+    doc(db, USERS_D, userId)
   );
   const [posts, loadingPosts, errorLoadingPosts] = useCollectionData(
     query(
-      collection(db, `${USERS_D}/${id}/${POSTS}`),
+      collection(db, `${USERS_D}/${userId}/${POSTS}`),
       orderBy("timestamp", "desc")
     )
   );
   const [friends, loadingFriends, errorLoadingFriends] = useCollectionData(
-    collection(db, `${USERS_D}/${id}/${FRIENDS_LIST}`)
+    collection(db, `${USERS_D}/${userId}/${FRIENDS_LIST}`)
   );
 
   if (loading || loadingPosts || loadingFriends) {
@@ -41,6 +41,7 @@ const UserProfile = () => {
   }
 
   return (
+    <>
     <Box
       sx={{
         backgroundColor: "rgba(0,0,0,0.2)",
@@ -59,8 +60,10 @@ const UserProfile = () => {
         friendsCount={friends.length}
         postsCount={posts.length}
       />
-      <PostList user={user} postsList={posts} />
-    </Box>
+        <PostList user={user} postsList={posts} />
+      </Box>
+      <Outlet/>
+    </>
   );
 };
 

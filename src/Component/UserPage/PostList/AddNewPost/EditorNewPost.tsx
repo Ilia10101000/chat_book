@@ -14,6 +14,8 @@ import {
 } from "../../../../firebase_storage_path_constants/firebase_storage_path_constants";
 import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 interface IEditorNewPost {
   handleClose: () => void;
@@ -37,6 +39,7 @@ function EditorNewPost({
   const [text, setText] = useState("");
   const [savedImage, setSavedImage] = useState("");
   const [pendingAddPost, setPendingAddPost] = useState(false);
+  const [hideComments, setHideComments] = useState(false)
 
   const handleChangeText = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -76,6 +79,7 @@ function EditorNewPost({
         id: postsId,
         imageURL: postsImageURL,
         text,
+        showComments:!hideComments,
         timestamp: serverTimestamp(),
       });
     } catch (error) {
@@ -137,6 +141,16 @@ function EditorNewPost({
             >
               Back
             </Button>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={hideComments}
+                  onChange={() => setHideComments((value) => !value)}
+                />
+              }
+              label="Hide comments"
+            />
+
             <Button
               disabled={pendingAddPost}
               sx={{ mt: 2, padding: "4px 10px", boxSizing: "border-box" }}
