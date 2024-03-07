@@ -71,7 +71,7 @@ function MessageListItemLink({
   return (
     <div>
       <Link
-        to={`/chats/${chatId}`}
+        to={`/c/${chatId}`}
         state={user}
         style={{ textDecoration: "none", color: "inherit" }}
       >

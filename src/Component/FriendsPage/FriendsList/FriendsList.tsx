@@ -40,7 +40,7 @@ const FriendsList = ({ authUser, onClose }) => {
     const navigate = useNavigate();
 
     function handleClickFriendCard (id: string){
-      navigate(`user/${id}`);
+      navigate(`u/${id}`);
       onClose();
     };
 

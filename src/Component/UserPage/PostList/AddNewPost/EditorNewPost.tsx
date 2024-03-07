@@ -77,6 +77,7 @@ function EditorNewPost({
       const postsImageURL = await getDownloadURL(storageRef);
       await setDoc(doc(db, `${USERS_D}/${authUser.uid}/${POSTS}/${postsId}`), {
         id: postsId,
+        ownerPostId:authUser.uid,
         imageURL: postsImageURL,
         text,
         showComments:!hideComments,

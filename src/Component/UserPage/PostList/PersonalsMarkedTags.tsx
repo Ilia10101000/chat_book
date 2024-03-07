@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
 import PersonIcon from "@mui/icons-material/Person";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import { DocumentData, collection, doc, getDoc } from "firebase/firestore";
+import { DocumentData, doc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebase/auth";
 import {
   MARKED_PERSONS,
@@ -18,8 +18,18 @@ interface IPersonalsMarkedTags {
   handleClick: () => void;
   isShownTags: boolean;
   isOwner: boolean;
-  removeTag:(id:string) => void
+  removeTag:(tagData:any) => void
 }
+
+const getUserName = async (
+  userId: string,
+  callback: (name: string) => void
+) => {
+  const queryRef = doc(db, USERS_D, userId);
+  const response = await getDoc(queryRef);
+  const result = response.data().displayName;
+  callback(result);
+};
 
 function PersonalsMarkedTags({
   userId,
@@ -29,22 +39,11 @@ function PersonalsMarkedTags({
   isOwner,
   removeTag
 }: IPersonalsMarkedTags) {
-  const [markedPesons, loadingMP, errorMP] = useCollectionData(
-    collection(db, `${USERS_D}/${userId}/${POSTS}/${postId}/${MARKED_PERSONS}`)
-  );
 
-  const getUserName = async (
-    userId: string,
-    callback: (name: string) => void
-  ) => {
-    const queryRef = doc(db, USERS_D, userId);
-    const response = await getDoc(queryRef);
-    const result = response.data().displayName;
-    callback(result);
-  };
-  if (loadingMP || errorMP) {
-    return null;
-  }
+  // const [markedPesons, loadingMP, errorMP] = useCollectionData(
+  //   collection(db, `${USERS_D}/${userId}/${POSTS}/${postId}/${MARKED_PERSONS}`)
+  // );
+
   return (
     <>
       <Tooltip title="Tag a person">
@@ -123,7 +122,7 @@ function TooltipTag({
         >
           {isOwner && (
             <IconButton
-              onClick={() => handleDelete(markDoc.id)}
+              onClick={() => handleDelete(markDoc)}
               sx={{ position: "absolute", top: "-18px", left: "-30px" }}
             >
               <ClearIcon sx={{ fontSize: "16px" }} />
@@ -136,7 +135,7 @@ function TooltipTag({
                 textDecoration: "none",
                 color: "inherit",
               }}
-              to={`/user/${markDoc.userId}`}
+              to={`/u/${markDoc.userId}`}
             >
               <span
                 style={{

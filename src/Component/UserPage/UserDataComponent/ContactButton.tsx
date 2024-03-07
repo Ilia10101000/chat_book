@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   USERS_D,
   SENT_FRIENDS_REQUESTS,
@@ -14,7 +14,7 @@ import {
 } from "../contact_status";
 import { useCheckRelationshipUserStatus } from "../../../hooks/useCheckRelationshipUserStatus";
 import { db } from "../../../firebase/auth";
-import { Button,CircularProgress, Alert } from "@mui/material";
+import { Button, CircularProgress, Alert } from "@mui/material";
 import { doc, setDoc, deleteDoc } from "firebase/firestore";
 import { DocumentData } from "firebase/firestore";
 import { User } from "firebase/auth";
@@ -34,15 +34,23 @@ interface IContactButton {
 
 function ContactButton({ authUser, user, handleError }: IContactButton) {
   const [waitingRequestProcessing, setWaitingRequestProcessing] =
-        useState(false);
-      const [handleSuccess, setHandleSuccess] = useState(null);
+    useState(false);
+  const [handleSuccess, setHandleSuccess] = useState(null);
+
+  useEffect(() => {
+    if (handleSuccess) {
+      setTimeout(() => {
+        setHandleSuccess(null)
+      },2000)
+    }
+  },[handleSuccess])
 
   const status: Status = useCheckRelationshipUserStatus(
     authUser.uid,
     user.id,
     handleError
   );
-  const sendFriendRequest = useCallback(() => async () => {
+  const sendFriendRequest = async () => {
     setWaitingRequestProcessing(true);
     try {
       await setDoc(
@@ -71,7 +79,7 @@ function ContactButton({ authUser, user, handleError }: IContactButton) {
     } finally {
       setWaitingRequestProcessing(false);
     }
-  },[])
+  };
 
   const removeFromFriendsList = async () => {
     setWaitingRequestProcessing(true);
@@ -114,32 +122,46 @@ function ContactButton({ authUser, user, handleError }: IContactButton) {
     []
   );
 
-  const acceptFriendRequest = useCallback(() => async () => {
-    setWaitingRequestProcessing(true);
-    try {
-      await deleteDoc(
-        doc(db, `${USERS_D}/${user.id}/${SENT_FRIENDS_REQUESTS}/`, authUser.uid)
-      );
-      await deleteDoc(
-        doc(db, `${USERS_D}/${authUser.uid}/${RECEIVED_FRIENDS_REQUESTS}/`, user.id)
-      );
-      await setDoc(doc(db, `${USERS_D}/${authUser.uid}/${FRIENDS_LIST}`, user.id), {
-        id: user.id,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-      });
-      await setDoc(doc(db, `${USERS_D}/${user.id}/${FRIENDS_LIST}`, authUser.uid), {
-        id: authUser.uid,
-        displayName: authUser.displayName,
-        photoURL: authUser.photoURL,
-      });
-      setHandleSuccess("accepted request");
-    } catch (error) {
-      handleError(error.message);
-    } finally {
-      setWaitingRequestProcessing(false);
+  const acceptFriendRequest = async () => {
+      setWaitingRequestProcessing(true);
+      try {
+        await deleteDoc(
+          doc(
+            db,
+            `${USERS_D}/${user.id}/${SENT_FRIENDS_REQUESTS}/`,
+            authUser.uid
+          )
+        );
+        await deleteDoc(
+          doc(
+            db,
+            `${USERS_D}/${authUser.uid}/${RECEIVED_FRIENDS_REQUESTS}/`,
+            user.id
+          )
+        );
+        await setDoc(
+          doc(db, `${USERS_D}/${authUser.uid}/${FRIENDS_LIST}`, user.id),
+          {
+            id: user.id,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+          }
+        );
+        await setDoc(
+          doc(db, `${USERS_D}/${user.id}/${FRIENDS_LIST}`, authUser.uid),
+          {
+            id: authUser.uid,
+            displayName: authUser.displayName,
+            photoURL: authUser.photoURL,
+          }
+        );
+        setHandleSuccess("accepted request");
+      } catch (error) {
+        handleError(error.message);
+      } finally {
+        setWaitingRequestProcessing(false);
+      }
     }
-  },[])
 
   const shownButton = {
     [FRIEND]: {
@@ -163,18 +185,18 @@ function ContactButton({ authUser, user, handleError }: IContactButton) {
       onClick: null,
     },
   };
-    return (
-      <>
-        <Button
-          size="small"
-          disabled={waitingRequestProcessing}
-          onClick={shownButton[status].onClick}
-        >
-          {shownButton[status].label}
-        </Button>
-        {handleSuccess && <Alert severity="success">{handleSuccess}</Alert>}
-      </>
-    );
+  return (
+    <>
+      <Button
+        size="small"
+        disabled={waitingRequestProcessing}
+        onClick={shownButton[status].onClick}
+      >
+        {shownButton[status].label}
+      </Button>
+      {handleSuccess && <Alert severity="success">{handleSuccess}</Alert>}
+    </>
+  );
 }
 
 export { ContactButton };

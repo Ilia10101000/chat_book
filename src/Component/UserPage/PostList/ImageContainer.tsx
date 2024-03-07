@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { PersonalsMarkedTags } from "./PersonalsMarkedTags";
-import { DocumentData, deleteDoc } from "firebase/firestore";
+import { DocumentData, collection, deleteDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../../../firebase/auth";
 import {
   setDoc,
@@ -10,13 +10,16 @@ import {
   POSTS,
   USERS_D,
   MARKED_PERSONS,
+  TAGS_IN_THIRD_PARTY_POSTS,
 } from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
 import { SearchUsersDialog } from "./SearchUsersDialog";
+import { useCollectionData } from "react-firebase-hooks/firestore";
 
 interface IImageContainer {
   post: DocumentData;
   userId: string;
   isOwner: boolean;
+  authUserId: string;
 }
 
 interface INewCords {
@@ -28,10 +31,13 @@ const generateUniqueFileName = (userId: string) => {
   return `${Date.now()}-${userId}-${Math.floor(Math.random() * 10000) + 1}`;
 };
 
-function ImageContainer({ post, userId, isOwner }: IImageContainer) {
+function ImageContainer({ post, userId, isOwner, authUserId }: IImageContainer) {
 
   const [showMarkedTags, setShowMarkedTags] = useState(false);
   const [newTagCords, setNewTagCords] = useState<INewCords>(null);
+  const [markedPesons, loadingMP, errorMP] = useCollectionData(
+    collection(db, `${USERS_D}/${userId}/${POSTS}/${post.id}/${MARKED_PERSONS}`)
+  );
 
   const toogleMarksVisible = () => {
     setShowMarkedTags((value) => !value);
@@ -53,9 +59,10 @@ function ImageContainer({ post, userId, isOwner }: IImageContainer) {
     setNewTagCords({ x: relativeX, y: relativeY });
   };
 
-  const submitUserTag = async (userData: { type: string; name?: string; id?: string }) => {
+  const addUserTag = async (personId:string) => {
     
     const tagId = generateUniqueFileName(userId);
+
       try {
         await setDoc(
           doc(
@@ -63,8 +70,23 @@ function ImageContainer({ post, userId, isOwner }: IImageContainer) {
             `${USERS_D}/${userId}/${POSTS}/${post.id}/${MARKED_PERSONS}`,
             tagId
           ),
-          {id:tagId, ...newTagCords, ...userData }
+          { id: tagId, ...newTagCords, personId }
         );
+        if (personId !== authUserId) {
+          await setDoc(
+            doc(
+              db,
+              `${USERS_D}/${personId}/${TAGS_IN_THIRD_PARTY_POSTS}`,
+              tagId
+            ),
+            {
+              id: tagId,
+              ownerPostId: userId,
+              postId: post.id,
+              timestamp: serverTimestamp(),
+            }
+          );
+        }
       } catch (error) {
         console.log(error.message);
       } finally {
@@ -72,15 +94,25 @@ function ImageContainer({ post, userId, isOwner }: IImageContainer) {
       }
   };
   
-  const deletePersonalTag = async (tagId: string) => {
+  const deletePersonalTag = async (tagData: {id:string, userId?:string, type:string}) => {
     try {
       await deleteDoc(
         doc(
           db,
           `${USERS_D}/${userId}/${POSTS}/${post.id}/${MARKED_PERSONS}`,
-          tagId
+          tagData.id
         )
       );
+      if (tagData.type === 'link' && tagData.userId !== authUserId) {
+        await deleteDoc(
+          doc(
+            db,
+            `${USERS_D}/${tagData.userId}/${TAGS_IN_THIRD_PARTY_POSTS}`,
+            tagData.id
+          )
+        );
+        
+      }
     } catch (error) {
       console.log(error.message)
     }
@@ -107,7 +139,7 @@ function ImageContainer({ post, userId, isOwner }: IImageContainer) {
       {!!newTagCords && (
         <SearchUsersDialog
           open={!!newTagCords}
-          handleSubmit={submitUserTag}
+          handleSubmit={addUserTag}
           closeModal={clearTagCords}
         />
       )}

@@ -59,7 +59,7 @@ function MiddlewareCheckComponent() {
     }
     if (chatSnap && !chatSnap.empty) {
       const chatId = chatSnap.docs[0].id
-      navigate(`/chats/${chatId}`, { state: user , replace:true});
+      navigate(`/c/${chatId}`, { state: user , replace:true});
     }
   }, [chatSnap]);
 

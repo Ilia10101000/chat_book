@@ -91,7 +91,7 @@ function AppDrawer({
         >
           <Link
             style={{ color: "inherit", textDecoration: "none" }}
-            to={`/user/${userInfo.uid}`}
+            to={`/u/${userInfo.uid}`}
           >
             <UserAvatar
               style={{

@@ -3,9 +3,10 @@
 const USERS_D = "users";
 const CHATS_D = "chats";
 const POSTS = 'posts';
-const COMMENTS = 'comments'
-const LIKES = 'likes'
-const MARKED_PERSONS = 'marked_persons'
+const COMMENTS = 'comments';
+const LIKES = 'likes';
+const MARKED_PERSONS = 'marked_persons';
+const TAGS_IN_THIRD_PARTY_POSTS = 'tags_in_third_party_posts';
 
 // Personal user collections
 
@@ -43,4 +44,5 @@ export {
   COMMENTS,
   LIKES,
   MARKED_PERSONS,
+  TAGS_IN_THIRD_PARTY_POSTS,
 };

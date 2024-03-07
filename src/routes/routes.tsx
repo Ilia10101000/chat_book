@@ -8,7 +8,6 @@ import { UserProfile } from "../Component/UserPage/UserProfile";
 import { Signin } from "../Component/SigninPage/Signin";
 import { SigninInfo } from "../Component/SigninPage/SigninInfo";
 import { MiddlewareCheckComponent } from "../Component/MessagesPage/MiddlewareCheckMessage";
-import { ExamplePage } from "../Component/UserPage/ExamplePage";
 import { PostModalWindow } from "../Component/UserPage/PostList/PostModalWindow";
 
 export const unAuthorizedRoutes = [
@@ -42,15 +41,15 @@ export const authorizedRoutes = [
         element: <MiddlewareCheckComponent />,
       },
       {
-        path: "chats/:chatId",
+        path: "c/:chatId",
         element: <MessagesPage />,
       },
       {
-        path: "user/:userId",
+        path: "u/:userId",
         element: <UserProfile />,
         children: [
           {
-            path: "post/:postId",
+            path: "o/:ownerPostId/p/:postId",
             element:<PostModalWindow/>
           }
         ]

@@ -1,19 +1,25 @@
 import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Box, Modal, IconButton, SxProps, Theme, List,ListItem,
+import {
+  Box,
+  Modal,
+  IconButton,
+  SxProps,
+  Theme,
+  List,
+  ListItem,
   ListItemAvatar,
   ListItemText,
-  ListItemButton, } from "@mui/material";
+  ListItemButton,
+} from "@mui/material";
 import { collection, query, where, getDocs, limit } from "firebase/firestore";
 import CloseIcon from "@mui/icons-material/Close";
 import { UserAvatar } from "../../Drawer/DrawerUserAvatar";
 import { useDebounce } from "use-debounce";
 import { db } from "../../../firebase/auth";
-import {
-  USERS_D,
-} from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
-import SendIcon from '@mui/icons-material/Send';
+import { USERS_D } from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
+import SendIcon from "@mui/icons-material/Send";
 
 const style: SxProps<Theme> = {
   position: "relative",
@@ -63,7 +69,7 @@ const SearchUsersDialog = ({ open, closeModal, handleSubmit }) => {
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     if (selectedUser) {
-      setSelectedUser(false);
+      setSelectedUser(null);
     }
     setSearchQuery(e.target.value);
   };
@@ -72,20 +78,11 @@ const SearchUsersDialog = ({ open, closeModal, handleSubmit }) => {
     setSelectedUser(userData);
     setSearchQuery(userData.displayName);
     setOptions([]);
-  }
+  };
 
   const addUserTag = () => {
-    let userData: { type?: string; userId?: string; name?: string } = {};
-    if (selectedUser) {
-      userData.type = "link";
-      userData.userId = selectedUser.id;
-    } else {
-      userData.type = "text";
-      userData.name = searchQuery;
-    }
-    handleSubmit(userData);
-  }
-
+    handleSubmit(selectedUser.id);
+  };
 
   return (
     <Modal open={open}>
@@ -104,13 +101,11 @@ const SearchUsersDialog = ({ open, closeModal, handleSubmit }) => {
           InputProps={{
             endAdornment: loading ? (
               <CircularProgress color="success" size={20} />
-            ) : (
-              (selectedUser || searchQuery) ? (
-                <IconButton onClick={addUserTag}>
-                  <SendIcon sx={{ fontSize: "20px" }} />
-                </IconButton>
-              ): null
-            ),
+            ) : selectedUser && searchQuery ? (
+              <IconButton onClick={addUserTag}>
+                <SendIcon sx={{ fontSize: "20px" }} />
+              </IconButton>
+            ) : null,
           }}
         />
         {!!options.length && (

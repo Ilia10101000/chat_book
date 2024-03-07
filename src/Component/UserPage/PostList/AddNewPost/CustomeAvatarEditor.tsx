@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { useTheme, Theme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import AvatarEdit from "react-avatar-editor";
 import Button from "@mui/material/Button";
@@ -10,9 +10,6 @@ import CheckIcon from "@mui/icons-material/Check";
 import AspectRatioIcon from "@mui/icons-material/AspectRatio";
 import SpeedDial from "@mui/material/SpeedDial";
 import SpeedDialAction from "@mui/material/SpeedDialAction";
-import Crop169Icon from "@mui/icons-material/Crop169";
-import Crop54Icon from "@mui/icons-material/Crop54";
-import CropSquareIcon from "@mui/icons-material/CropSquare";
 
 interface IAvatarEditor {
   postsImage: File;

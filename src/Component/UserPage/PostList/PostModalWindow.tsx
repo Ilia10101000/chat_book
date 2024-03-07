@@ -41,16 +41,18 @@ const generateUniqueFileName = (userId: string) => {
 
 function PostModalWindow() {
 
-  const { postId, userId } = useParams();
+  const { postId, ownerPostId } = useParams();
   const navigate = useNavigate();
 
   const closeModal = () => {
     navigate(-1)
   }
 
-  const [user, loadingU, errorU] = useDocumentData(doc(db, `${USERS_D}/${userId}`));
+  const [user, loadingU, errorU] = useDocumentData(
+    doc(db, `${USERS_D}/${ownerPostId}`)
+  );
   const [post, loadingP, errorP] = useDocumentData(
-    doc(db, `${USERS_D}/${userId}/${POSTS}/${postId}`)
+    doc(db, `${USERS_D}/${ownerPostId}/${POSTS}/${postId}`)
   );
 
 
@@ -160,7 +162,7 @@ function PostModalWindow() {
               alignItems: "center",
             }}
           >
-            <ImageContainer post={post} userId={user?.id} isOwner={isOwnerPost} />
+            <ImageContainer authUserId={authUser.uid} post={post} userId={user?.id} isOwner={isOwnerPost} />
           </Box>
           <Box
             sx={{
