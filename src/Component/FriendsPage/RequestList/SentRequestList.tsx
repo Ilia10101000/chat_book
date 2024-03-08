@@ -11,19 +11,15 @@ import {
 
 function SentRequestList({ requestList, onClose, authUser }) {
 
-  const cancelRequest = async (friendUserData) => {
+  const cancelRequest = async (userId:string) => {
     try {
       await deleteDoc(
-        doc(
-          db,
-          `${USERS_D}/${authUser.id}/${SENT_FRIENDS_REQUESTS}`,
-          friendUserData.id
-        )
+        doc(db, `${USERS_D}/${authUser.id}/${SENT_FRIENDS_REQUESTS}`, userId)
       );
       await deleteDoc(
         doc(
           db,
-          `${USERS_D}/${friendUserData.id}/${RECEIVED_FRIENDS_REQUESTS}`,
+          `${USERS_D}/${userId}/${RECEIVED_FRIENDS_REQUESTS}`,
           authUser.id
         )
       );
@@ -31,13 +27,13 @@ function SentRequestList({ requestList, onClose, authUser }) {
       console.log(error.message);
     }
   };
-  let res = requestList?.map((user, index) => (
+  let res = requestList?.map((user: { id: string }) => (
     <RequestCardItem
-      key={index}
+      key={user.id}
       onClose={onClose}
       handleRequest={cancelRequest}
       icon={<DoNotDisturbAltIcon fontSize="small" />}
-      friendUser={user}
+      userId={user.id}
     />
   ));
   return <>{res}</>;

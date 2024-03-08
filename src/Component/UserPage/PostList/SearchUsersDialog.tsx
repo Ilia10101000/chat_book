@@ -57,6 +57,7 @@ const SearchUsersDialog = ({ open, closeModal, handleSubmit }) => {
       setLoading(false);
     }
   };
+  
   useEffect(() => {
     if (defSearchQuery && !selectedUser) {
       fetchData(defSearchQuery);
@@ -116,6 +117,7 @@ const SearchUsersDialog = ({ open, closeModal, handleSubmit }) => {
           >
             {options?.map((option) => (
               <ListItemButton
+                key={option.id}
                 sx={{ p: 0 }}
                 onClick={() => handleSelectUser(option)}
               >

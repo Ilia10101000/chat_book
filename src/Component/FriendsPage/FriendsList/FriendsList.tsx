@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDebounce } from "use-debounce";
-import { useFindUsers } from "../useFindUsers";
-import { Friend } from "./Friend";
+import { UserCard } from "../UserCard.tsx";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import { collection } from "firebase/firestore";
-import { List, TextField, Box } from "@mui/material";
+import { collection, query, where, limit, getDocs } from "firebase/firestore";
+import { List, TextField, Box, CircularProgress } from "@mui/material";
 import { db } from "../../../firebase/auth";
 import {
   USERS_D,
@@ -23,38 +22,63 @@ interface IUser {
 const FriendsList = ({ authUser, onClose }) => {
 
   const [usersSearchValue, setUsersSearchValue] = useState("");
+  const [textValue] = useDebounce(usersSearchValue, 800);
+
+  const [resultUserSearch, setResultUserSearch] = useState(null);
+  const [loading, setLoading] = useState(false);
   
-  const [textValue] = useDebounce(usersSearchValue, 600);
-
-  let resultUserSearch = useFindUsers({
-    text: textValue.toLowerCase(),
-    authUserId: authUser.id,
-    handleClick: handleClickFriendCard,
-  });
-
   const [friendsList, loadingFL, errorFL] = useCollectionData(
     collection(db, `${USERS_D}/${authUser.id}/${FRIENDS_LIST}`)
   );
-  let resultFriendsList: React.ReactNode | null;
+
+  const fetchData = async (searchQuery: string) => {
+    setLoading(true);
+    try {
+      const queryRef = query(
+        collection(db, USERS_D),
+        where("searchQuery", ">=", searchQuery.toLowerCase()),
+        where("searchQuery", "<=", searchQuery.toLowerCase() + "\uf8ff"),
+        limit(5)
+      );
+      const data = await getDocs(queryRef);
+      const result = data.docs.map((doc) => doc.data());
+      setResultUserSearch(result);
+    } catch (error) {
+      console.error("Error fetching data:", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (textValue) {
+        fetchData(textValue)
+    } else if (!textValue && resultUserSearch) {
+      setResultUserSearch(null)
+      }
+  }, [textValue])
+  
+  let result: React.ReactNode | null;
 
     const navigate = useNavigate();
 
     function handleClickFriendCard (id: string){
       navigate(`u/${id}`);
       onClose();
-    };
+  };
+  
+  let noResult = <div style={{textAlign:'center'}}>{resultUserSearch ? 'Not matches' : 'Find your friends'}</div>;
+  let dataList = resultUserSearch ? resultUserSearch : friendsList;
 
-  if (!friendsList?.length) {
-    resultFriendsList = <div>Find your friends</div>;
+  if (!dataList?.length) {
+    result = noResult;
   } else {
-    resultFriendsList = (
+    result = (
       <List>
-        {friendsList.map((user: IUser) => (
-          <Friend
+        {dataList.map((user: IUser) => (
+          <UserCard
             key={user.id}
-            id={user.id}
-            displayName={user.displayName}
-            photoURL={user.photoURL}
+            userId={user.id}
             handleClick={handleClickFriendCard}
           />
         ))}
@@ -67,6 +91,7 @@ const FriendsList = ({ authUser, onClose }) => {
   ) => {
     setUsersSearchValue(e.target.value);
   };
+
   return (
     <div>
       <Box sx={{ my: 3, textAlign: "center", whiteSpace: "collapse" }}>
@@ -79,7 +104,7 @@ const FriendsList = ({ authUser, onClose }) => {
           autoComplete="off"
         />
       </Box>
-      {usersSearchValue ? resultUserSearch : resultFriendsList}
+      {loading ? <CircularProgress /> : result}
     </div>
   );
 };

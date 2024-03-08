@@ -12,42 +12,39 @@ import {
 
 function ReceivedRequestList({ requestList, onClose, authUser }) {
 
-  const submitRequest = async (friendUserData) => {
+  const submitFriendsRequest = async (userId: string) => {
     try {
       await deleteDoc(
         doc(
           db,
           `${USERS_D}/${authUser.id}/${RECEIVED_FRIENDS_REQUESTS}`,
-          friendUserData.id
+          userId
         )
       );
       await deleteDoc(
-        doc(
-          db,
-          `${USERS_D}/${friendUserData.id}/${SENT_FRIENDS_REQUESTS}`,
-          authUser.id
-        )
+        doc(db, `${USERS_D}/${userId}/${SENT_FRIENDS_REQUESTS}`, authUser.id)
       );
       await setDoc(
-        doc(db, `${USERS_D}/${authUser.id}/${FRIENDS_LIST}`, friendUserData.id),
-        friendUserData
+        doc(db, `${USERS_D}/${authUser.id}/${FRIENDS_LIST}`, userId),
+        { id: userId }
       );
       await setDoc(
-        doc(db, `${USERS_D}/${friendUserData.id}/${FRIENDS_LIST}`, authUser.id),
-        authUser
+        doc(db, `${USERS_D}/${userId}/${FRIENDS_LIST}`, authUser.id),
+        {id:authUser.uid}
       );
     } catch (error) {
       console.log(error.message);
     }
   };
-  let res = requestList?.map((user, index) => (
-    <RequestCardItem
-      key={index}
-      onClose={onClose}
-      handleRequest={submitRequest}
-      icon={<PersonAddAlt1Icon fontSize="small" />}
-      friendUser={user}
-    />
+  let res = requestList?.map((user: { id: string }) => (
+      <RequestCardItem
+        key={user.id}
+        onClose={onClose}
+        handleRequest={submitFriendsRequest}
+        icon={<PersonAddAlt1Icon fontSize="small" />}
+        userId={user.id}
+      />
+
   ));
   return <>{res}</>;
 }

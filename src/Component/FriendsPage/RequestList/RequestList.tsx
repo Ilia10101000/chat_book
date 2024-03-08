@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Tab, Tabs, Box } from "@mui/material";
+import {
+  Tab,
+  Tabs,
+  Box,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+} from "@mui/material";
 import { CustomTabPanel } from "../../CustomeElement/CustomeTabPanel";
 import { SentRequestList } from "./SentRequestList";
 import { useCollectionData } from "react-firebase-hooks/firestore";
@@ -13,42 +20,46 @@ import {
 } from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
 
 function RequestList({ authUser, onClose }) {
+  const [tabNumber, setTabNumber] = useState("1");
 
-  const [tabNumber, setTabNumber] = useState(0);
-  
   const [receivedFriendsRequest, loadingRFR, errorRFR] = useCollectionData(
     collection(db, `${USERS_D}/${authUser.id}/${RECEIVED_FRIENDS_REQUESTS}`)
   );
   const [sentFriendsRequest, loadingSFR, errorSFR] = useCollectionData(
     collection(db, `${USERS_D}/${authUser.id}/${SENT_FRIENDS_REQUESTS}`)
   );
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTabNumber(newValue);
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setTabNumber(event.target.value);
   };
+
   return (
     <>
       <Box
         sx={{
           borderBottom: 1,
           borderColor: "divider",
+          display: "flex",
+          justifyContent: "center",
+          padding: "10px 0px",
         }}
       >
-        <Tabs variant="fullWidth" value={tabNumber} onChange={handleChange}>
-          <Tab label="Received" />
-          <Tab label="Sent" />
-        </Tabs>
+        <Select value={tabNumber} onChange={handleChange}>
+          <MenuItem value={1}>Received</MenuItem>
+          <MenuItem value={2}>Sent</MenuItem>
+        </Select>
       </Box>
-      <CustomTabPanel value={tabNumber} index={0}>
+      <CustomTabPanel style={{ padding: "8px" }} value={+tabNumber} index={1}>
         <ReceivedRequestList
           authUser={authUser}
           requestList={receivedFriendsRequest}
           onClose={onClose}
         />
       </CustomTabPanel>
-      <CustomTabPanel value={tabNumber} index={1}>
+      <CustomTabPanel style={{ padding: "8px" }} value={+tabNumber} index={2}>
         <SentRequestList
-          requestList={sentFriendsRequest}
           authUser={authUser}
+          requestList={sentFriendsRequest}
           onClose={onClose}
         />
       </CustomTabPanel>

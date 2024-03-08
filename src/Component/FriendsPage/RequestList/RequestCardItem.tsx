@@ -6,42 +6,45 @@ import {
   ListItemAvatar,
   ListItemText,
 } from "@mui/material";
-import User from "../../../img/default-user.svg";
 import { useNavigate } from "react-router-dom";
+import { UserAvatar } from "../../Drawer/DrawerUserAvatar";
+import { useDocumentData } from "react-firebase-hooks/firestore";
+import { doc } from "firebase/firestore";
+import { db } from "../../../firebase/auth";
+import { USERS_D } from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
+import { UserRequestSkeleton } from "../../CustomeElement/UserItemListSkeleton";
 
-function RequestCardItem({ friendUser, onClose, handleRequest, icon }) {
+function RequestCardItem({ userId, onClose, handleRequest, icon }) {
+  const [user, loadingU, errorU] = useDocumentData(
+    doc(db, `${USERS_D}/${userId}`)
+  );
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const handleViewUserProfile = () => {
-        onClose();
-        navigate(`user/${friendUser.id}`)
-    }
+  const handleViewUserProfile = () => {
+    onClose();
+    navigate(`u/${userId}`, { replace: true });
+  };
+
+  if (loadingU) {
+    return <UserRequestSkeleton/>;
+  }
   return (
     <ListItem sx={{ p: 0 }}>
-      <IconButton onClick={handleViewUserProfile} sx={{ p: 0, mr: 2 }}>
-        <ListItemAvatar>
-          <Avatar
-            alt={friendUser.displayName}
-            src={friendUser.photoURL || User}
-            sx={{ width: 56, height: 56 }}
-          />
-        </ListItemAvatar>
-      </IconButton>
+      <ListItemAvatar>
+        <IconButton onClick={handleViewUserProfile}>
+          <UserAvatar userName={user.displayName} photoURL={user.photoURL} />
+        </IconButton>
+      </ListItemAvatar>
       <ListItemText
-        secondaryTypographyProps={{
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-        }}
         primaryTypographyProps={{
           whiteSpace: "nowrap",
           overflow: "hidden",
           textOverflow: "ellipsis",
         }}
-        primary={friendUser.displayName}
+        primary={user?.displayName}
       />
-      <IconButton onClick={() => handleRequest(friendUser)}>{icon}</IconButton>
+      <IconButton onClick={() => handleRequest(userId)}>{icon}</IconButton>
     </ListItem>
   );
 }

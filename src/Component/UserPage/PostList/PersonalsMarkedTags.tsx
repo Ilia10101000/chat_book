@@ -1,11 +1,8 @@
 import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
 import PersonIcon from "@mui/icons-material/Person";
-import { useCollectionData } from "react-firebase-hooks/firestore";
 import { DocumentData, doc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebase/auth";
 import {
-  MARKED_PERSONS,
-  POSTS,
   USERS_D,
 } from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
 import { IconButton, Tooltip } from "@mui/material";
@@ -15,10 +12,11 @@ import ClearIcon from "@mui/icons-material/Clear";
 interface IPersonalsMarkedTags {
   userId: string;
   postId: string;
+  markedPersons:DocumentData[];
   handleClick: () => void;
   isShownTags: boolean;
   isOwner: boolean;
-  removeTag:(tagData:any) => void
+  removeTag: (tagData: any) => void;
 }
 
 const getUserName = async (
@@ -32,17 +30,12 @@ const getUserName = async (
 };
 
 function PersonalsMarkedTags({
-  userId,
-  postId,
   handleClick,
   isShownTags,
+  markedPersons,
   isOwner,
   removeTag
 }: IPersonalsMarkedTags) {
-
-  // const [markedPesons, loadingMP, errorMP] = useCollectionData(
-  //   collection(db, `${USERS_D}/${userId}/${POSTS}/${postId}/${MARKED_PERSONS}`)
-  // );
 
   return (
     <>
@@ -61,7 +54,7 @@ function PersonalsMarkedTags({
       </Tooltip>
       {isShownTags && (
         <>
-          {markedPesons.map((mark) => (
+          {markedPersons.map((mark) => (
             <TooltipTag
               key={mark.x + mark.y}
               isOwner={isOwner}
@@ -89,13 +82,14 @@ function TooltipTag({
   fetchData: (id: string, callback: Dispatch<SetStateAction<string>>) => void;
   isOwner: boolean;
 }) {
-  const [userName, setUserame] = useState(markDoc.name || "");
+  const [userName, setUserame] = useState("");
 
   useEffect(() => {
-    if (markDoc.type === "link") {
-      fetchData(markDoc.userId, setUserame);
+    if (markDoc.personId) {
+      fetchData(markDoc.personId, setUserame);
+      
     }
-  }, [markDoc.type]);
+  }, [markDoc.personId]);
 
   const mark = (
     <div
@@ -128,8 +122,6 @@ function TooltipTag({
               <ClearIcon sx={{ fontSize: "16px" }} />
             </IconButton>
           )}
-
-          {markDoc.type === "link" ? (
             <Link
               style={{
                 textDecoration: "none",
@@ -150,19 +142,6 @@ function TooltipTag({
                 {userName}
               </span>
             </Link>
-          ) : (
-            <span
-              style={{
-                display: "inline-block",
-                maxWidth: "100px",
-                overflowX: "hidden",
-                whiteSpace: "nowrap",
-                textOverflow: "ellipsis",
-              }}
-            >
-              {userName}
-            </span>
-          )}
         </span>
       }
     >

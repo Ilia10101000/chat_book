@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { PersonalsMarkedTags } from "./PersonalsMarkedTags";
-import { DocumentData, collection, deleteDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "../../../firebase/auth";
 import {
-  setDoc,
-  doc,
+  DocumentData,
+  collection,
+  deleteDoc,
+  serverTimestamp,
+  updateDoc,
 } from "firebase/firestore";
+import { db } from "../../../firebase/auth";
+import { setDoc, doc } from "firebase/firestore";
 import {
   POSTS,
   USERS_D,
@@ -25,17 +28,21 @@ interface IImageContainer {
 interface INewCords {
   x: string;
   y: string;
-};
+}
 
 const generateUniqueFileName = (userId: string) => {
   return `${Date.now()}-${userId}-${Math.floor(Math.random() * 10000) + 1}`;
 };
 
-function ImageContainer({ post, userId, isOwner, authUserId }: IImageContainer) {
-
+function ImageContainer({
+  post,
+  userId,
+  isOwner,
+  authUserId,
+}: IImageContainer) {
   const [showMarkedTags, setShowMarkedTags] = useState(false);
   const [newTagCords, setNewTagCords] = useState<INewCords>(null);
-  const [markedPesons, loadingMP, errorMP] = useCollectionData(
+  const [markedPersons, loadingMP, errorMP] = useCollectionData(
     collection(db, `${USERS_D}/${userId}/${POSTS}/${post.id}/${MARKED_PERSONS}`)
   );
 
@@ -43,11 +50,10 @@ function ImageContainer({ post, userId, isOwner, authUserId }: IImageContainer) 
     setShowMarkedTags((value) => !value);
   };
 
-    const clearTagCords = () => {
-        setNewTagCords(null);
-    }
+  const clearTagCords = () => {
+    setNewTagCords(null);
+  };
 
-    
   const setPersonalTagCoords = async (e: any) => {
     const image = e.target;
     let imageWidth = image.offsetWidth;
@@ -59,11 +65,37 @@ function ImageContainer({ post, userId, isOwner, authUserId }: IImageContainer) 
     setNewTagCords({ x: relativeX, y: relativeY });
   };
 
-  const addUserTag = async (personId:string) => {
-    
-    const tagId = generateUniqueFileName(userId);
+  const updateTagCords = async (
+    tagId: string,
+    cords: { x: string; y: string }
+  ) => {
+    try {
+      const docRef = doc(
+        db,
+        `${USERS_D}/${userId}/${POSTS}/${post.id}/${MARKED_PERSONS}`,
+        tagId
+      );
+      await updateDoc(docRef, {
+        ...cords,
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
-      try {
+  const addUserTag = async (personId: string) => {
+
+    try {
+
+      if (markedPersons?.some((mark) => mark.personId === personId)) {
+
+        let tagDoc = markedPersons?.find((mark) => mark.personId === personId);
+        await updateTagCords(tagDoc.id, newTagCords);
+
+      } else {
+
+        const tagId = generateUniqueFileName(personId);
+
         await setDoc(
           doc(
             db,
@@ -72,7 +104,9 @@ function ImageContainer({ post, userId, isOwner, authUserId }: IImageContainer) 
           ),
           { id: tagId, ...newTagCords, personId }
         );
+
         if (personId !== authUserId) {
+
           await setDoc(
             doc(
               db,
@@ -87,14 +121,24 @@ function ImageContainer({ post, userId, isOwner, authUserId }: IImageContainer) 
             }
           );
         }
-      } catch (error) {
-        console.log(error.message);
-      } finally {
-        clearTagCords();
       }
+
+    } catch (error) {
+
+      console.log(error.message);
+
+    } finally {
+
+      clearTagCords();
+
+    }
   };
-  
-  const deletePersonalTag = async (tagData: {id:string, userId?:string, type:string}) => {
+
+  const deletePersonalTag = async (tagData: {
+    id: string;
+    personId?: string;
+    type: string;
+  }) => {
     try {
       await deleteDoc(
         doc(
@@ -103,20 +147,19 @@ function ImageContainer({ post, userId, isOwner, authUserId }: IImageContainer) 
           tagData.id
         )
       );
-      if (tagData.type === 'link' && tagData.userId !== authUserId) {
+      if (tagData.personId !== authUserId) {
         await deleteDoc(
           doc(
             db,
-            `${USERS_D}/${tagData.userId}/${TAGS_IN_THIRD_PARTY_POSTS}`,
+            `${USERS_D}/${tagData.personId}/${TAGS_IN_THIRD_PARTY_POSTS}`,
             tagData.id
           )
         );
-        
       }
     } catch (error) {
-      console.log(error.message)
+      console.log(error.message);
     }
-  }
+  };
   return (
     <div style={{ position: "relative", width: "100%", padding: "0px" }}>
       <img
@@ -129,6 +172,7 @@ function ImageContainer({ post, userId, isOwner, authUserId }: IImageContainer) 
         alt={post?.id}
       />
       <PersonalsMarkedTags
+        markedPersons={markedPersons}
         isShownTags={showMarkedTags}
         handleClick={toogleMarksVisible}
         userId={userId}

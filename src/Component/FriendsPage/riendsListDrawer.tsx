@@ -28,17 +28,12 @@ function FriendsListDrawer({ open, onClose }) {
       onClose={onClose}
       variant="temporary"
       sx={{
-        width:"250px",
+        width: "250px",
         "& .MuiDrawer-paper": {
-          width:"250px",
+          width: "250px",
         },
       }}
     >
-      <DrawerAppHeader>
-        <Typography variant="h6" sx={{ mx: "auto" }}>
-          <b>Friends</b>
-        </Typography>
-      </DrawerAppHeader>
       <Divider />
       <Box
         sx={{
@@ -54,7 +49,7 @@ function FriendsListDrawer({ open, onClose }) {
       <CustomTabPanel style={{ padding: "0px" }} value={tabNumber} index={0}>
         <FriendsList authUser={authUserData} onClose={onClose} />
       </CustomTabPanel>
-      <CustomTabPanel value={tabNumber} index={1}>
+      <CustomTabPanel style={{ padding: "0px" }} value={tabNumber} index={1}>
         <RequestList authUser={authUserData} onClose={onClose} />
       </CustomTabPanel>
     </Drawer>

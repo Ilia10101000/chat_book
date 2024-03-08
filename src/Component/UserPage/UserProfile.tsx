@@ -34,10 +34,10 @@ const UserProfile = () => {
     )
   );
   const [thirdPartyPostTags, loadingTPPT, errorLoadingTPPT] = useCollectionData(
-    // query(
+    query(
       collection(db, `${USERS_D}/${userId}/${TAGS_IN_THIRD_PARTY_POSTS}`),
-    //   orderBy("timestamp", "desc")
-    // )
+      orderBy("timestamp", "desc")
+    )
   );
   const [friends, loadingF, errorLoadingF] = useCollectionData(
     collection(db, `${USERS_D}/${userId}/${FRIENDS_LIST}`)

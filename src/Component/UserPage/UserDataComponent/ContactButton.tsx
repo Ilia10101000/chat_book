@@ -57,8 +57,6 @@ function ContactButton({ authUser, user, handleError }: IContactButton) {
         doc(db, `${USERS_D}/${authUser.uid}/${SENT_FRIENDS_REQUESTS}`, user.id),
         {
           id: user.id,
-          displayName: user.displayName,
-          photoURL: user.photoURL || "",
         }
       );
       await setDoc(
@@ -69,8 +67,6 @@ function ContactButton({ authUser, user, handleError }: IContactButton) {
         ),
         {
           id: authUser.uid,
-          displayName: authUser.displayName,
-          photoURL: authUser.photoURL || "",
         }
       );
       setHandleSuccess("sent request");
@@ -97,8 +93,7 @@ function ContactButton({ authUser, user, handleError }: IContactButton) {
       setWaitingRequestProcessing(false);
     }
   };
-  const cancelFriendRequest = useCallback(
-    () => async () => {
+  const cancelFriendRequest = async () => {
       try {
         await deleteDoc(
           doc(
@@ -118,9 +113,7 @@ function ContactButton({ authUser, user, handleError }: IContactButton) {
       } catch (error) {
         handleError(error.message);
       }
-    },
-    []
-  );
+    }
 
   const acceptFriendRequest = async () => {
       setWaitingRequestProcessing(true);
@@ -143,16 +136,12 @@ function ContactButton({ authUser, user, handleError }: IContactButton) {
           doc(db, `${USERS_D}/${authUser.uid}/${FRIENDS_LIST}`, user.id),
           {
             id: user.id,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
           }
         );
         await setDoc(
           doc(db, `${USERS_D}/${user.id}/${FRIENDS_LIST}`, authUser.uid),
           {
             id: authUser.uid,
-            displayName: authUser.displayName,
-            photoURL: authUser.photoURL,
           }
         );
         setHandleSuccess("accepted request");
