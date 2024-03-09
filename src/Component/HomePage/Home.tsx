@@ -6,7 +6,7 @@ import GroupIcon from "@mui/icons-material/Group";
 import TuneIcon from "@mui/icons-material/Tune";
 import AddToPhotosOutlinedIcon from "@mui/icons-material/AddToPhotosOutlined";
 import NewspaperIcon from "@mui/icons-material/Newspaper";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { auth, realTimeDB } from "../../firebase/auth";
 import { signOut } from "firebase/auth";
 import { serverTimestamp } from "firebase/firestore";
@@ -18,13 +18,11 @@ import { MobileAppBar } from "./AppBar";
 import { MessageListDrawer } from "../MessagesPage/MessageListDrawer";
 import { FriendsListDrawer } from "../FriendsPage/riendsListDrawer";
 import { USERS_RT } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
-import { NewPostModalWindow } from "../UserPage/PostList/AddNewPost/NewPostModalWindow";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
+import { NewImageModalWindow } from "../UserPage/PostList/AddNewPost/NewImageModalWindow";
+import { EditorNewPost } from "../UserPage/PostList/AddNewPost/EditorNewPost";
 
 const makeDrawerInner = (drawerListItems: any): ReactNode => {
   return drawerListItems.map(({ mode, label, icon, ...modeAction }) => {
-
     let button = (
       <ListItemButton
         onClick={mode === "button" ? modeAction.handleClick : undefined}
@@ -33,9 +31,9 @@ const makeDrawerInner = (drawerListItems: any): ReactNode => {
           minHeight: 48,
           justifyContent: "initial",
           px: 2.5,
-          boxSizing: 'border-box',
-          overflowX: 'hidden',
-          whiteSpace:'nowrap'
+          boxSizing: "border-box",
+          overflowX: "hidden",
+          whiteSpace: "nowrap",
         }}
       >
         <ListItemIcon
@@ -72,7 +70,7 @@ const makeDrawerInner = (drawerListItems: any): ReactNode => {
       );
     }
     if (mode === "button") {
-      return button
+      return button;
     }
   });
 };
@@ -98,18 +96,18 @@ function HomePage() {
 
   let [mode, toogleThemeMode] = useTheme();
 
-  function toogleDrawerOpen()  {
+  function toogleDrawerOpen() {
     setIsOpenMobileDrawer((isOpen) => !isOpen);
-  };
+  }
   function toogleShowAddNewPostModel() {
     setShowAddNewPostModel((isOpen) => !isOpen);
-  };
+  }
   function toogleMessageDrawerOpen() {
     setShowMessageDrawer((isOpen) => !isOpen);
-  };
+  }
   function toogleFriendsDrawerOpen() {
     setShowFriendsDrawer((isOpen) => !isOpen);
-  };
+  }
 
   const signOutApp = () => {
     signOut(auth);
@@ -124,10 +122,10 @@ function HomePage() {
 
   const drawerListItems = [
     {
-      mode: "button",
-      label: "Main ",
+      mode: "link",
+      label: "News",
       icon: <NewspaperIcon />,
-      handleClick: toogleMessageDrawerOpen,
+      href: '/news',
     },
     {
       mode: "button",
@@ -178,14 +176,12 @@ function HomePage() {
           flexGrow: 1,
         }}
       >
-        {showAddNewPostModel && (
-          <DndProvider backend={HTML5Backend}>
-            <NewPostModalWindow
-              open={showAddNewPostModel}
-              onClose={toogleShowAddNewPostModel}
-            />
-          </DndProvider>
-        )}
+        <NewImageModalWindow
+          open={showAddNewPostModel}
+          onClose={toogleShowAddNewPostModel}
+        >
+          <EditorNewPost />
+        </NewImageModalWindow>
         <Outlet />
       </Box>
     </Box>

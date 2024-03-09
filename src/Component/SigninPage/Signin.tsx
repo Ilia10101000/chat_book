@@ -83,6 +83,13 @@ function Signin() {
       localStorage.removeItem("displayNameSignInValue");
     };
   }, []);
+  useEffect(() => {
+    if (error) {
+      setTimeout(() => {
+        setError(null)
+      },2000)
+    };
+  }, [error]);
   return (
     <SigninContext.Provider value={{ signinForm, error, loading }}>
       <div

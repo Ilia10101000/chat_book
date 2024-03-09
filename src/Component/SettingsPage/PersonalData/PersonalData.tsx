@@ -1,17 +1,22 @@
 import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import Avatar from "react-avatar-edit";
 import { PhotoURLDialog } from "./ConfirmeDialog";
 import { UserPhoto } from "./UserPhoto";
-import { getDownloadURL, uploadString } from "firebase/storage";
-import { storage, ref, auth, db } from "../../../firebase/auth";
+import { auth, db, storage, ref } from "../../../firebase/auth";
 import { updateProfile } from "firebase/auth";
 import { doc, updateDoc } from "firebase/firestore";
+import { getDownloadURL, uploadString } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { loginValidationSchema } from "../../../lib/yupFormsValidationParams";
-import { AVATAR_S, USERS_D } from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
+import {
+  USERS_D,
+  AVATAR_S,
+} from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
+import { Box } from "@mui/material";
+import { NewImageModalWindow } from "../../UserPage/PostList/AddNewPost/NewImageModalWindow";
+import { EditorNewAvatar } from "./EditorUserAvatar";
 
 interface IPersonalData {
   displayName: string;
@@ -32,73 +37,62 @@ function PersonalData({
     initialValues: {
       displayName: displayName,
     },
-    onSubmit: handleSubmitChangeUserData,
+    onSubmit: handleSubmitChangeUserName,
     validationSchema: loginValidationSchema,
   });
 
   const [isOpenDialog, setIsOpenDialog] = React.useState(false);
-  const [preview, setPreview] = useState(null);
-  const [showEditor, setShowEditor] = useState(photoURL ? false : true);
-
-  const handleEditorClose = () => {
-    setShowEditor(false);
-  };
+  const [showEditor, setShowEditor] = useState(false);
 
   const handleClickOpen = () => {
     setIsOpenDialog(true);
-  };
-
-  const onCrop = (view) => {
-    setPreview(view);
   };
 
   const handleClose = () => {
     setIsOpenDialog(false);
   };
 
-  const handleDeletePhoto = () => {
-    setPreview(null);
-    setShowEditor(true);
-  };
-
   const updatePage = () => {
     navigate(0);
   };
 
-  async function handleSubmitChangeUserData () {
-    
-    const changedUserData: { displayName?: string; photoURL?: string, searchQuery?:string } = {};
+  const handleSaveImage = async (savedImage: string) => {
+    const storageRef = ref(storage, `${AVATAR_S}/${uid}/${AVATAR_S}`);
+    try {
+      await uploadString(storageRef, savedImage, "data_url");
+
+      const photourlLink = await getDownloadURL(
+        ref(storage, `${AVATAR_S}/${uid}/${AVATAR_S}`)
+      );
+      await updateDoc(doc(db, USERS_D, uid), {
+        photoURL: photourlLink,
+      });
+      await updateProfile(auth.currentUser, { photoURL: photourlLink });
+    } catch (error) {
+      handleError(error.message);
+    }
+  };
+
+  async function handleSubmitChangeUserName() {
+    const changedUserData: {
+      displayName?: string;
+      searchQuery?: string;
+    } = {};
 
     if (displayName !== displayNameForm.values.displayName) {
       changedUserData.displayName = displayNameForm.values.displayName;
-      changedUserData.searchQuery = displayNameForm.values.displayName.toLowerCase();
+      changedUserData.searchQuery =
+        displayNameForm.values.displayName.toLowerCase();
     }
 
     try {
-      if (!photoURL && preview) {
-        await uploadString(
-          ref(storage, `${AVATAR_S}/${uid}/${AVATAR_S}`),
-          preview,
-          "data_url"
-        );
-
-        const photourlLink = await getDownloadURL(
-          ref(storage, `${AVATAR_S}/${uid}/${AVATAR_S}`)
-        );
-
-        changedUserData.photoURL = photourlLink;
-      }
       await updateDoc(doc(db, USERS_D, uid), changedUserData);
       await updateProfile(auth.currentUser, changedUserData);
       updatePage();
     } catch (error) {
       handleError(error.message);
-    } finally {
-      if (preview) {
-        setPreview(null)
-      }
     }
-  };
+  }
 
   const transformNameValue = (value: string) => {
     return value.trim().replace(/\s{2,}/g, " ");
@@ -114,15 +108,22 @@ function PersonalData({
     >
       {photoURL ? (
         <UserPhoto photoURL={photoURL} handleClick={handleClickOpen} />
-      ) : showEditor ? (
-        <Avatar
-          width={200}
-          height={200}
-          onCrop={onCrop}
-          onClose={handleEditorClose}
-        />
       ) : (
-        <UserPhoto photoURL={preview} handleClick={handleDeletePhoto} />
+        <Box
+          sx={{
+            width: "250px",
+            height: "250px",
+            border: "1px dotted #8c8c8c",
+            borderRadius: "50%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            cursor: "pointer",
+          }}
+          onClick={() => setShowEditor(true)}
+        >
+          Add photo
+        </Box>
       )}
       <TextField
         error={
@@ -149,10 +150,8 @@ function PersonalData({
       />
       <Button
         disabled={
-          Boolean(displayNameForm.errors.displayName) || (
-          displayNameForm.values.displayName.trim() == displayName) && (photoURL
-            ? !preview && !showEditor
-            : !preview && showEditor)
+          Boolean(displayNameForm.errors.displayName) ||
+          displayNameForm.values.displayName.trim() == displayName
         }
         variant="contained"
         color="warning"
@@ -166,6 +165,12 @@ function PersonalData({
         handleError={handleError}
         updatePage={updatePage}
       />
+      <NewImageModalWindow
+        open={showEditor}
+        onClose={() => setShowEditor(false)}
+      >
+        <EditorNewAvatar handleSaveImage={handleSaveImage} />
+      </NewImageModalWindow>
     </div>
   );
 }

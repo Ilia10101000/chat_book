@@ -63,7 +63,7 @@ function CommentItem({ data, authUserId, removeComment }: ICommentItem) {
             <DeleteIcon sx={{ fontSize: "16px" }} />
           </IconButton>
       )}
-      <Link to={`/user/${commmentAuthor.id}`}>
+      <Link style={{textDecoration:'none', color:'inherit'}} to={`/user/${commmentAuthor.id}`}>
         <UserAvatar
           photoURL={commmentAuthor.photoURL}
           userName={commmentAuthor.displayName}

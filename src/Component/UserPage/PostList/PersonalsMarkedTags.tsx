@@ -127,7 +127,7 @@ function TooltipTag({
                 textDecoration: "none",
                 color: "inherit",
               }}
-              to={`/u/${markDoc.userId}`}
+              to={`/u/${markDoc.personId}`}
             >
               <span
                 style={{

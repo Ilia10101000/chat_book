@@ -43,7 +43,7 @@ function ImageContainer({
   const [showMarkedTags, setShowMarkedTags] = useState(false);
   const [newTagCords, setNewTagCords] = useState<INewCords>(null);
   const [markedPersons, loadingMP, errorMP] = useCollectionData(
-    collection(db, `${USERS_D}/${userId}/${POSTS}/${post.id}/${MARKED_PERSONS}`)
+    collection(db, `${USERS_D}/${userId}/${POSTS}/${post?.id}/${MARKED_PERSONS}`)
   );
 
   const toogleMarksVisible = () => {

@@ -10,6 +10,8 @@ import { auth } from "./firebase/auth";
 import { Routes, Route } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import { User } from "firebase/auth";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 const UserContext = createContext<User>(null);
 
@@ -24,10 +26,12 @@ const App = () => {
 
   return (
     <UserContext.Provider value={user}>
-      <Routes>
-        {renderRoutes(availablePaths)}
-        <Route path={"*"} element={<ErrorPage />} />
-      </Routes>
+      <DndProvider backend={HTML5Backend}>
+        <Routes>
+          {renderRoutes(availablePaths)}
+          <Route path={"*"} element={<ErrorPage />} />
+        </Routes>
+      </DndProvider>
     </UserContext.Provider>
   );
 };

@@ -37,11 +37,11 @@ function PersonalDisplayData({
   return (
     <Box sx={{ display: "flex", py: 3 }}>
       <div style={{ margin: "0px 40px 0px 20px", width: "150px" }}>
-        <img style={{ width: "100%" }} src={user.photoURL || DefaultPhoto} />
+        <img style={{ width: "100%", borderRadius:'50%' }} src={user?.photoURL || DefaultPhoto} />
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         <div>
-          <div>{user.displayName}</div>
+          <div>{user?.displayName}</div>
         </div>
         <div style={{ display: "flex", gap: "20px" }}>
           <div>{postsCount || 0} Publications</div>
@@ -49,7 +49,7 @@ function PersonalDisplayData({
         </div>
         {!isOwnPage && (
           <div style={{ display: "flex", gap: "15px" }}>
-            <Link to={`/messages/${user.id}`} state={user}>
+            <Link to={`/messages/${user?.id}`} state={user}>
               <Button size="small" variant="contained">
                 Start chat
               </Button>

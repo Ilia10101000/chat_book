@@ -10,7 +10,7 @@ import { AccountData } from "./AccountData";
 import Alert from "@mui/material/Alert";
 
 function Settings() {
-  const { displayName, email, photoURL, uid } = useAuth();
+  const { displayName, photoURL, uid } = useAuth();
   const [error, setError] = useState("");
   const [tabNumber, setTabNumber] = useState(0);
 

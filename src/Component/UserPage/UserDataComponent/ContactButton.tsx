@@ -47,7 +47,7 @@ function ContactButton({ authUser, user, handleError }: IContactButton) {
 
   const status: Status = useCheckRelationshipUserStatus(
     authUser.uid,
-    user.id,
+    user?.id,
     handleError
   );
   const sendFriendRequest = async () => {

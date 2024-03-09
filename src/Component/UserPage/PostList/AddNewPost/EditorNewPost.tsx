@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { IconButton, TextField, CircularProgress } from "@mui/material";
-import { CustomeAvatarEditor } from "./CustomeAvatarEditor";
+import { CustomePostImageEditor } from "./CustomePostImageEditor";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useAuth } from "../../../../hooks/useAuth";
@@ -14,32 +14,23 @@ import {
 } from "../../../../firebase_storage_path_constants/firebase_storage_path_constants";
 import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
-import Checkbox from '@mui/material/Checkbox';
+import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-
-interface IEditorNewPost {
-  handleClose: () => void;
-  handleError: (message: string) => void;
-  onClose: () => void;
-  postsImage: File;
-}
+import { useImageDragDropContext } from "./NewImageModalWindow";
 
 const generateUniqueFileName = (userId: string) => {
   return `${Date.now()}-${userId}-${Math.floor(Math.random() * 10000) + 1}`;
 };
 
-function EditorNewPost({
-  handleClose,
-  postsImage,
-  handleError,
-  onClose,
-}: IEditorNewPost) {
+function EditorNewPost() {
+  const { handleClose, postsImage, handleError, onCloseWindow } =
+    useImageDragDropContext();
   const authUser = useAuth();
 
   const [text, setText] = useState("");
   const [savedImage, setSavedImage] = useState("");
   const [pendingAddPost, setPendingAddPost] = useState(false);
-  const [hideComments, setHideComments] = useState(false)
+  const [hideComments, setHideComments] = useState(false);
 
   const handleChangeText = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -77,18 +68,17 @@ function EditorNewPost({
       const postsImageURL = await getDownloadURL(storageRef);
       await setDoc(doc(db, `${USERS_D}/${authUser.uid}/${POSTS}/${postsId}`), {
         id: postsId,
-        ownerPostId:authUser.uid,
+        ownerPostId: authUser.uid,
         imageURL: postsImageURL,
         text,
-        showComments:!hideComments,
+        showComments: !hideComments,
         timestamp: serverTimestamp(),
       });
     } catch (error) {
       handleError(error.message);
     } finally {
-      closeEditor();
       setPendingAddPost(false);
-      onClose();
+      onCloseWindow();
     }
   };
 
@@ -172,7 +162,10 @@ function EditorNewPost({
           </div>
         </Box>
       ) : (
-        <CustomeAvatarEditor handleSave={handleSave} postsImage={postsImage} />
+        <CustomePostImageEditor
+          handleSave={handleSave}
+          postsImage={postsImage}
+        />
       )}
     </Box>
   );

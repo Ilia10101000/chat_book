@@ -9,6 +9,7 @@ import { Signin } from "../Component/SigninPage/Signin";
 import { SigninInfo } from "../Component/SigninPage/SigninInfo";
 import { MiddlewareCheckComponent } from "../Component/MessagesPage/MiddlewareCheckMessage";
 import { PostModalWindow } from "../Component/UserPage/PostList/PostModalWindow";
+import { NewsPage } from "../Component/NewsPage/NewsPage";
 
 export const unAuthorizedRoutes = [
   {
@@ -47,6 +48,16 @@ export const authorizedRoutes = [
       {
         path: "u/:userId",
         element: <UserProfile />,
+        children: [
+          {
+            path: "o/:ownerPostId/p/:postId",
+            element:<PostModalWindow/>
+          }
+        ]
+      },
+      {
+        path: "news",
+        element: <NewsPage />,
         children: [
           {
             path: "o/:ownerPostId/p/:postId",

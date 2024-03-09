@@ -7,33 +7,21 @@ import Stack from "@mui/material/Stack";
 import Slider from "@mui/material/Slider";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import CheckIcon from "@mui/icons-material/Check";
-import AspectRatioIcon from "@mui/icons-material/AspectRatio";
-import SpeedDial from "@mui/material/SpeedDial";
-import SpeedDialAction from "@mui/material/SpeedDialAction";
 
 interface IAvatarEditor {
   postsImage: File;
   handleSave: (editorRef: React.MutableRefObject<any>) => void;
 }
 
-const ratios = [
-  { label: "1:1", value: 1 },
-  { label: "5:4", value: 1.25 },
-  { label: "16:9", value: 1.77 },
-];
-
-export const CustomeAvatarEditor = ({ postsImage, handleSave }: IAvatarEditor,) => {
-
+const CustomeAvatarEditor = ({ postsImage, handleSave }: IAvatarEditor) => {
   const theme = useTheme();
-
-  const [imageRatio, setImageRatio] = useState<number>(1);
 
   const isXs = useMediaQuery(theme.breakpoints.between("xs", "md"));
   const isSm = useMediaQuery(theme.breakpoints.between("sm", "md"));
   const isMdAndLarger = useMediaQuery(theme.breakpoints.up("md"));
 
-  let editorWidth: number = ((isXs && 250) || (isSm && 450) || (isMdAndLarger && 650));
-  let editorHeight = editorWidth / imageRatio;
+  let editorSquardParams: number =
+    (isXs && 250) || (isSm && 450) || (isMdAndLarger && 650);
 
   const [scaledImage, setScaledImage] = useState(1);
 
@@ -56,9 +44,10 @@ export const CustomeAvatarEditor = ({ postsImage, handleSave }: IAvatarEditor,) 
         color={[0, 0, 0, 0.8]}
         ref={editorRef}
         image={postsImage}
-        width={editorWidth}
-        height={editorHeight}
+        width={editorSquardParams}
+        height={editorSquardParams}
         border={50}
+        borderRadius={editorSquardParams / 2}
         scale={scaledImage}
       />
       <Stack spacing={3} direction="row" sx={{ mb: 1 }} alignItems="center">
@@ -75,19 +64,6 @@ export const CustomeAvatarEditor = ({ postsImage, handleSave }: IAvatarEditor,) 
             sx={{ width: "100px" }}
           />
         </div>
-        <SpeedDial
-          ariaLabel="SpeedDial basic example"
-          sx={{ position: "absolute", bottom: 16, right: 16 }}
-          icon={<AspectRatioIcon />}
-        >
-          {ratios.map((ratio) => (
-            <SpeedDialAction
-              key={ratio.label}
-              icon={ratio.label}
-              onClick={() => setImageRatio(ratio.value)}
-            />
-          ))}
-        </SpeedDial>
       </Stack>
       <Button
         startIcon={<CheckIcon />}
@@ -100,5 +76,5 @@ export const CustomeAvatarEditor = ({ postsImage, handleSave }: IAvatarEditor,) 
       </Button>
     </div>
   );
-}
-;
+};
+export { CustomeAvatarEditor };

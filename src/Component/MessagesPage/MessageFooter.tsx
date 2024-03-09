@@ -144,4 +144,3 @@ const MessageFooter = ({ sendMessage, sendImages }: IMessageFooter) => {
 
 export { MessageFooter };
 
-//react-dropzone
