@@ -41,7 +41,8 @@ const FriendsList = ({ authUser, onClose }) => {
         limit(5)
       );
       const data = await getDocs(queryRef);
-      const result = data.docs.map((doc) => doc.data());
+      const resultList = data.docs.map((doc) => doc.data());
+      const result = resultList.filter(user => user.id !== authUser.id);
       setResultUserSearch(result);
     } catch (error) {
       console.error("Error fetching data:", error.message);

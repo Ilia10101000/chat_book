@@ -101,6 +101,11 @@ function MessageListItemLink({
                 overflow: "hidden",
                 textOverflow: "ellipsis",
               }}
+              primaryTypographyProps={{
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
               primary={user.displayName || user.email}
               secondary={lastMessage?.lastMessage}
             />

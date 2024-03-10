@@ -6,7 +6,6 @@ import { CustomTabPanel } from "../CustomeElement/CustomeTabPanel";
 import { useAuth } from "../../hooks/useAuth";
 import { FriendsList } from "./FriendsList/FriendsList";
 import { RequestList } from "./RequestList/RequestList";
-import DrawerAppHeader from "../Drawer/DrawerAppHeader";
 
 function FriendsListDrawer({ open, onClose }) {
   const user = useAuth();

@@ -14,6 +14,7 @@ import {
   IconButton,
   Typography,
   List,
+  Skeleton,
 } from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -27,7 +28,7 @@ function LikesList({ postId, userId, authUserId }) {
   const [isExpandedLikesGroup, setisExpandedLikesGroup] = useState(false);
 
   if (loadingLL) {
-    return <div>Loading</div>;
+    return <Skeleton variant="circular" sx={{width:'30px', height:'30px'}} />;
   }
 
   const isSetLike = likesList?.some((doc) => doc.id === authUserId);

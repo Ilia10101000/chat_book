@@ -30,7 +30,7 @@ function FavoriteLikesGroupItem({
     return (
       <Link
         style={{ textDecoration: "none", color: "inherit" }}
-        to={`/user/${user.id}`}
+        to={`/u/${user.id}`}
       >
         <ListItemButton sx={{ p: 0 }}>
           <ListItem>

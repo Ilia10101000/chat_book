@@ -6,7 +6,7 @@ import {
   Typography,
   Drawer,
   useMediaQuery,
-  Avatar,
+  Avatar
 } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useTheme } from "@mui/material/styles";
@@ -15,7 +15,7 @@ import { ThemeSwitch } from "../CustomeElement/SwitchTheme";
 import { UserAvatar } from "./DrawerUserAvatar";
 import { User } from "firebase/auth";
 import { Link } from "react-router-dom";
-import BrandIcon from "../../img/pngwing.com.png";
+import BrandIcon from '../../img/pngwing.com.png'
 
 interface IAppDrawer {
   open: boolean;
@@ -28,24 +28,28 @@ interface IAppDrawer {
 }
 
 function AppDrawer({
+  open,
+  onClose,
   drawerInner,
   mode,
   toogleThemeMode,
   signOut,
   userInfo,
 }: IAppDrawer) {
+  
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.only("xs"));
 
   return (
     <>
       <Drawer
-        variant={"permanent"}
+        variant={isXs ? "temporary" : "permanent"}
+        open={isXs ? open : true}
+        onClose={isXs ? onClose : undefined}
         sx={{
-        //   display: { xs: "flex", sm: "block" },
-          width: { xs: "100%", sm: "65px", md: "200px" },
+          width: { xs: "200px", sm: "65px", md: "200px" },
           "& .MuiDrawer-paper": {
-            width: { xs: "100%", sm: "65px", md: "200px" },
+            width: { xs: "200px", sm: "65px", md: "200px" },
             transition: (theme) =>
               theme.transitions.create("width", {
                 easing: theme.transitions.easing.easeIn,
@@ -53,15 +57,14 @@ function AppDrawer({
               }),
           },
         }}
-        anchor={isXs ? "bottom" : "left"}
       >
         <DrawerAppHeader>
           <Typography
             variant="h6"
             sx={{
-              ml: { xs: 3, sm: 0, md: 3 },
-              display: { xs: "none", sm: "none", md: "block" },
-              whiteSpace: "nowrap",
+              ml: {xs:3,sm:0,md:3},
+              display: { xs: "block", sm: "none", md: "block" },
+              whiteSpace:'nowrap'
             }}
           >
             <b>ChatBook</b>
@@ -72,12 +75,12 @@ function AppDrawer({
               width: "60px",
               height: "60px",
               filter: mode === "dark" ? "invert(100%)" : "",
-              userSelect: "none",
+              userSelect:'none'
             }}
             src={BrandIcon}
           />
         </DrawerAppHeader>
-        <Divider sx={{ display: { xs: "none", sm: "block" } }} />
+        <Divider />
         <Fab
           sx={{
             mx: "auto",
@@ -100,20 +103,15 @@ function AppDrawer({
             />
           </Link>
         </Fab>
-        <List sx={{ display: { xs: "flex", sm: "block" } }}>{drawerInner}</List>
+        <List>{drawerInner}</List>
         <ThemeSwitch
-          sx={{ mx: "auto", mt: 3, display: { xs: "none", sm: "block" } }}
+          sx={{ mx: "auto", mt: 3 }}
           checked={mode === "dark"}
           onChange={toogleThemeMode}
         />
         <Fab
           onClick={signOut}
-          sx={{
-            mx: "auto",
-            mt: "auto",
-            mb: 2,
-            display: { xs: "none", sm: "block" },
-          }}
+          sx={{ mx: "auto", mt: "auto", mb: 2 }}
           color="secondary"
           variant="extended"
           size="small"

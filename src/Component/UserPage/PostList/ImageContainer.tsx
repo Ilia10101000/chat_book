@@ -17,6 +17,7 @@ import {
 } from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
 import { SearchUsersDialog } from "./SearchUsersDialog";
 import { useCollectionData } from "react-firebase-hooks/firestore";
+import { Box, Skeleton } from "@mui/material";
 
 interface IImageContainer {
   post: DocumentData;
@@ -42,6 +43,7 @@ function ImageContainer({
 }: IImageContainer) {
   const [showMarkedTags, setShowMarkedTags] = useState(false);
   const [newTagCords, setNewTagCords] = useState<INewCords>(null);
+  const [isLoadedImage, setIsLoadedImage] = useState(false);
   const [markedPersons, loadingMP, errorMP] = useCollectionData(
     collection(db, `${USERS_D}/${userId}/${POSTS}/${post?.id}/${MARKED_PERSONS}`)
   );
@@ -161,16 +163,20 @@ function ImageContainer({
     }
   };
   return (
-    <div style={{ position: "relative", width: "100%", padding: "0px" }}>
+    <Box sx={{ position: "relative", width: "100%", padding: "0px", height: isLoadedImage? null:{sx:'200px', sm:'400px', md:'700px'} }}>
       <img
         onClick={isOwner && showMarkedTags ? setPersonalTagCoords : null}
+        onLoad={() => setIsLoadedImage(true)}
         src={post?.imageURL}
         style={{
+          display: isLoadedImage?'block':'none',
           width: "100%",
           ...(isOwner && showMarkedTags && { cursor: "pointer" }),
         }}
         alt={post?.id}
       />
+      <Skeleton variant="rounded" sx={{width:'100%', height:'100%', display: isLoadedImage?'none':'block'}}/>
+
       <PersonalsMarkedTags
         markedPersons={markedPersons}
         isShownTags={showMarkedTags}
@@ -187,7 +193,7 @@ function ImageContainer({
           closeModal={clearTagCords}
         />
       )}
-    </div>
+    </Box>
   );
 }
 
