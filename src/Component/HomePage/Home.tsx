@@ -1,12 +1,12 @@
 import React, { ReactNode, useEffect } from "react";
-import { Box, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { Box, Fab, IconButton, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { useState } from "react";
 import EmailIcon from "@mui/icons-material/Email";
 import GroupIcon from "@mui/icons-material/Group";
 import TuneIcon from "@mui/icons-material/Tune";
 import AddToPhotosOutlinedIcon from "@mui/icons-material/AddToPhotosOutlined";
 import NewspaperIcon from "@mui/icons-material/Newspaper";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import { auth, realTimeDB } from "../../firebase/auth";
 import { signOut } from "firebase/auth";
 import { serverTimestamp } from "firebase/firestore";
@@ -14,66 +14,12 @@ import { ref, set } from "firebase/database";
 import { useTheme } from "../../theme";
 import { useAuth } from "../../hooks/useAuth";
 import { AppDrawer } from "../Drawer/AppDrawer";
-import { MobileAppBar } from "./AppBar";
 import { MessageListDrawer } from "../MessagesPage/MessageListDrawer";
 import { FriendsListDrawer } from "../FriendsPage/riendsListDrawer";
 import { USERS_RT } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
 import { NewImageModalWindow } from "../UserPage/PostList/AddNewPost/NewImageModalWindow";
 import { EditorNewPost } from "../UserPage/PostList/AddNewPost/EditorNewPost";
-
-// const makeDrawerInner = (drawerListItems: any): ReactNode => {
-//   return drawerListItems.map(({ mode, label, icon, ...modeAction }) => {
-//     let button = (
-//       <ListItemButton
-//         onClick={mode === "button" ? modeAction.handleClick : undefined}
-//         key={label}
-//         sx={{
-//           minHeight: 48,
-//           justifyContent: "initial",
-//           px: 2.5,
-//           boxSizing: "border-box",
-//           overflowX: "hidden",
-//           whiteSpace: "nowrap",
-//         }}
-//       >
-//         <ListItemIcon
-//           sx={{
-//             minWidth: 0,
-//             mr: 3,
-//             justifyContent: "center",
-//           }}
-//         >
-//           {icon}
-//         </ListItemIcon>
-//         <ListItemText
-//           sx={{
-//             display: { xs: "block", sm: "none", md: "block" },
-//             transition: (theme) =>
-//               theme.transitions.create("display", {
-//                 easing: theme.transitions.easing.easeIn,
-//                 duration: theme.transitions.duration.leavingScreen,
-//               }),
-//           }}
-//           primary={label}
-//         />
-//       </ListItemButton>
-//     );
-//     if (mode === "link") {
-//       return (
-//         <Link
-//           key={label}
-//           to={modeAction.href}
-//           style={{ textDecoration: "none", color: "inherit" }}
-//         >
-//           {button}
-//         </Link>
-//       );
-//     }
-//     if (mode === "button") {
-//       return button;
-//     }
-//   });
-// };
+import { MobileDrawer } from "../Drawer/MobileDrawer";
 
 const makeDrawerInner = (drawerListItems: any): ReactNode => {
   return drawerListItems.map(({ mode, label, icon, ...modeAction }) => {
@@ -82,28 +28,26 @@ const makeDrawerInner = (drawerListItems: any): ReactNode => {
         onClick={mode === "button" ? modeAction.handleClick : undefined}
         key={label}
         sx={{
-          // minHeight: {xs:'30px', sm:'46px'},
-          // justifyContent: { xs: 'start', sm: 'initial' },
-          // px: {xs:0, sm:2.5},
-          // boxSizing: "border-box",
-          // overflowX: "hidden",
-          // whiteSpace: "nowrap",
-          // border: '1px solid red',
-          // display:'inline-block'
+          minHeight: 48,
+          justifyContent: "initial",
+          px: 2.5,
+          boxSizing: "border-box",
+          overflowX: "hidden",
+          whiteSpace: "nowrap",
         }}
       >
         <ListItemIcon
           sx={{
-            // minWidth: 0,
-            // mr: {xs:0,sm:3},
-            // justifyContent: "center",
+            minWidth: 0,
+            mr: 3,
+            justifyContent: "center",
           }}
         >
           {icon}
         </ListItemIcon>
         <ListItemText
           sx={{
-            display: { xs: "none", md: "block" },
+            display: { xs: "block", sm: "none", md: "block" },
             transition: (theme) =>
               theme.transitions.create("display", {
                 easing: theme.transitions.easing.easeIn,
@@ -113,6 +57,32 @@ const makeDrawerInner = (drawerListItems: any): ReactNode => {
           primary={label}
         />
       </ListItemButton>
+    );
+    if (mode === "link") {
+      return (
+        <Link
+          key={label}
+          to={modeAction.href}
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
+          {button}
+        </Link>
+      );
+    }
+    if (mode === "button") {
+      return button;
+    }
+  });
+};
+const makeMobileDrawerInner = (drawerListItems: any): ReactNode => {
+  return drawerListItems.map(({ mode, label, icon, ...modeAction }) => {
+    let button = (
+        <IconButton
+          onClick={mode === "button" ? modeAction.handleClick : undefined}
+          key={label}
+        >
+          {icon}
+        </IconButton>
     );
     if (mode === "link") {
       return (
@@ -145,16 +115,12 @@ const setIsUserOnline = async (userId: string, isOnline: boolean) => {
 function HomePage() {
   let user = useAuth();
 
-  const [isOpenMobileDrawer, setIsOpenMobileDrawer] = useState(false);
   const [showMessageDrawer, setShowMessageDrawer] = useState(false);
   const [showFriendsDrawer, setShowFriendsDrawer] = useState(false);
   const [showAddNewPostModel, setShowAddNewPostModel] = useState(false);
 
   let [mode, toogleThemeMode] = useTheme();
 
-  function toogleDrawerOpen() {
-    setIsOpenMobileDrawer((isOpen) => !isOpen);
-  }
   function toogleShowAddNewPostModel() {
     setShowAddNewPostModel((isOpen) => !isOpen);
   }
@@ -205,13 +171,10 @@ function HomePage() {
   ];
 
   const drawerInner = makeDrawerInner(drawerListItems);
-
+  const mobileDrawerInner = makeMobileDrawerInner(drawerListItems);
   return (
-    <Box sx={{ display: "flex", flexDirection:{xs:'column', sm:'row'} }}>
-      {/* <MobileAppBar toogleDrawerOpen={toogleDrawerOpen} /> */}
+    <Box sx={{ display: "flex", flexDirection:{xs:'column',sm:'row'}, maxHeight:'100vh', height:'100vh', maxWidth:'100vw', overflow:'hidden' }}>
       <AppDrawer
-        open={isOpenMobileDrawer}
-        onClose={toogleDrawerOpen}
         drawerInner={drawerInner}
         mode={mode}
         toogleThemeMode={toogleThemeMode}
@@ -229,7 +192,8 @@ function HomePage() {
       <Box
         component="main"
         sx={{
-          flexGrow: 1,
+          flex: 2,
+          overflowY:'scroll'
         }}
       >
         <NewImageModalWindow
@@ -240,6 +204,13 @@ function HomePage() {
         </NewImageModalWindow>
         <Outlet />
       </Box>
+        <MobileDrawer
+          signOut={signOutApp}
+          mode={mode}
+          toogleThemeMode={toogleThemeMode}
+          drawerInner={mobileDrawerInner}
+          userInfo={user}
+        />
     </Box>
   );
 }

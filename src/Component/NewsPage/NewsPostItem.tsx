@@ -33,7 +33,7 @@ function NewsPostItem({ imageURL, ownerPostId, showComments, id, authUserId }) {
           display: "flex",
           flexDirection: "column",
           gap: "10px",
-          backgroundColor: "rgba(0,0,0,0.5)",
+          backgroundColor: "rgba(255,255,255,0.5)",
           borderRadius: "10px",
           width: "100%",
           height: { sx: "200px", sm: "400px", md: "700px" },
@@ -78,7 +78,7 @@ function NewsPostItem({ imageURL, ownerPostId, showComments, id, authUserId }) {
         display: "flex",
         flexDirection: "column",
         gap: "10px",
-        backgroundColor: "rgba(0,0,0,0.5)",
+        backgroundColor: "customeBackground.main",
         borderRadius: "10px",
         width: "100%",
         height: isImageLoaded

@@ -1,5 +1,5 @@
 import React, { ReactNode, createContext, useContext, useMemo } from "react";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { createTheme, Palette, PaletteOptions, ThemeOptions, ThemeProvider } from "@mui/material/styles";
 import { Button, Container, Box } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 
@@ -9,11 +9,18 @@ interface ThemeProps {
   children: ReactNode;
 }
 
+interface CustomePalette extends PaletteOptions{
+  customeBackground: {
+    main:string
+  }
+}
+
 type ModeTypeToggle = [PaletteMode, () => void];
 
 const ModeToogleContext = createContext<ModeTypeToggle>(null);
 
 function Theme({ children }: ThemeProps) {
+
   const [mode, setMode] = React.useState<PaletteMode>(
     (localStorage.getItem("theme") as PaletteMode) || "light"
   );
@@ -22,6 +29,9 @@ function Theme({ children }: ThemeProps) {
     return createTheme({
       palette: {
         mode,
+        customeBackground: {
+          main: mode === 'light' ? "rgba(255,255,255,0.2)": "rgba(0,0,0,0.5)",
+        },
       },
       components: {
         MuiFormHelperText: {
@@ -43,7 +53,7 @@ function Theme({ children }: ThemeProps) {
               "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
                 backgroundColor: "#000000",
                 width: "1px",
-                height:"3px"
+                height: "3px",
               },
               "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
                 backgroundColor: "#6b6b6b",
@@ -56,7 +66,7 @@ function Theme({ children }: ThemeProps) {
           },
         },
       },
-    });
+    } as ThemeOptions & {palette:CustomePalette} );
   }, [mode]);
 
   const toogleThemeMode = () => {

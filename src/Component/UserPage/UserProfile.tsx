@@ -51,7 +51,7 @@ const UserProfile = () => {
     <>
       <Box
         sx={{
-          backgroundColor: "rgba(0,0,0,0.2)",
+          backgroundColor: "customeBackground.main",
           mx: "auto",
           px: 1,
           minHeight: "100vh",
