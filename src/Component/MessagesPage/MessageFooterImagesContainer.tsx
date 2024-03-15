@@ -15,12 +15,12 @@ function MessageFooterImagesContainer({
     <List
       sx={{
         display: "flex",
-        justifyContent: "center",
+        justifyContent: "end",
         position: "absolute",
         borderRadius: "10px",
         right: "20px",
         bottom: "80px",
-        width: "300px",
+        maxWidth: "300px",
         height: "70px",
         overflowX: "scroll",
         background: "rgba(0,0,0,0.3)",

@@ -67,6 +67,7 @@ function CommentItem({ data, authUserId, removeComment }: ICommentItem) {
         <UserAvatar
           photoURL={commmentAuthor.photoURL}
           userName={commmentAuthor.displayName}
+          style={{width:'25px',height:'25px'}}
         />
       </Link>
       <Box

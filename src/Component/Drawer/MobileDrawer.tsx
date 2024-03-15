@@ -37,7 +37,7 @@ function MobileDrawer({
       sx={{
         display: { xs: "flex", sm: "none" },
         justifyContent: "center",
-        backgroundColor: "background.paper",
+        backgroundColor: "background.drawer",
         width: "100%",
         mt: "auto",
         flexShrink: 0,
@@ -69,7 +69,7 @@ function MobileDrawer({
             height: "40px",
             boxSizing: "border-box",
             borderRadius: "50%",
-            // backgroundColor: "text.secondary",
+
           }}
         >
           <Backdrop open={openSpeedDial} />

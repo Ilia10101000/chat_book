@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import TextField from "@mui/material/TextField";
 import CircularProgress from "@mui/material/CircularProgress";
 import {
@@ -27,7 +27,8 @@ const style: SxProps<Theme> = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: "250px",
-  backgroundColor: "#000",
+  backgroundColor: (theme) =>
+    theme.palette.mode === "light" ? "#fff" : "#000",
   display: "flex",
   flexDirection: "column",
 };
@@ -38,6 +39,17 @@ const SearchUsersDialog = ({ open, closeModal, handleSubmit }) => {
   const [defSearchQuery] = useDebounce(searchQuery, 1000);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const [searchListHeight, setSearchListHeight] = useState(0);
+
+  // const listRef = useRef < HTMLUListElement>(null);
+  const listRef = useRef < HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (listRef.current) {
+      setSearchListHeight(listRef.current.clientHeight);
+    }
+  }, [options.length]);
 
   const fetchData = async (searchQuery: string) => {
     setLoading(true);
@@ -92,16 +104,17 @@ const SearchUsersDialog = ({ open, closeModal, handleSubmit }) => {
           onClick={closeModal}
           sx={{ position: "absolute", right: "-30px", top: "-30px" }}
         >
-          <CloseIcon />
+          <CloseIcon sx={{ color: "#fff" }} />
         </IconButton>
         <TextField
+          ref={listRef}
           sx={{ width: "100%" }}
-          label={"Choose person"}
+          placeholder={"Choose person"}
           value={searchQuery}
           onChange={handleChange}
           InputProps={{
             endAdornment: loading ? (
-              <CircularProgress color="success" size={20} />
+              <CircularProgress color="error" size={20} />
             ) : selectedUser && searchQuery ? (
               <IconButton onClick={addUserTag}>
                 <SendIcon sx={{ fontSize: "20px" }} />
@@ -113,6 +126,11 @@ const SearchUsersDialog = ({ open, closeModal, handleSubmit }) => {
           <List
             sx={{
               width: "100%",
+              position: "absolute",
+              left: 0,
+              top: `${searchListHeight}px`,
+              backgroundColor: (theme) =>
+                theme.palette.mode === "light" ? "#fff" : "#000",
             }}
           >
             {options?.map((option) => (
@@ -140,6 +158,22 @@ const SearchUsersDialog = ({ open, closeModal, handleSubmit }) => {
               </ListItemButton>
             ))}
           </List>
+        )}
+        {!loading && !options.length && defSearchQuery && (
+          <Box
+            sx={{
+              width: "100%",
+              p: 2,
+              textAlign: "center",
+              position: "absolute",
+              left: 0,
+              top: `${searchListHeight}px`,
+              backgroundColor: (theme) =>
+                theme.palette.mode === "light" ? "#fff" : "#000",
+            }}
+          >
+            No matches
+          </Box>
         )}
       </Box>
     </Modal>

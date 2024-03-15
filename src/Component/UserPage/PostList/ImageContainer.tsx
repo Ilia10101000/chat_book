@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import { PersonalsMarkedTags } from "./PersonalsMarkedTags";
 import {
   DocumentData,
@@ -47,6 +47,7 @@ function ImageContainer({
   const [markedPersons, loadingMP, errorMP] = useCollectionData(
     collection(db, `${USERS_D}/${userId}/${POSTS}/${post?.id}/${MARKED_PERSONS}`)
   );
+  const [containerHeight, setContainerHeight] = useState(0)
 
   const toogleMarksVisible = () => {
     setShowMarkedTags((value) => !value);
@@ -162,8 +163,17 @@ function ImageContainer({
       console.log(error.message);
     }
   };
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (containerRef.current) {
+      setContainerHeight(containerRef.current.clientWidth);
+    }
+  }, []);
+  
   return (
-    <Box sx={{ position: "relative", width: "100%", padding: "0px", height: isLoadedImage? null:{sx:'200px', sm:'400px', md:'700px'} }}>
+    <Box ref={containerRef} sx={{ position: "relative", width: "100%", padding: "0px" }}>
       <img
         onClick={isOwner && showMarkedTags ? setPersonalTagCoords : null}
         onLoad={() => setIsLoadedImage(true)}
@@ -171,11 +181,12 @@ function ImageContainer({
         style={{
           display: isLoadedImage?'block':'none',
           width: "100%",
+          borderRadius:'10px',
           ...(isOwner && showMarkedTags && { cursor: "pointer" }),
         }}
         alt={post?.id}
       />
-      <Skeleton variant="rounded" sx={{width:'100%', height:'100%', display: isLoadedImage?'none':'block'}}/>
+      <Skeleton variant="rounded" sx={{width:`${containerHeight}px`, height:`${containerHeight}px`, display: isLoadedImage?'none':'block'}}/>
 
       <PersonalsMarkedTags
         markedPersons={markedPersons}

@@ -16,7 +16,7 @@ export const ChoosePhotoField = forwardRef(
           sx={{
             width: "100%",
             minHeight: "150px",
-            border: isActive ? "1px solid #fff" : "1px dotted #fff",
+            border: isActive ? "1px solid #8c8c8c" : "1px dashed #8c8c8c",
             borderRadius: "10px",
             display: "flex",
             justifyContent: "center",

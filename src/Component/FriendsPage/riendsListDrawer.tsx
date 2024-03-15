@@ -27,6 +27,7 @@ function FriendsListDrawer({ open, onClose }) {
       onClose={onClose}
       variant="temporary"
       sx={{
+        backgroundColor:'background.paper',
         width: "250px",
         "& .MuiDrawer-paper": {
           width: "250px",

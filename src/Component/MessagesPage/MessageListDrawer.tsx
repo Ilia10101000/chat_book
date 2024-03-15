@@ -1,4 +1,4 @@
-import React, { useState, ReactNode } from "react";
+import React, { useState, ReactNode, useEffect } from "react";
 import {
   Box,
   Divider,
@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { useAuth } from "../../hooks/useAuth";
-import { collection } from "firebase/firestore";
+import { collection, query, where, limit, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/auth";
 import { MessageListItemLink } from "./MessageListItemLink";
 import DrawerAppHeader from "../Drawer/DrawerAppHeader";
@@ -18,21 +18,33 @@ import {
   USERS_D,
   EXISTING_CHATS,
 } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
+import { useDebounce } from "use-debounce";
+import { useNavigate } from "react-router-dom";
+import { User } from "firebase/auth";
+import { UserCard } from "../FriendsPage/UserCard.tsx";
+
+interface IUser {
+  searchQuery: string;
+  displayName: string;
+  email: string;
+  photoURL: string;
+  id: string;
+}
 
 function MessageListDrawer({ open, onClose }) {
-  const user = useAuth();
+  const authUser = useAuth();
 
-  const [existingChatsList, loading, error] = useCollectionData(
-    collection(db, `${USERS_D}/${user.uid}/${EXISTING_CHATS}`)
+  const [existingChatsList, loadingECL, errorECL] = useCollectionData(
+    collection(db, `${USERS_D}/${authUser.uid}/${EXISTING_CHATS}`)
   );
-  const [value, setValue] = useState("");
 
-  let result: ReactNode;
+  let result: React.ReactNode | null;
 
-  if (loading) {
-    result = <CircularProgress />;
-  } else if (error) {
-    result = <div>Some error occured</div>;
+  if (loadingECL) {
+    result = <CircularProgress sx={{mx:'auto'}} />;
+
+  } else if (!existingChatsList?.length) {
+    result = <div style={{textAlign:'center'}}>No existing chats...</div>;
   } else {
     result = existingChatsList?.map(({ companion, chatId }, index) => (
       <MessageListItemLink
@@ -50,21 +62,13 @@ function MessageListDrawer({ open, onClose }) {
       onClose={onClose}
       variant="temporary"
       sx={{
+        backgroundColor: "background.paper",
         width: "250px",
         "& .MuiDrawer-paper": {
           width: "250px",
         },
       }}
     >
-      <DrawerAppHeader>
-        <Typography variant="h6" sx={{ mx: "auto" }}>
-          <b>Message</b>
-        </Typography>
-      </DrawerAppHeader>
-      <Divider />
-      <Box sx={{ my: 3, textAlign: "center", whiteSpace: "collapse" }}>
-        <TextField value={value} onChange={(e) => setValue(e.target.value)} />
-      </Box>
       <List>{result}</List>
     </Drawer>
   );

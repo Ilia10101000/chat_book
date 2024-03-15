@@ -20,10 +20,9 @@ const MessageFooter = ({ sendMessage, sendImages }: IMessageFooter) => {
   const [message, setMessage] = useState("");
   const [isOpenEmoji, setIsOpenEmoji] = useState(false);
   const [imageList, setImageList] = useState<File[] | null>(null);
-  const [mode] = useTheme();
+  const { mode } = useTheme();
 
-  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSendMessage = async () => {
     if (message) {
       sendMessage(message);
       setMessage("");
@@ -56,6 +55,12 @@ const MessageFooter = ({ sendMessage, sendImages }: IMessageFooter) => {
     if (e.target.files) {
       const imageListArray = Array.from(e.target.files);
       setImageList(imageListArray);
+    }
+  };
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      handleSendMessage();
     }
   };
   const deleteSelectedImage = (imageName: string) => {
@@ -91,7 +96,7 @@ const MessageFooter = ({ sendMessage, sendImages }: IMessageFooter) => {
           imageList={imageList}
         />
       )}
-      <form style={{ position: "relative" }} onSubmit={handleFormSubmit}>
+      <div style={{ position: "relative" }}>
         <InputBase
           id="filesPhoto"
           type="file"
@@ -103,6 +108,7 @@ const MessageFooter = ({ sendMessage, sendImages }: IMessageFooter) => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           multiline
+          onKeyDown={handleKeyDown}
           maxRows={4}
           sx={{
             width: "100%",
@@ -119,25 +125,26 @@ const MessageFooter = ({ sendMessage, sendImages }: IMessageFooter) => {
                 </IconButton>
               </Box>
             ),
-            endAdornment: (message || imageList) ? (
-              <IconButton type="submit">
-                <SendIcon />
-              </IconButton>
-            ) : (
-              <Box sx={{ display: "flex", gap: { sx: "0px", sm: 1 } }}>
-                <label style={{ padding: 0, margin: 0 }} htmlFor="filesPhoto">
-                  <IconButton component="span">
-                    <PanoramaOutlinedIcon />
-                  </IconButton>
-                </label>
-                <IconButton onClick={sendHeardEmoji}>
-                  <FavoriteBorderOutlinedIcon />
+            endAdornment:
+              message || imageList ? (
+                <IconButton onClick={handleSendMessage}>
+                  <SendIcon />
                 </IconButton>
-              </Box>
-            ),
+              ) : (
+                <Box sx={{ display: "flex", gap: { sx: "0px", sm: 1 } }}>
+                  <label style={{ padding: 0, margin: 0 }} htmlFor="filesPhoto">
+                    <IconButton component="span">
+                      <PanoramaOutlinedIcon />
+                    </IconButton>
+                  </label>
+                  <IconButton onClick={sendHeardEmoji}>
+                    <FavoriteBorderOutlinedIcon />
+                  </IconButton>
+                </Box>
+              ),
           }}
         />
-      </form>
+      </div>
     </Paper>
   );
 };

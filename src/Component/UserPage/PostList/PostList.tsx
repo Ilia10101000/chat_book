@@ -6,6 +6,8 @@ import Tabs from "@mui/material/Tabs";
 import { CustomTabPanel } from "../../CustomeElement/CustomeTabPanel";
 import { OwnPosts } from "./PostsCollection";
 import { ThirdPartyPosts } from "./ThirdPartyPosts";
+import BurstModeIcon from "@mui/icons-material/BurstMode";
+import HowToRegIcon from "@mui/icons-material/HowToReg";
 
 interface IPosList {
   postsList: DocumentData[];
@@ -24,8 +26,8 @@ function PostList({ postsList, thirdPartyPostTags }: IPosList) {
     <Box sx={{ maxWidth: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={tabNumber} onChange={handleChange}>
-          <Tab label="Posts" />
-          <Tab label="Marks" />
+          <Tab icon={<BurstModeIcon />} label="Posts" />
+          <Tab icon={<HowToRegIcon />} label="Marks" />
         </Tabs>
       </Box>
       <CustomTabPanel

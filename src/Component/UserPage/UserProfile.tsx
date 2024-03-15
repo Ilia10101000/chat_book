@@ -1,6 +1,6 @@
 import React from "react";
-import { Link, Outlet, useParams } from "react-router-dom";
-import { Box } from "@mui/material";
+import { Outlet, useParams } from "react-router-dom";
+import { Box, CircularProgress } from "@mui/material";
 import { useAuth } from "../../hooks/useAuth";
 import { collection, doc, orderBy, query } from "firebase/firestore";
 import { db } from "../../firebase/auth";
@@ -44,7 +44,7 @@ const UserProfile = () => {
   );
 
   if (loadingU || loadingP || loadingF || loadingTPPT) {
-    return <div>Loading...</div>;
+    return <CircularProgress sx={{position:'relative',top:'50%',left:'50%',transform:'translate(-50%,-50%)'}} />;
   }
 
   return (
@@ -54,10 +54,11 @@ const UserProfile = () => {
           backgroundColor: "customeBackground.main",
           mx: "auto",
           px: 1,
-          minHeight: "100vh",
+          height: "100%",
           display: "flex",
           flexDirection: "column",
-          width: "600px",
+          width: "100%",
+          maxWidth:'800px'
         }}
       >
         <PersonalDisplayData

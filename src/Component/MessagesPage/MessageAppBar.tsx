@@ -31,7 +31,7 @@ function MessageAppBar({ companion }) {
       <Toolbar>
         <ListItem sx={{ p: 0 }}>
           <ListItemAvatar sx={{ mr: 2 }}>
-            <Link to={`/user/${companion.id}`}>
+            <Link to={`/u/${companion.id}`}>
               <IconButton sx={{ p: 0 }}>
                 <Avatar
                   alt={companion.displayName || companion.email}

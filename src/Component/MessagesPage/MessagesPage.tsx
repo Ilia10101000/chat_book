@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Navigate, useLocation, useParams } from "react-router-dom";
 import {
   collection,
@@ -7,6 +7,9 @@ import {
   updateDoc,
   doc,
   orderBy,
+  deleteDoc,
+  serverTimestamp,
+  setDoc
 } from "firebase/firestore";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { MessageFooter } from "./MessageFooter";
@@ -15,7 +18,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import { useAuth } from "../../hooks/useAuth";
 import { db } from "../../firebase/auth";
-import { serverTimestamp } from "firebase/firestore";
 import { MessageAppBar } from "./MessageAppBar";
 import { ref, storage } from "../../firebase/auth";
 import { uploadString, getDownloadURL } from "firebase/storage";
@@ -63,8 +65,9 @@ function MessagesPage() {
       orderBy("timestamp")
     )
   );
+
   if (!companion) {
-    return <Navigate to="/" />;
+    return <Navigate to={`/u/${authUser.uid}`} />;
   }
   if (loading) {
     return (
@@ -110,18 +113,20 @@ function MessagesPage() {
             );
             await uploadString(imageRef, imageDataURL.data, "data_url");
             const url = await getDownloadURL(imageRef);
-            return url;
+            return { url, imageId: imageDataURL.id };
           }
         )
       );
       await Promise.all(
-        imageURLS.map(async (url) => {
-          await addDoc(collection(db, `${CHATS_D}/${chatId}/${MESSAGES}`), {
+        imageURLS.map(async ({ url, imageId }) => {
+          await setDoc(doc(db, `${CHATS_D}/${chatId}/${MESSAGES}`, imageId), {
+            id:imageId,
             senderId: authUser.uid,
             type: "image",
             content: url,
             timestamp: serverTimestamp(),
             isReaded: false,
+            imageId
           });
         })
       );
@@ -130,7 +135,9 @@ function MessagesPage() {
     }
   };
   const sendMessage = async (message: string) => {
-    await addDoc(collection(db, `${CHATS_D}/${chatId}/${MESSAGES}`), {
+    const messageId = Date.now() + authUser.uid;
+    await setDoc(doc(db, `${CHATS_D}/${chatId}/${MESSAGES}`, messageId), {
+      id:messageId,
       senderId: authUser.uid,
       type: "text",
       content: message,
@@ -142,16 +149,20 @@ function MessagesPage() {
     });
   };
 
+
+
   return (
     <Box
       sx={{
-        height: "100vh",
+        height: "100%",
+        maxHeight: "100vh",
         display: "flex",
         flexDirection: "column",
       }}
     >
       <MessageAppBar companion={companion} />
       <MessageList
+        chatId={chatId}
         messages={messagesList}
         isEmpty={messagesList.length === 0}
         user={authUser}

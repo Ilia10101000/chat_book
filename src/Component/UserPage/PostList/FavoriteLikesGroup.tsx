@@ -9,22 +9,24 @@ import {
   ListItemAvatar,
   ListItemButton,
   ListItemText,
+  SxProps,
 } from "@mui/material";
 import { UserAvatar } from "../../Drawer/DrawerUserAvatar";
 import { Link } from "react-router-dom";
 
 function FavoriteLikesGroupItem({
   userId,
-  expanded,
+  expanded,style
 }: {
   userId: string;
-  expanded?: boolean;
+    expanded?: boolean;
+  style?:SxProps
 }) {
   const [user, loading, error] = useDocumentData(
     doc(db, `${USERS_D}/${userId}`)
   );
   if (loading) {
-    return <Avatar />;
+    return <Avatar sx={style} />;
   }
   if (expanded) {
     return (
@@ -38,15 +40,24 @@ function FavoriteLikesGroupItem({
               <UserAvatar
                 userName={user.displayName}
                 photoURL={user.photoURL}
+                style={style}
               />
             </ListItemAvatar>
-            <ListItemText primaryTypographyProps={{ maxWidth: '260px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden'}} primary={user.displayName} />
+            <ListItemText
+              primaryTypographyProps={{
+                maxWidth: "260px",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+                overflow: "hidden",
+              }}
+              primary={user.displayName}
+            />
           </ListItem>
         </ListItemButton>
       </Link>
     );
   }
-  return <UserAvatar userName={user.displayName} photoURL={user.photoURL} />;
+  return <UserAvatar userName={user.displayName} photoURL={user.photoURL} style={style} />;
 }
 
 export { FavoriteLikesGroupItem };

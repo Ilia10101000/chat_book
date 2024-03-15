@@ -101,7 +101,6 @@ const FriendsList = ({ authUser, onClose }) => {
           value={usersSearchValue}
           label={"Find friends"}
           onChange={handleChangeUsersSearchValue}
-          autoFocus
           autoComplete="off"
         />
       </Box>

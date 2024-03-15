@@ -1,15 +1,41 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "@mui/material/Modal";
 import CloseIcon from "@mui/icons-material/Close";
-import { Alert, CircularProgress, Divider, List, SxProps, Theme, Typography } from "@mui/material";
-import { Box, IconButton } from "@mui/material";
+import {
+  Alert,
+  CircularProgress,
+  Divider,
+  List,
+  SxProps,
+  Theme,
+  Typography,
+  Box,
+  IconButton,
+} from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { AddPostComment } from "./AddNewPost/AddPostComment";
 import { PostDialogConfig } from "./PostDialogConfig";
-import { setDoc, doc, serverTimestamp, query, collection, orderBy, deleteDoc, updateDoc } from "firebase/firestore";
-import { db,ref,storage } from "../../../firebase/auth";
-import { COMMENTS, POSTS, USERS_D} from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
+import {
+  setDoc,
+  doc,
+  serverTimestamp,
+  query,
+  collection,
+  orderBy,
+  deleteDoc,
+  updateDoc,
+} from "firebase/firestore";
+import { db, ref, storage } from "../../../firebase/auth";
+import {
+  COMMENTS,
+  POSTS,
+  USERS_D,
+} from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
 import { useAuth } from "../../../hooks/useAuth";
-import { useCollectionData, useDocumentData } from "react-firebase-hooks/firestore";
+import {
+  useCollectionData,
+  useDocumentData,
+} from "react-firebase-hooks/firestore";
 import { CommentItem } from "./CommentItem";
 import { UserAvatar } from "../../Drawer/DrawerUserAvatar";
 import { LikesList } from "./LikesList";
@@ -23,30 +49,23 @@ const style: SxProps<Theme> = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: { xs: "300px", sm: "550px", md: "auto" },
+  width: "100%",
   maxWidth: "1200px",
-  backgroundColor: "#000",
-  borderRadius: "10px",
-  boxShadow: 24,
-  p: 1.5,
+  backgroundColor: theme => theme.palette.mode === 'light' ? '#fff':'#000',
+  p: { xs: 1, sm: 1.5 },
   display: "flex",
-  flexDirection: { xs: "column", md: "row" },
-  maxHeight:'90vh',
+  flexDirection: { xs: "column", sm: "row" },
+  maxHeight: "92vh",
+  overflow: "hidden",
 };
 
 const generateUniqueFileName = (userId: string) => {
   return `${Date.now()}-${userId}-${Math.floor(Math.random() * 10000) + 1}`;
 };
 
-
 function PostModalWindow() {
-
   const { postId, ownerPostId } = useParams();
-  const navigate = useNavigate();
-
-  const closeModal = () => {
-    navigate(-1)
-  }
+  const isScreenBelow700px = useMediaQuery("(max-height: 700px)");
 
   const [user, loadingU, errorU] = useDocumentData(
     doc(db, `${USERS_D}/${ownerPostId}`)
@@ -55,44 +74,48 @@ function PostModalWindow() {
     doc(db, `${USERS_D}/${ownerPostId}/${POSTS}/${postId}`)
   );
 
-
   const authUser = useAuth();
 
-  const [error, setError] = useState('');
-  
+  const [error, setError] = useState("");
+
   const [commentsList, loadingCL, errorCL] = useCollectionData(
     query(
       collection(db, `${USERS_D}/${user?.id}/${POSTS}/${post?.id}/${COMMENTS}`),
-      orderBy("timestamp", 'desc')
-      )
-      );
-      
-      useEffect(() => {
-        if (error) {
-          setTimeout(() => {
-            setError('')
-          },22000)
-        }
-      },[error])
-      
-      
-        if (loadingU || loadingP) {
-          return (
-            <Box sx={{...style,alignItems:'center'}}>
-              <CircularProgress/>
-            </Box>
-          )
-        }
+      orderBy("timestamp", "desc")
+    )
+  );
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (error) {
+      setTimeout(() => {
+        setError("");
+      }, 22000);
+    }
+  }, [error]);
+
+  if (loadingU || loadingP) {
+    return (
+      <Box sx={{ ...style, alignItems: "center" }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   const isOwnerPost = authUser.uid === user?.id;
+  const closeModal = () => {
+    navigate(-1);
+  };
 
   const addComment = async (comment: string) => {
-
-    
     const uniqueCommentsId = generateUniqueFileName(user?.id);
     try {
       await setDoc(
-        doc(db, `${USERS_D}/${user?.id}/${POSTS}/${post?.id}/${COMMENTS}`, uniqueCommentsId),
+        doc(
+          db,
+          `${USERS_D}/${user?.id}/${POSTS}/${post?.id}/${COMMENTS}`,
+          uniqueCommentsId
+        ),
         {
           id: uniqueCommentsId,
           author: authUser.uid,
@@ -102,43 +125,43 @@ function PostModalWindow() {
         }
       );
     } catch (error) {
-      setError(error.message)
+      setError(error.message);
     }
-  }
+  };
 
-  const removeComment = async (commentId:string) => {
+  const removeComment = async (commentId: string) => {
     try {
       await deleteDoc(
-        doc(db, `${USERS_D}/${user?.id}/${POSTS}/${post?.id}/${COMMENTS}`,commentId)
+        doc(
+          db,
+          `${USERS_D}/${user?.id}/${POSTS}/${post?.id}/${COMMENTS}`,
+          commentId
+        )
       );
-      
     } catch (error) {
-      console.log(error.message)
+      console.log(error.message);
     }
-  }
+  };
 
   const deletePost = async () => {
     try {
-      await deleteDoc(
-        doc(db, `${USERS_D}/${user?.id}/${POSTS}/${post?.id}`)
-      );
+      await deleteDoc(doc(db, `${USERS_D}/${user?.id}/${POSTS}/${post?.id}`));
       await deleteObject(ref(storage, `${POSTS}/${user?.id}/${post?.id}`));
-      closeModal()
+      closeModal();
     } catch (error) {
-      console.log(error.message)
+      console.log(error.message);
     }
-  }
+  };
 
-  const isShownComments = async (isShown:boolean) => {
+  const isShownComments = async (isShown: boolean) => {
     try {
-      const postRef = doc(db, `${USERS_D}/${user?.id}/${POSTS}/${post?.id}`)
+      const postRef = doc(db, `${USERS_D}/${user?.id}/${POSTS}/${post?.id}`);
       await updateDoc(postRef, { showComments: isShown });
       closeModal();
     } catch (error) {
-      console.log(error.message)
+      console.log(error.message);
     }
-  }
-
+  };
 
   return (
     <Modal open={true}>
@@ -150,9 +173,9 @@ function PostModalWindow() {
         )}
         <IconButton
           onClick={closeModal}
-          sx={{ position: "absolute", right: "10px", top: "10px" }}
+          sx={{ position: "absolute", right: "5px", top: "2px", zIndex: 2000 }}
         >
-          <CloseIcon />
+          <CloseIcon sx={{ fontSize:"30px", color:'#fff' }} />
         </IconButton>
         <Box sx={style}>
           <Box
@@ -160,32 +183,46 @@ function PostModalWindow() {
               flexGrow: 1,
               display: "flex",
               alignItems: "center",
+              px: isScreenBelow700px ? 4 : 0,
             }}
           >
-            <ImageContainer authUserId={authUser.uid} post={post} userId={user?.id} isOwner={isOwnerPost} />
+            <ImageContainer
+              authUserId={authUser.uid}
+              post={post}
+              userId={user?.id}
+              isOwner={isOwnerPost}
+            />
           </Box>
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
-              p: { xs: 1, sm: 2 },
-              width: { xs: "300px", sm: "550px", md: "400px" },
-              maxHeiht: "100%",
-              overflow: "scroll",
+              maxHeight: "100%",
+              p: { xs: "5px 0px 0px 0px", sm: 2 },
+              maxWidth: { xs: "100%", sm: "300px", md: "400px" },
+              overflow: "hidden",
             }}
           >
             <Box>
-              <Box sx={{ display: "flex", gap: "10px", mb: 2 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: { xs: 0, sm: 1 },
+                  mb: { xs: 0.5, sm: 2 },
+                }}
+              >
                 <UserAvatar
                   photoURL={user?.photoURL}
                   userName={user?.displayName}
                 />
                 <Typography
                   sx={{
+                    fontSize: { xs: "14px" },
                     whiteSpace: "wrap",
                     wordBreak: "break-word",
-                    maxHeight: { xs: "300px" },
+                    maxHeight: { xs: "75px", md: "300px" },
                     overflowY: "scroll",
+                    ml: { xs: 1, sm: 0 },
                   }}
                 >
                   {post?.text}
@@ -212,7 +249,6 @@ function PostModalWindow() {
                 <List
                   sx={{
                     flexGrow: 1,
-                    maxHeight: "100%",
                     overflowY: "scroll",
                     p: { xs: "8px 16px 8px 0px", md: "8px 16px 8px 8px" },
                   }}

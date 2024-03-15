@@ -98,9 +98,9 @@ function NewImageModalWindow({ open, onClose, children }) {
         >
           <IconButton
             onClick={onCloseWindow}
-            sx={{ position: "absolute", right: "-30px", top: "-30px" }}
+            sx={{ position: "absolute", right: "-5px", top: "-40px" }}
           >
-            <CloseIcon />
+            <CloseIcon sx={{ color: "#fff" }} />
           </IconButton>
           {postsImage ? (
             children

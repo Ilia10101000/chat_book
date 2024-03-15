@@ -119,7 +119,7 @@ function HomePage() {
   const [showFriendsDrawer, setShowFriendsDrawer] = useState(false);
   const [showAddNewPostModel, setShowAddNewPostModel] = useState(false);
 
-  let [mode, toogleThemeMode] = useTheme();
+  let { mode, toogleThemeMode } = useTheme();
 
   function toogleShowAddNewPostModel() {
     setShowAddNewPostModel((isOpen) => !isOpen);
@@ -173,7 +173,15 @@ function HomePage() {
   const drawerInner = makeDrawerInner(drawerListItems);
   const mobileDrawerInner = makeMobileDrawerInner(drawerListItems);
   return (
-    <Box sx={{ display: "flex", flexDirection:{xs:'column',sm:'row'}, maxHeight:'100vh', height:'100vh', maxWidth:'100vw', overflow:'hidden' }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: { xs: "column", sm: "row" },
+        height: "100%",
+        width: "100%",
+        overflow: "hidden",
+      }}
+    >
       <AppDrawer
         drawerInner={drawerInner}
         mode={mode}
@@ -192,8 +200,13 @@ function HomePage() {
       <Box
         component="main"
         sx={{
-          flex: 2,
-          overflowY:'scroll'
+          flexGrow: 1,
+          overflowY: "scroll",
+          transition: (theme) =>
+            theme.transitions.create("width", {
+              easing: theme.transitions.easing.easeIn,
+              duration: theme.transitions.duration.leavingScreen,
+            }),
         }}
       >
         <NewImageModalWindow
@@ -204,13 +217,13 @@ function HomePage() {
         </NewImageModalWindow>
         <Outlet />
       </Box>
-        <MobileDrawer
-          signOut={signOutApp}
-          mode={mode}
-          toogleThemeMode={toogleThemeMode}
-          drawerInner={mobileDrawerInner}
-          userInfo={user}
-        />
+      <MobileDrawer
+        signOut={signOutApp}
+        mode={mode}
+        toogleThemeMode={toogleThemeMode}
+        drawerInner={mobileDrawerInner}
+        userInfo={user}
+      />
     </Box>
   );
 }

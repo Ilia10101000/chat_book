@@ -15,11 +15,13 @@ import {
   Typography,
   List,
   Skeleton,
+  Avatar,
 } from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { setDoc, deleteDoc, doc } from "firebase/firestore";
 import { FavoriteLikesGroupItem } from "./FavoriteLikesGroup";
+import { UserAvatar } from "../../Drawer/DrawerUserAvatar";
 
 function LikesList({ postId, userId, authUserId }) {
   const [likesList, loadingLL, errorLL] = useCollectionData(
@@ -28,7 +30,15 @@ function LikesList({ postId, userId, authUserId }) {
   const [isExpandedLikesGroup, setisExpandedLikesGroup] = useState(false);
 
   if (loadingLL) {
-    return <Skeleton variant="circular" sx={{width:'30px', height:'30px'}} />;
+    return (
+        <Skeleton
+          variant="circular"
+          sx={{
+            width: '41px',
+            height: '41px',
+          }}
+        />
+    );
   }
 
   const isSetLike = likesList?.some((doc) => doc.id === authUserId);
@@ -60,20 +70,40 @@ function LikesList({ postId, userId, authUserId }) {
     setisExpandedLikesGroup(true);
   };
   return (
-    <Box sx={{ display: "flex", gap: "10px", alignItems: "center" }}>
-      <IconButton onClick={isSetLike ? removeLike : addLike}>
+    <Box
+      sx={{
+        display: "flex",
+        gap: "10px",
+        alignItems: "center",
+        maxWidth: "100%",
+      }}
+    >
+      <IconButton
+        sx={{ pr: { xs: 0, sm: 1 } }}
+        onClick={isSetLike ? removeLike : addLike}
+      >
         {isSetLike ? (
-          <FavoriteIcon sx={{ color: "red", fontSize: "30px" }} />
+          <FavoriteIcon
+            sx={{ color: "red", fontSize: { xs: "25px", sm: "30px" } }}
+          />
         ) : (
           <FavoriteBorderIcon
             sx={{
-              fontSize: "30px",
+              fontSize: { xs: "25px", sm: "30px" },
             }}
           />
         )}
       </IconButton>
       {!!likesList.length && (
-        <>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: "5px",
+            maxWidth: "100%",
+            overflowX: "hidden",
+          }}
+        >
           <AvatarGroup
             onClick={handleExpandLikesGroup}
             sx={{ ":hover": { cursor: "pointer" } }}
@@ -81,10 +111,21 @@ function LikesList({ postId, userId, authUserId }) {
             spacing={"small"}
           >
             {likesList?.map((doc) => (
-              <FavoriteLikesGroupItem key={doc.id} userId={doc.id} />
+              <FavoriteLikesGroupItem
+                key={doc.id}
+                userId={doc.id}
+                style={{ width: "22px", height: "22px" }}
+              />
             ))}
           </AvatarGroup>
-          <Typography variant="caption">
+          <Typography
+            sx={{
+              textOverflow: "ellipsis",
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+            }}
+            variant="caption"
+          >
             {likesList.length} people likes this post
           </Typography>
           <Dialog open={isExpandedLikesGroup} onClose={handleReduceLikesGroup}>
@@ -103,7 +144,7 @@ function LikesList({ postId, userId, authUserId }) {
               ))}
             </List>
           </Dialog>
-        </>
+        </Box>
       )}
     </Box>
   );

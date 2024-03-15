@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { ReactNode, useState } from "react";
 import {
   USERS_D,
   SENT_FRIENDS_REQUESTS,
@@ -18,6 +18,10 @@ import { Button, CircularProgress, Alert } from "@mui/material";
 import { doc, setDoc, deleteDoc } from "firebase/firestore";
 import { DocumentData } from "firebase/firestore";
 import { User } from "firebase/auth";
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import DoDisturbIcon from "@mui/icons-material/DoDisturb";
+import HandshakeIcon from "@mui/icons-material/Handshake";
 
 type Status =
   | typeof FRIEND
@@ -32,18 +36,23 @@ interface IContactButton {
   handleError: (errorMessage: string) => void;
 }
 
+interface IButtonProp {
+  label: string | ReactNode;
+  icon: ReactNode | null;
+  onClick: () => void | null;
+  color:
+    | "inherit"
+    | "error"
+    | "warning"
+    | "success"
+    | "info"
+    | "primary"
+    | "secondary";
+}
+
 function ContactButton({ authUser, user, handleError }: IContactButton) {
   const [waitingRequestProcessing, setWaitingRequestProcessing] =
     useState(false);
-  const [handleSuccess, setHandleSuccess] = useState(null);
-
-  useEffect(() => {
-    if (handleSuccess) {
-      setTimeout(() => {
-        setHandleSuccess(null)
-      },2000)
-    }
-  },[handleSuccess])
 
   const status: Status = useCheckRelationshipUserStatus(
     authUser.uid,
@@ -69,7 +78,6 @@ function ContactButton({ authUser, user, handleError }: IContactButton) {
           id: authUser.uid,
         }
       );
-      setHandleSuccess("sent request");
     } catch (error) {
       handleError(error.message);
     } finally {
@@ -86,7 +94,6 @@ function ContactButton({ authUser, user, handleError }: IContactButton) {
       await deleteDoc(
         doc(db, `${USERS_D}/${user.id}/${FRIENDS_LIST}/`, authUser.uid)
       );
-      setHandleSuccess("Successful removed");
     } catch (error) {
       handleError(error.message);
     } finally {
@@ -109,7 +116,6 @@ function ContactButton({ authUser, user, handleError }: IContactButton) {
             authUser.uid
           )
         );
-        setHandleSuccess("canceled request");
       } catch (error) {
         handleError(error.message);
       }
@@ -144,7 +150,6 @@ function ContactButton({ authUser, user, handleError }: IContactButton) {
             id: authUser.uid,
           }
         );
-        setHandleSuccess("accepted request");
       } catch (error) {
         handleError(error.message);
       } finally {
@@ -152,39 +157,53 @@ function ContactButton({ authUser, user, handleError }: IContactButton) {
       }
     }
 
-  const shownButton = {
+  
+  
+  const shownButton: { [key: string]: IButtonProp } = {
     [FRIEND]: {
       label: "Remove from friend",
       onClick: removeFromFriendsList,
+      color: "error",
+      icon:<PersonRemoveIcon/>
     },
     [SENTREQUEST]: {
       label: "Cancel friend request",
       onClick: cancelFriendRequest,
+      color: "warning",
+      icon:<DoDisturbIcon/>
     },
     [RECEIVED_REQUEST]: {
       label: "Accept friend request",
       onClick: acceptFriendRequest,
+      color: "success",
+      icon:<HandshakeIcon/>
     },
     [NO_CONTACT]: {
       label: "Send friend request",
       onClick: sendFriendRequest,
+      color: "info",
+      icon:<PersonAddAlt1Icon/>
     },
     [LOADING]: {
-      label: <CircularProgress />,
+      label: <CircularProgress size={25}/>,
       onClick: null,
+      color: "primary",
+      icon:null
     },
   };
   return (
-    <>
+    <div style={{ position: "relative" }}>
       <Button
+        startIcon={shownButton[status].icon}
+        variant="contained"
+        color={shownButton[status].color}
         size="small"
-        disabled={waitingRequestProcessing}
+        disabled={waitingRequestProcessing || status === LOADING}
         onClick={shownButton[status].onClick}
       >
         {shownButton[status].label}
       </Button>
-      {handleSuccess && <Alert severity="success">{handleSuccess}</Alert>}
-    </>
+    </div>
   );
 }
 

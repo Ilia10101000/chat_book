@@ -13,7 +13,7 @@ interface IAddPostComment {
 function AddPostComment({ addComment }: IAddPostComment) {
   const [comment, setComment] = useState("");
   const [isOpenEmoji, setIsOpenEmoji] = useState(false);
-  const [mode] = useTheme();
+  const { mode } = useTheme();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
