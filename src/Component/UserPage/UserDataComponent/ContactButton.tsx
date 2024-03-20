@@ -14,7 +14,7 @@ import {
 } from "../contact_status";
 import { useCheckRelationshipUserStatus } from "../../../hooks/useCheckRelationshipUserStatus";
 import { db } from "../../../firebase/auth";
-import { Button, CircularProgress, Alert } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import { doc, setDoc, deleteDoc } from "firebase/firestore";
 import { DocumentData } from "firebase/firestore";
 import { User } from "firebase/auth";
@@ -39,7 +39,7 @@ interface IContactButton {
 interface IButtonProp {
   label: string | ReactNode;
   icon: ReactNode | null;
-  onClick: () => void | null;
+  onClick: ({user1Id,user2Id}) => void | null;
   color:
     | "inherit"
     | "error"
@@ -50,6 +50,111 @@ interface IButtonProp {
     | "secondary";
 }
 
+const sendFriendRequest = async ({user1Id,user2Id}:{user1Id:string;user2Id:string}) => {
+    await setDoc(
+      doc(db, `${USERS_D}/${user1Id}/${SENT_FRIENDS_REQUESTS}`, user2Id),
+      {
+        id: user2Id,
+      }
+    );
+    await setDoc(
+      doc(db, `${USERS_D}/${user2Id}/${RECEIVED_FRIENDS_REQUESTS}`, user1Id),
+      {
+        id: user1Id,
+      }
+    );
+};
+
+const removeFromFriendsList = async ({user1Id,user2Id}:{user1Id:string;user2Id:string}) => {
+    await deleteDoc(
+      doc(db, `${USERS_D}/${user1Id}/${FRIENDS_LIST}/`, user2Id)
+    );
+    await deleteDoc(
+      doc(db, `${USERS_D}/${user2Id}/${FRIENDS_LIST}/`, user1Id)
+    );
+};
+
+const cancelFriendRequest = async ({user1Id,user2Id}:{user1Id:string;user2Id:string}) => {
+      await deleteDoc(
+        doc(
+          db,
+          `${USERS_D}/${user1Id}/${SENT_FRIENDS_REQUESTS}/`,
+          user2Id
+        )
+      );
+      await deleteDoc(
+        doc(
+          db,
+          `${USERS_D}/${user2Id}/${RECEIVED_FRIENDS_REQUESTS}/`,
+          user1Id
+        )
+      );
+  }
+
+const acceptFriendRequest = async ({user1Id,user2Id}:{user1Id:string;user2Id:string}) => {
+      await deleteDoc(
+        doc(
+          db,
+          `${USERS_D}/${user2Id}/${SENT_FRIENDS_REQUESTS}/`,
+          user1Id
+        )
+      );
+      await deleteDoc(
+        doc(
+          db,
+          `${USERS_D}/${user1Id}/${RECEIVED_FRIENDS_REQUESTS}/`,
+          user2Id
+        )
+      );
+      await setDoc(
+        doc(db, `${USERS_D}/${user1Id}/${FRIENDS_LIST}`, user2Id),
+        {
+          id: user2Id,
+        }
+      );
+      await setDoc(
+        doc(db, `${USERS_D}/${user2Id}/${FRIENDS_LIST}`, user1Id),
+        {
+          id: user1Id,
+        }
+      );
+  }
+
+
+
+const shownButton: { [key: string]: IButtonProp } = {
+  [FRIEND]: {
+    label: "Remove from friend",
+    onClick: removeFromFriendsList,
+    color: "error",
+    icon:<PersonRemoveIcon/>
+  },
+  [SENTREQUEST]: {
+    label: "Cancel friend request",
+    onClick: cancelFriendRequest,
+    color: "warning",
+    icon:<DoDisturbIcon/>
+  },
+  [RECEIVED_REQUEST]: {
+    label: "Accept friend request",
+    onClick: acceptFriendRequest,
+    color: "success",
+    icon:<HandshakeIcon/>
+  },
+  [NO_CONTACT]: {
+    label: "Send friend request",
+    onClick: sendFriendRequest,
+    color: "info",
+    icon:<PersonAddAlt1Icon/>
+  },
+  [LOADING]: {
+    label: <CircularProgress size={25}/>,
+    onClick: null,
+    color: "primary",
+    icon:null
+  },
+};
+
 function ContactButton({ authUser, user, handleError }: IContactButton) {
   const [waitingRequestProcessing, setWaitingRequestProcessing] =
     useState(false);
@@ -59,138 +164,17 @@ function ContactButton({ authUser, user, handleError }: IContactButton) {
     user?.id,
     handleError
   );
-  const sendFriendRequest = async () => {
+
+  const handleClickContactButton = async () => {
     setWaitingRequestProcessing(true);
     try {
-      await setDoc(
-        doc(db, `${USERS_D}/${authUser.uid}/${SENT_FRIENDS_REQUESTS}`, user.id),
-        {
-          id: user.id,
-        }
-      );
-      await setDoc(
-        doc(
-          db,
-          `${USERS_D}/${user.id}/${RECEIVED_FRIENDS_REQUESTS}`,
-          authUser.uid
-        ),
-        {
-          id: authUser.uid,
-        }
-      );
+      shownButton[status].onClick({user1Id:authUser.uid,user2Id:user.id});
     } catch (error) {
       handleError(error.message);
     } finally {
       setWaitingRequestProcessing(false);
     }
-  };
-
-  const removeFromFriendsList = async () => {
-    setWaitingRequestProcessing(true);
-    try {
-      await deleteDoc(
-        doc(db, `${USERS_D}/${authUser.uid}/${FRIENDS_LIST}/`, user.id)
-      );
-      await deleteDoc(
-        doc(db, `${USERS_D}/${user.id}/${FRIENDS_LIST}/`, authUser.uid)
-      );
-    } catch (error) {
-      handleError(error.message);
-    } finally {
-      setWaitingRequestProcessing(false);
-    }
-  };
-  const cancelFriendRequest = async () => {
-      try {
-        await deleteDoc(
-          doc(
-            db,
-            `${USERS_D}/${authUser.uid}/${SENT_FRIENDS_REQUESTS}/`,
-            user.id
-          )
-        );
-        await deleteDoc(
-          doc(
-            db,
-            `${USERS_D}/${user.id}/${RECEIVED_FRIENDS_REQUESTS}/`,
-            authUser.uid
-          )
-        );
-      } catch (error) {
-        handleError(error.message);
-      }
-    }
-
-  const acceptFriendRequest = async () => {
-      setWaitingRequestProcessing(true);
-      try {
-        await deleteDoc(
-          doc(
-            db,
-            `${USERS_D}/${user.id}/${SENT_FRIENDS_REQUESTS}/`,
-            authUser.uid
-          )
-        );
-        await deleteDoc(
-          doc(
-            db,
-            `${USERS_D}/${authUser.uid}/${RECEIVED_FRIENDS_REQUESTS}/`,
-            user.id
-          )
-        );
-        await setDoc(
-          doc(db, `${USERS_D}/${authUser.uid}/${FRIENDS_LIST}`, user.id),
-          {
-            id: user.id,
-          }
-        );
-        await setDoc(
-          doc(db, `${USERS_D}/${user.id}/${FRIENDS_LIST}`, authUser.uid),
-          {
-            id: authUser.uid,
-          }
-        );
-      } catch (error) {
-        handleError(error.message);
-      } finally {
-        setWaitingRequestProcessing(false);
-      }
-    }
-
-  
-  
-  const shownButton: { [key: string]: IButtonProp } = {
-    [FRIEND]: {
-      label: "Remove from friend",
-      onClick: removeFromFriendsList,
-      color: "error",
-      icon:<PersonRemoveIcon/>
-    },
-    [SENTREQUEST]: {
-      label: "Cancel friend request",
-      onClick: cancelFriendRequest,
-      color: "warning",
-      icon:<DoDisturbIcon/>
-    },
-    [RECEIVED_REQUEST]: {
-      label: "Accept friend request",
-      onClick: acceptFriendRequest,
-      color: "success",
-      icon:<HandshakeIcon/>
-    },
-    [NO_CONTACT]: {
-      label: "Send friend request",
-      onClick: sendFriendRequest,
-      color: "info",
-      icon:<PersonAddAlt1Icon/>
-    },
-    [LOADING]: {
-      label: <CircularProgress size={25}/>,
-      onClick: null,
-      color: "primary",
-      icon:null
-    },
-  };
+  }
   return (
     <div style={{ position: "relative" }}>
       <Button
@@ -199,7 +183,7 @@ function ContactButton({ authUser, user, handleError }: IContactButton) {
         color={shownButton[status].color}
         size="small"
         disabled={waitingRequestProcessing || status === LOADING}
-        onClick={shownButton[status].onClick}
+        onClick={handleClickContactButton}
       >
         {shownButton[status].label}
       </Button>
@@ -207,4 +191,4 @@ function ContactButton({ authUser, user, handleError }: IContactButton) {
   );
 }
 
-export { ContactButton };
+export { ContactButton, cancelFriendRequest, removeFromFriendsList,  };

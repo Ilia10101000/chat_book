@@ -1,4 +1,4 @@
-import React, { createContext } from "react";
+import React, { createContext, useEffect } from "react";
 import { ErrorPage } from "./Component/Error/Error";
 import {
   unAuthorizedRoutes,
@@ -17,27 +17,34 @@ const UserContext = createContext<User>(null);
 
 const App = () => {
   const [user, loading] = useAuthState(auth);
+  console.log(user)
 
-  let availablePaths = user ? authorizedRoutes : unAuthorizedRoutes;
+  let availablePaths =
+    user?.uid && !loading ? authorizedRoutes : unAuthorizedRoutes;
 
   if (loading) {
     return (
       <CircularProgress
-        sx={{ position: "absolute", top: "50%", left: "50%", transform:'translate(-50%,-50%)' }}
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%,-50%)",
+        }}
         color="success"
       />
     );
   }
 
   return (
-    <UserContext.Provider value={user}>
-      <DndProvider backend={HTML5Backend}>
+    <DndProvider backend={HTML5Backend}>
+      <UserContext.Provider value={user}>
         <Routes>
           {renderRoutes(availablePaths)}
           <Route path={"*"} element={<ErrorPage />} />
         </Routes>
-      </DndProvider>
-    </UserContext.Provider>
+      </UserContext.Provider>
+    </DndProvider>
   );
 };
 

@@ -78,8 +78,8 @@ function AddPostComment({ addComment }: IAddPostComment) {
               </IconButton>
             </Box>
           ),
-          endAdornment: comment && (
-            <IconButton onClick={handleAddComment}>
+          endAdornment: (
+            <IconButton disabled={!comment} onClick={handleAddComment}>
               <SendIcon />
             </IconButton>
           ),

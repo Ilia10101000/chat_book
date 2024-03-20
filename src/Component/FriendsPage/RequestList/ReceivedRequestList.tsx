@@ -30,7 +30,7 @@ function ReceivedRequestList({ requestList, onClose, authUser }) {
       );
       await setDoc(
         doc(db, `${USERS_D}/${userId}/${FRIENDS_LIST}`, authUser.id),
-        {id:authUser.uid}
+        {id:authUser.id}
       );
     } catch (error) {
       console.log(error.message);

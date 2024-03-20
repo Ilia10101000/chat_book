@@ -107,7 +107,7 @@ function MessageListItemLink({
                 textOverflow: "ellipsis",
               }}
               primary={user.displayName || user.email}
-              secondary={lastMessage?.lastMessage}
+              secondary={lastMessage?.lastMessage?.message}
             />
           </ListItem>
         </ListItemButton>

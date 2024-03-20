@@ -9,7 +9,6 @@ import {
   SigninSubmitList,
 } from "./SigninValueFields";
 
-
 const transformEmailValue = (value: string) => {
   return value.replace(/\s+/g, "");
 };
@@ -19,9 +18,9 @@ const transformNameValue = (value: string) => {
 
 function SigninInfo() {
   const { requiredInfo } = useParams();
-  const {signinForm, error, loading} = useSigninValue();
-    const navigate = useNavigate();
-    const goBack = () => navigate(-1);
+  const { signinForm, error, loading } = useSigninValue();
+  const navigate = useNavigate();
+  const goBack = () => navigate(-1);
 
   let form: ReactNode | null = null;
 
@@ -33,20 +32,21 @@ function SigninInfo() {
           Boolean(signinForm.errors.displayName)
         }
         helperText={
-          signinForm.touched.displayName &&
-          signinForm.errors.displayName
+          signinForm.touched.displayName && signinForm.errors.displayName
         }
-        autoComplete='off'
+        autoComplete="off"
         label={"Type your name"}
         name={"displayName"}
         id={"displayName"}
         value={signinForm.values.displayName}
         onChange={signinForm.handleChange}
         onBlur={(e) => {
-          signinForm.setFieldValue(
-            "displayName",
-            transformNameValue(signinForm.values.displayName)
-          ).then(() => signinForm.handleBlur(e));
+          signinForm
+            .setFieldValue(
+              "displayName",
+              transformNameValue(signinForm.values.displayName)
+            )
+            .then(() => signinForm.handleBlur(e));
         }}
       />
     );
@@ -127,7 +127,7 @@ function SigninInfo() {
     <Box
       sx={{
         borderRadius: "10px",
-        width: "fit-content",
+        width: "300px",
         p: 4,
         gap: 3,
         display: "flex",

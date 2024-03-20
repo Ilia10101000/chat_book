@@ -1,12 +1,6 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import { PersonalsMarkedTags } from "./PersonalsMarkedTags";
-import {
-  DocumentData,
-  collection,
-  deleteDoc,
-  serverTimestamp,
-  updateDoc,
-} from "firebase/firestore";
+import { DocumentData, collection, deleteDoc } from "firebase/firestore";
 import { db } from "../../../firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 import {
@@ -18,12 +12,18 @@ import {
 import { SearchUsersDialog } from "./SearchUsersDialog";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { Box, Skeleton } from "@mui/material";
+import {
+  updateTagCords,
+  addUserTag,
+  deletePersonalTag,
+} from "../../../firebase/utils/post_utils";
 
 interface IImageContainer {
   post: DocumentData;
   userId: string;
   isOwner: boolean;
   authUserId: string;
+  handleError: (message: string) => void;
 }
 
 interface INewCords {
@@ -31,23 +31,23 @@ interface INewCords {
   y: string;
 }
 
-const generateUniqueFileName = (userId: string) => {
-  return `${Date.now()}-${userId}-${Math.floor(Math.random() * 10000) + 1}`;
-};
-
 function ImageContainer({
   post,
   userId,
   isOwner,
   authUserId,
+  handleError,
 }: IImageContainer) {
   const [showMarkedTags, setShowMarkedTags] = useState(false);
   const [newTagCords, setNewTagCords] = useState<INewCords>(null);
   const [isLoadedImage, setIsLoadedImage] = useState(false);
   const [markedPersons, loadingMP, errorMP] = useCollectionData(
-    collection(db, `${USERS_D}/${userId}/${POSTS}/${post?.id}/${MARKED_PERSONS}`)
+    collection(
+      db,
+      `${USERS_D}/${userId}/${POSTS}/${post?.id}/${MARKED_PERSONS}`
+    )
   );
-  const [containerHeight, setContainerHeight] = useState(0)
+  const [containerHeight, setContainerHeight] = useState(0);
 
   const toogleMarksVisible = () => {
     setShowMarkedTags((value) => !value);
@@ -68,99 +68,18 @@ function ImageContainer({
     setNewTagCords({ x: relativeX, y: relativeY });
   };
 
-  const updateTagCords = async (
-    tagId: string,
-    cords: { x: string; y: string }
-  ) => {
+  const handleAddUserTag = async (personId: string) => {
     try {
-      const docRef = doc(
-        db,
-        `${USERS_D}/${userId}/${POSTS}/${post.id}/${MARKED_PERSONS}`,
-        tagId
-      );
-      await updateDoc(docRef, {
-        ...cords,
-      });
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  const addUserTag = async (personId: string) => {
-
-    try {
-
       if (markedPersons?.some((mark) => mark.personId === personId)) {
-
         let tagDoc = markedPersons?.find((mark) => mark.personId === personId);
-        await updateTagCords(tagDoc.id, newTagCords);
-
+        await updateTagCords(post.id, authUserId, tagDoc.id, newTagCords);
       } else {
-
-        const tagId = generateUniqueFileName(personId);
-
-        await setDoc(
-          doc(
-            db,
-            `${USERS_D}/${userId}/${POSTS}/${post.id}/${MARKED_PERSONS}`,
-            tagId
-          ),
-          { id: tagId, ...newTagCords, personId }
-        );
-
-        if (personId !== authUserId) {
-
-          await setDoc(
-            doc(
-              db,
-              `${USERS_D}/${personId}/${TAGS_IN_THIRD_PARTY_POSTS}`,
-              tagId
-            ),
-            {
-              id: tagId,
-              ownerPostId: userId,
-              postId: post.id,
-              timestamp: serverTimestamp(),
-            }
-          );
-        }
+        addUserTag(post.id, authUserId, personId, newTagCords);
       }
-
     } catch (error) {
-
-      console.log(error.message);
-
+      handleError(error.message);
     } finally {
-
       clearTagCords();
-
-    }
-  };
-
-  const deletePersonalTag = async (tagData: {
-    id: string;
-    personId?: string;
-    type: string;
-  }) => {
-    try {
-      await deleteDoc(
-        doc(
-          db,
-          `${USERS_D}/${userId}/${POSTS}/${post.id}/${MARKED_PERSONS}`,
-          tagData.id
-        )
-      );
-      if (tagData.personId !== authUserId) {
-        await deleteDoc(
-          doc(
-            db,
-            `${USERS_D}/${tagData.personId}/${TAGS_IN_THIRD_PARTY_POSTS}`,
-            tagData.id
-          )
-        );
-      }
-    } catch (error) {
-      console.log(error.message);
     }
   };
 
@@ -171,22 +90,32 @@ function ImageContainer({
       setContainerHeight(containerRef.current.clientWidth);
     }
   }, []);
-  
+
   return (
-    <Box ref={containerRef} sx={{ position: "relative", width: "100%", padding: "0px" }}>
+    <Box
+      ref={containerRef}
+      sx={{ position: "relative", width: "100%", padding: "0px" }}
+    >
       <img
         onClick={isOwner && showMarkedTags ? setPersonalTagCoords : null}
         onLoad={() => setIsLoadedImage(true)}
         src={post?.imageURL}
         style={{
-          display: isLoadedImage?'block':'none',
+          display: isLoadedImage ? "block" : "none",
           width: "100%",
-          borderRadius:'10px',
+          borderRadius: "10px",
           ...(isOwner && showMarkedTags && { cursor: "pointer" }),
         }}
         alt={post?.id}
       />
-      <Skeleton variant="rounded" sx={{width:`${containerHeight}px`, height:`${containerHeight}px`, display: isLoadedImage?'none':'block'}}/>
+      <Skeleton
+        variant="rounded"
+        sx={{
+          width: `${containerHeight}px`,
+          height: `${containerHeight}px`,
+          display: isLoadedImage ? "none" : "block",
+        }}
+      />
 
       <PersonalsMarkedTags
         markedPersons={markedPersons}
@@ -200,7 +129,7 @@ function ImageContainer({
       {!!newTagCords && (
         <SearchUsersDialog
           open={!!newTagCords}
-          handleSubmit={addUserTag}
+          handleSubmit={handleAddUserTag}
           closeModal={clearTagCords}
         />
       )}

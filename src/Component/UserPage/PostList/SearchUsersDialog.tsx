@@ -42,7 +42,6 @@ const SearchUsersDialog = ({ open, closeModal, handleSubmit }) => {
 
   const [searchListHeight, setSearchListHeight] = useState(0);
 
-  // const listRef = useRef < HTMLUListElement>(null);
   const listRef = useRef < HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -159,22 +158,25 @@ const SearchUsersDialog = ({ open, closeModal, handleSubmit }) => {
             ))}
           </List>
         )}
-        {!loading && !options.length && defSearchQuery && (
-          <Box
-            sx={{
-              width: "100%",
-              p: 2,
-              textAlign: "center",
-              position: "absolute",
-              left: 0,
-              top: `${searchListHeight}px`,
-              backgroundColor: (theme) =>
-                theme.palette.mode === "light" ? "#fff" : "#000",
-            }}
-          >
-            No matches
-          </Box>
-        )}
+        {!loading &&
+          !options.length &&
+          defSearchQuery &&
+          !selectedUser && (
+            <Box
+              sx={{
+                width: "100%",
+                p: 2,
+                textAlign: "center",
+                position: "absolute",
+                left: 0,
+                top: `${searchListHeight}px`,
+                backgroundColor: (theme) =>
+                  theme.palette.mode === "light" ? "#fff" : "#000",
+              }}
+            >
+              No matches
+            </Box>
+          )}
       </Box>
     </Modal>
   );

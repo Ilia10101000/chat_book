@@ -54,7 +54,7 @@ function PersonalsMarkedTags({
       </Tooltip>
       {isShownTags && (
         <>
-          {markedPersons.map((mark) => (
+          {markedPersons?.map((mark) => (
             <TooltipTag
               key={mark.x + mark.y}
               isOwner={isOwner}

@@ -57,7 +57,12 @@ function LikesList({ postId, userId, authUserId }) {
     try {
       await setDoc(
         doc(db, `${USERS_D}/${userId}/${POSTS}/${postId}/${LIKES}`, authUserId),
-        { id: authUserId }
+        {
+          id: authUserId,
+          ownerPostId: userId,
+          postId:postId
+
+        }
       );
     } catch (error) {
       console.log(error.message);

@@ -3,8 +3,6 @@ import { useTheme } from "../../theme";
 import {
   Badge,
   Box,
-  ImageList,
-  ImageListItem,
   Typography,
 } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
@@ -18,7 +16,7 @@ function AppTheme() {
         Select app theme
       </Typography>
       <Box sx={{ display: "flex", gap: "20px", justifyContent: "center" }}>
-        {Object.keys(appThemesValues).map((theme) => {
+        {Object.keys(appThemesValues).map((theme,index) => {
           const box = (
               <Box
                   onClick={() => changeAppTheme(theme)}
@@ -51,9 +49,15 @@ function AppTheme() {
           );
           const isSelected = appTheme === theme;
           return isSelected ? (
-            <Badge badgeContent={<CheckBoxIcon />}>{box}</Badge>
+            <div key={index}>
+
+              <Badge badgeContent={<CheckBoxIcon />}>{box}</Badge>
+            </div>
           ) : (
-            box
+              <div key={index}>
+                {box}
+
+              </div>
           );
         })}
       </Box>

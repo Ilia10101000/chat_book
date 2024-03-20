@@ -1,6 +1,6 @@
 import React from "react";
 import Avatar from "@mui/material/Avatar";
-import { SxProps, Theme } from "@mui/material";
+import { Skeleton, SxProps, Theme } from "@mui/material";
 
 interface IUserAvatar {
   photoURL: string;
@@ -53,7 +53,10 @@ const getFirstNamesLetters = (name: string) => {
 }
 
 function UserAvatar({ photoURL, userName, style = {} }: IUserAvatar) {
-  if (photoURL) {
+  if (!photoURL && !userName) {
+    return <Skeleton variant="rounded" sx={{...style}} />
+  }
+  else if (photoURL) {
     return <Avatar sx={{ ...style }} src={photoURL} />;
   } else {
     return (
@@ -69,4 +72,4 @@ function UserAvatar({ photoURL, userName, style = {} }: IUserAvatar) {
   }
 }
 
-export {UserAvatar}
+export { UserAvatar }

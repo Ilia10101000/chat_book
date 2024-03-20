@@ -15,7 +15,7 @@ import BrushIcon from "@mui/icons-material/Brush";
 import { AppTheme } from "./AppTheme";
 
 function Settings() {
-  const { displayName, photoURL, uid } = useAuth();
+  const authUser = useAuth();
   const [error, setError] = useState("");
   const [tabNumber, setTabNumber] = useState(0);
 
@@ -27,7 +27,7 @@ function Settings() {
     if (error) {
       setTimeout(() => {
         setError("");
-      }, 2000);
+      }, 5000);
     }
   });
 
@@ -63,7 +63,7 @@ function Settings() {
       <Box
         sx={{
           width: "100%",
-          padding: {xs:0, sm:'0px 50px'},
+          padding: { xs: 0, sm: "0px 50px" },
         }}
       >
         <Box
@@ -74,29 +74,36 @@ function Settings() {
           }}
         >
           <Tabs value={tabNumber} onChange={handleChange} variant="fullWidth">
-            {tabsList.map(tab => <Tab sx={{fontSize:{xs:'9px', sm:'11px', md:'13px'}}} key={tab.label} icon={tab.icon} label={tab.label} />)}
+            {tabsList.map((tab) => (
+              <Tab
+                sx={{ fontSize: { xs: "9px", sm: "11px", md: "13px" } }}
+                key={tab.label}
+                icon={tab.icon}
+                label={tab.label}
+              />
+            ))}
           </Tabs>
         </Box>
         <Box>
           <CustomTabPanel value={tabNumber} index={0}>
             <PersonalData
-              displayName={displayName}
-              photoURL={photoURL}
-              uid={uid}
+              displayName={authUser.displayName}
+              photoURL={authUser.photoURL}
+              uid={authUser.uid}
               handleError={handleErrorOccured}
             />
           </CustomTabPanel>
           <CustomTabPanel value={tabNumber} index={1}>
-            <AppTheme/>
+            <AppTheme />
           </CustomTabPanel>
           <CustomTabPanel value={tabNumber} index={2}>
             <SecurityData
-              displayName={displayName}
+              displayName={authUser.displayName}
               handleError={handleErrorOccured}
             />
           </CustomTabPanel>
           <CustomTabPanel value={tabNumber} index={3}>
-            <AccountData handleError={handleErrorOccured} />
+            <AccountData user={authUser} handleError={handleErrorOccured} />
           </CustomTabPanel>
         </Box>
       </Box>

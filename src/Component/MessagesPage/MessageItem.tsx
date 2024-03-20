@@ -1,35 +1,48 @@
-import React, { useState } from "react";
+import React, { forwardRef, useState } from "react";
 import { User } from "firebase/auth";
-import { Modal, Paper, SpeedDial, SpeedDialAction, IconButton, Box, CircularProgress } from "@mui/material";
+import {
+  Modal,
+  Paper,
+  SpeedDial,
+  SpeedDialAction,
+  IconButton,
+  Box,
+  CircularProgress,
+} from "@mui/material";
 import { DocumentData } from "firebase/firestore";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CloseIcon from "@mui/icons-material/Close";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 interface IMessageItem {
+  chatId: string;
+  showViewedIcon: boolean;
   doc: DocumentData;
   user: User;
   deleteMessage: (message: {
     id: string;
     type: string;
-    imageId: string;
-  }) => void;
+    imageId?: string;
+  },chatId:string) => void;
 }
 
-function MessageItem({ doc, user, deleteMessage }: IMessageItem) {
+const MessageItem = forwardRef<HTMLDivElement>((props: IMessageItem, ref) => {
   const [showSpeedDial, setShowSpeedDial] = useState(false);
   const [showImage, setShowImage] = useState(false);
   const [loadingImage, setLoadingImage] = useState(false);
+
+  const { doc, user, deleteMessage, showViewedIcon } = props;
 
   const { timestamp, content, senderId, type, id } = doc;
 
   const closeImageModal = () => {
     setShowImage(false);
-  }
+  };
   const openImageModal = () => {
     setShowImage(true);
     setLoadingImage(true);
-  }
+  };
 
   let createdAt: string;
 
@@ -43,6 +56,7 @@ function MessageItem({ doc, user, deleteMessage }: IMessageItem) {
   }
   return (
     <div
+      ref={ref || null}
       onMouseEnter={senderId == user.uid ? () => setShowSpeedDial(true) : null}
       onMouseLeave={senderId == user.uid ? () => setShowSpeedDial(false) : null}
       style={{
@@ -61,6 +75,12 @@ function MessageItem({ doc, user, deleteMessage }: IMessageItem) {
           overflowWrap: "break-word",
           position: "relative",
           ...(type == "image" && { cursor: "pointer" }),
+          '&.MuiPaper-root': {
+            
+            ...(senderId !== user.uid && {
+              backgroundColor: "customeMessageItemBackground.main",
+            }),
+          }
         }}
       >
         {type == "text" ? (
@@ -76,12 +96,17 @@ function MessageItem({ doc, user, deleteMessage }: IMessageItem) {
             fontSize: "11px",
             color: "grey",
             userSelect: "none",
+            display: "flex",
+            alignItems: "center",
+            gap: "2px",
           }}
         >
-          {createdAt}
+          {showViewedIcon && <VisibilityIcon sx={{ fontSize: "15px" }} />}
+          <span>{createdAt}</span>
         </div>
         {showSpeedDial && (
           <SpeedDial
+            onClick={(e) => e.stopPropagation()}
             direction={senderId == user.uid ? "left" : "right"}
             icon={
               <MoreVertIcon sx={{ fontSize: "15px", color: "text.primary" }} />
@@ -108,7 +133,8 @@ function MessageItem({ doc, user, deleteMessage }: IMessageItem) {
             <SpeedDialAction
               onClick={() =>
                 deleteMessage(
-                  doc as { id: string; imageId: string; type: string }
+                  doc as { id: string; imageId: string; type: string },
+                  props.chatId
                 )
               }
               icon={<DeleteIcon />}
@@ -117,29 +143,47 @@ function MessageItem({ doc, user, deleteMessage }: IMessageItem) {
           </SpeedDial>
         )}
       </Paper>
-        {type === "image" && (
-          <Modal open={showImage}>
-            <>
-              <IconButton
-                onClick={closeImageModal}
-                sx={{
-                  position: "absolute",
-                  right: "5px",
-                  top: "2px",
-                  zIndex: 2000,
+      {type === "image" && (
+        <Modal open={showImage}>
+          <>
+            <IconButton
+              onClick={closeImageModal}
+              sx={{
+                position: "absolute",
+                right: "5px",
+                top: "2px",
+                zIndex: 2000,
+              }}
+            >
+              <CloseIcon sx={{ fontSize: "30px", color: "#fff" }} />
+            </IconButton>
+            <Box
+              sx={{
+                width: "90%",
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%,-50%)",
+              }}
+            >
+              <CircularProgress
+                sx={{ display: loadingImage ? "block" : "none", mx: "auto" }}
+              />
+              <img
+                onLoad={() => setLoadingImage(false)}
+                style={{
+                  width: "100%",
+                  display: loadingImage ? "none" : "block",
                 }}
-              >
-                <CloseIcon sx={{ fontSize: "30px", color: "#fff" }} />
-              </IconButton>
-            <Box sx={{ width: '90%', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }}>
-              <CircularProgress sx={{display:loadingImage?'block':'none', mx:'auto'}} />
-                <img onLoad={() => setLoadingImage(false)} style={{ width: "100%", display:loadingImage?'none':'block'}} src={content} alt={content} />
-              </Box>
-            </>
-           </Modal>
-        )}
+                src={content}
+                alt={content}
+              />
+            </Box>
+          </>
+        </Modal>
+      )}
     </div>
   );
-}
+});
 
 export { MessageItem };

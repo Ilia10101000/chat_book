@@ -15,17 +15,8 @@ import {
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { AddPostComment } from "./AddNewPost/AddPostComment";
 import { PostDialogConfig } from "./PostDialogConfig";
-import {
-  setDoc,
-  doc,
-  serverTimestamp,
-  query,
-  collection,
-  orderBy,
-  deleteDoc,
-  updateDoc,
-} from "firebase/firestore";
-import { db, ref, storage } from "../../../firebase/auth";
+import { doc, query, collection, orderBy } from "firebase/firestore";
+import { db } from "../../../firebase/auth";
 import {
   COMMENTS,
   POSTS,
@@ -41,8 +32,13 @@ import { UserAvatar } from "../../Drawer/DrawerUserAvatar";
 import { LikesList } from "./LikesList";
 import LockPersonIcon from "@mui/icons-material/LockPerson";
 import { ImageContainer } from "./ImageContainer";
-import { deleteObject } from "firebase/storage";
-import { useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
+import {
+  deletePost,
+  removeComment,
+  addComment,
+  toogleVisibilityComments,
+} from "../../../firebase/utils/post_utils";
 
 const style: SxProps<Theme> = {
   position: "relative",
@@ -51,16 +47,13 @@ const style: SxProps<Theme> = {
   transform: "translate(-50%, -50%)",
   width: "100%",
   maxWidth: "1200px",
-  backgroundColor: theme => theme.palette.mode === 'light' ? '#fff':'#000',
+  backgroundColor: (theme) =>
+    theme.palette.mode === "light" ? "#fff" : "#000",
   p: { xs: 1, sm: 1.5 },
   display: "flex",
   flexDirection: { xs: "column", sm: "row" },
   maxHeight: "92vh",
   overflow: "hidden",
-};
-
-const generateUniqueFileName = (userId: string) => {
-  return `${Date.now()}-${userId}-${Math.floor(Math.random() * 10000) + 1}`;
 };
 
 function PostModalWindow() {
@@ -94,6 +87,10 @@ function PostModalWindow() {
     }
   }, [error]);
 
+  if ((!user && !loadingU) || (!post && !loadingP)) {
+    return <Navigate to={`/u/${authUser.uid}`} replace={true} />;
+  }
+
   if (loadingU || loadingP) {
     return (
       <Box sx={{ ...style, alignItems: "center" }}>
@@ -107,59 +104,29 @@ function PostModalWindow() {
     navigate(-1);
   };
 
-  const addComment = async (comment: string) => {
-    const uniqueCommentsId = generateUniqueFileName(user?.id);
+  const handleAddComment = async (comment: string) => {
     try {
-      await setDoc(
-        doc(
-          db,
-          `${USERS_D}/${user?.id}/${POSTS}/${post?.id}/${COMMENTS}`,
-          uniqueCommentsId
-        ),
-        {
-          id: uniqueCommentsId,
-          author: authUser.uid,
-          authorPhotoURL: authUser.photoURL,
-          text: comment,
-          timestamp: serverTimestamp(),
-        }
-      );
+      await addComment(user.id, post.id, authUser, comment);
     } catch (error) {
       setError(error.message);
     }
   };
 
-  const removeComment = async (commentId: string) => {
+  const submitDeletePost = async () => {
     try {
-      await deleteDoc(
-        doc(
-          db,
-          `${USERS_D}/${user?.id}/${POSTS}/${post?.id}/${COMMENTS}`,
-          commentId
-        )
-      );
+      await deletePost(post as any);
+      closeModal();
     } catch (error) {
-      console.log(error.message);
+      setError(error);
     }
   };
 
-  const deletePost = async () => {
+  const handleToogleVisibilityComments = async (isShown: boolean) => {
     try {
-      await deleteDoc(doc(db, `${USERS_D}/${user?.id}/${POSTS}/${post?.id}`));
-      await deleteObject(ref(storage, `${POSTS}/${user?.id}/${post?.id}`));
+      await toogleVisibilityComments(user?.id, post?.id, isShown);
       closeModal();
     } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  const isShownComments = async (isShown: boolean) => {
-    try {
-      const postRef = doc(db, `${USERS_D}/${user?.id}/${POSTS}/${post?.id}`);
-      await updateDoc(postRef, { showComments: isShown });
-      closeModal();
-    } catch (error) {
-      console.log(error.message);
+      setError(error.message);
     }
   };
 
@@ -175,7 +142,7 @@ function PostModalWindow() {
           onClick={closeModal}
           sx={{ position: "absolute", right: "5px", top: "2px", zIndex: 2000 }}
         >
-          <CloseIcon sx={{ fontSize:"30px", color:'#fff' }} />
+          <CloseIcon sx={{ fontSize: "30px", color: "#fff" }} />
         </IconButton>
         <Box sx={style}>
           <Box
@@ -191,6 +158,7 @@ function PostModalWindow() {
               post={post}
               userId={user?.id}
               isOwner={isOwnerPost}
+              handleError={setError}
             />
           </Box>
           <Box
@@ -231,8 +199,8 @@ function PostModalWindow() {
                   <div style={{ marginLeft: "auto" }}>
                     <PostDialogConfig
                       isShownComments={post?.showComments}
-                      handleShowComments={isShownComments}
-                      handleDeletePost={deletePost}
+                      handleShowComments={handleToogleVisibilityComments}
+                      handleDeletePost={submitDeletePost}
                     />
                   </div>
                 )}
@@ -264,7 +232,7 @@ function PostModalWindow() {
                 </List>
                 <Divider />
                 <Box sx={{ mt: "auto" }}>
-                  <AddPostComment addComment={addComment} />
+                  <AddPostComment addComment={handleAddComment} />
                 </Box>
               </>
             ) : (

@@ -68,6 +68,7 @@ function PersonalData({
         photoURL: photourlLink,
       });
       await updateProfile(auth.currentUser, { photoURL: photourlLink });
+      updatePage();
     } catch (error) {
       handleError(error.message);
     }

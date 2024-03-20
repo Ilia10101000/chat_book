@@ -182,7 +182,7 @@ function SigninSubmitList({
       <div>{displayName}</div>
       <div>
         <img
-          style={{ width: "300px", borderRadius: "50%" }}
+          style={{ width: "250px", borderRadius: "50%" }}
           src={photoURL || User}
           alt="sdf"
         />

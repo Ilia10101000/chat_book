@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Paper, Box, TextField, IconButton, InputBase } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
-import { FormEvent } from "react";
+import { ref, set } from "firebase/database";
 import { useState } from "react";
 import SentimentSatisfiedAltOutlinedIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
@@ -10,25 +10,56 @@ import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { useTheme } from "../../theme";
 import { MessageFooterImagesContainer } from "./MessageFooterImagesContainer";
+import { realTimeDB } from "../../firebase/auth";
+import { CHATS_RT } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
 
 interface IMessageFooter {
-  sendMessage: (message: string) => void;
-  sendImages: (images: File[]) => void;
+  sendMessage: (message: string, authUserId: string, chatId: string) => void;
+  sendImages: (imageList: File[], authUserId: string, chatId: string) => void;
+  isAuthUserTyping: boolean;
+  authUserId: string;
+  chatId: string;
 }
 
-const MessageFooter = ({ sendMessage, sendImages }: IMessageFooter) => {
+const MessageFooter = ({
+  sendMessage,
+  sendImages,
+  isAuthUserTyping,
+  authUserId,
+  chatId
+}: IMessageFooter) => {
   const [message, setMessage] = useState("");
   const [isOpenEmoji, setIsOpenEmoji] = useState(false);
   const [imageList, setImageList] = useState<File[] | null>(null);
   const { mode } = useTheme();
 
+  const handleChange = (event) => {
+    setMessage(event.target.value);
+  };
+
+  useEffect(() => {
+    if (!isAuthUserTyping && message) {
+      set(ref(realTimeDB, `${CHATS_RT}/${chatId}`), {
+        [authUserId]: true,
+      });
+    }
+    const timer1Id = setTimeout(() => {
+      set(ref(realTimeDB, `${CHATS_RT}/${chatId}`), {
+        [authUserId]: false,
+      });
+    }, 4000);
+    return () => {
+      clearTimeout(timer1Id);
+    };
+  }, [message]);
+
   const handleSendMessage = async () => {
     if (message) {
-      sendMessage(message);
+      sendMessage(message, authUserId, chatId);
       setMessage("");
     }
     if (imageList) {
-      sendImages(imageList);
+      sendImages(imageList,authUserId,chatId);
       setImageList(null);
     }
   };
@@ -48,7 +79,7 @@ const MessageFooter = ({ sendMessage, sendImages }: IMessageFooter) => {
   };
   const sendHeardEmoji = () => {
     const heartEmoji: string = "\u2764\uFE0F";
-    sendMessage(heartEmoji);
+    sendMessage(heartEmoji, authUserId, chatId);
   };
 
   const handleChooseImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,7 +137,7 @@ const MessageFooter = ({ sendMessage, sendImages }: IMessageFooter) => {
         />
         <TextField
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={handleChange}
           multiline
           onKeyDown={handleKeyDown}
           maxRows={4}
@@ -150,4 +181,3 @@ const MessageFooter = ({ sendMessage, sendImages }: IMessageFooter) => {
 };
 
 export { MessageFooter };
-

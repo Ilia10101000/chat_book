@@ -1,75 +1,71 @@
 import React, { useEffect } from "react";
-import { Navigate, useLocation, useParams } from "react-router-dom";
+import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   collection,
   query,
-  addDoc,
-  updateDoc,
   doc,
   orderBy,
-  deleteDoc,
-  serverTimestamp,
-  setDoc
 } from "firebase/firestore";
-import { useCollectionData } from "react-firebase-hooks/firestore";
+import { ref } from "firebase/database";
+import { useCollectionData, useDocument } from "react-firebase-hooks/firestore";
 import { MessageFooter } from "./MessageFooter";
 import { MessageList } from "./MessageList";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import { useAuth } from "../../hooks/useAuth";
-import { db } from "../../firebase/auth";
+import { db, realTimeDB } from "../../firebase/auth";
 import { MessageAppBar } from "./MessageAppBar";
-import { ref, storage } from "../../firebase/auth";
-import { uploadString, getDownloadURL } from "firebase/storage";
 import {
   CHATS_D,
-  CHATS_S,
+  CHATS_RT,
   MESSAGES,
 } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
-
-const fileToDataURL = async (file: File) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      resolve(reader.result);
-    };
-
-    reader.onerror = (error) => {
-      reject(error);
-    };
-
-    reader.readAsDataURL(file);
-  });
-};
-const generateUniqueFileName = (userId: string) => {
-  return `${Date.now()}-${userId}-${Math.floor(Math.random() * 10000) + 1}`;
-};
-
-const filesToDataURLs = async (files: File[]) => {
-  const promises = files.map((file) => fileToDataURL(file));
-
-  const dataURLs = await Promise.all(promises);
-
-  return dataURLs;
-};
+import { useObjectVal } from "react-firebase-hooks/database";
+import {
+  sendImages,
+  setIsUserTyping,
+  sendMessage,
+  setViewedMessage,
+  deleteChat,
+} from "../../firebase/utils/message_utils";
 
 function MessagesPage() {
   const { chatId } = useParams();
   const { state: companion } = useLocation();
   const authUser = useAuth();
+  const authUserId = authUser.uid;
+  const companionId = companion?.id;
 
-  const [messagesList, loading, error] = useCollectionData(
+  const [messagesList, loadingML, errorML] = useCollectionData(
     query(
       collection(db, `${CHATS_D}/${chatId}/${MESSAGES}`),
       orderBy("timestamp")
     )
   );
 
-  if (!companion) {
+  
+  const [isUsersTyping, loadingUT, errorUT] = useObjectVal<{
+    [key:string]: boolean;
+  }>(ref(realTimeDB, `${CHATS_RT}/${chatId}`));
+  
+  const navigate = useNavigate()
+  
+  useEffect(() => {
+    setIsUserTyping(chatId, companion.id,authUser.uid);
+  }, [])
+  
+  const [chatDoc, loadingCD, errorCD] = useDocument(
+    doc(db, `${CHATS_D}/${chatId}`)
+  );
+  
+  if (!loadingCD && !chatDoc.exists()) {
     return <Navigate to={`/u/${authUser.uid}`} />;
   }
-  if (loading) {
+  if (!companionId || !chatId) {
+    return <Navigate to={`/u/${authUser.uid}`} />;
+  }
+
+  if (loadingML) {
     return (
       <div
         style={{
@@ -83,7 +79,7 @@ function MessagesPage() {
       </div>
     );
   }
-  if (error) {
+  if (errorML) {
     return (
       <div
         style={{
@@ -97,59 +93,15 @@ function MessagesPage() {
       </div>
     );
   }
-  const sendImages = async (imageList: File[]) => {
+
+  const handleDeleteChat = async () => {
     try {
-      const imagesDateURL = await filesToDataURLs(imageList);
-      const imageListWithUniqueId = imagesDateURL.map((dataURL) => ({
-        id: generateUniqueFileName(authUser.uid),
-        data: dataURL,
-      }));
-      const imageURLS = await Promise.all(
-        imageListWithUniqueId.map(
-          async (imageDataURL: { id: string; data: string }) => {
-            const imageRef = ref(
-              storage,
-              `${CHATS_S}/${chatId}/${imageDataURL.id}`
-            );
-            await uploadString(imageRef, imageDataURL.data, "data_url");
-            const url = await getDownloadURL(imageRef);
-            return { url, imageId: imageDataURL.id };
-          }
-        )
-      );
-      await Promise.all(
-        imageURLS.map(async ({ url, imageId }) => {
-          await setDoc(doc(db, `${CHATS_D}/${chatId}/${MESSAGES}`, imageId), {
-            id:imageId,
-            senderId: authUser.uid,
-            type: "image",
-            content: url,
-            timestamp: serverTimestamp(),
-            isReaded: false,
-            imageId
-          });
-        })
-      );
+      await deleteChat(messagesList, chatId,authUserId,companionId);
+      navigate(`/u/${authUserId}`, { replace: true });
     } catch (error) {
-      console.log(error.message);
+      
     }
-  };
-  const sendMessage = async (message: string) => {
-    const messageId = Date.now() + authUser.uid;
-    await setDoc(doc(db, `${CHATS_D}/${chatId}/${MESSAGES}`, messageId), {
-      id:messageId,
-      senderId: authUser.uid,
-      type: "text",
-      content: message,
-      timestamp: serverTimestamp(),
-      isReaded: false,
-    });
-    await updateDoc(doc(db, `${CHATS_D}/${chatId}`), {
-      lastMessage: message,
-    });
-  };
-
-
+  } 
 
   return (
     <Box
@@ -160,14 +112,25 @@ function MessagesPage() {
         flexDirection: "column",
       }}
     >
-      <MessageAppBar companion={companion} />
+      <MessageAppBar
+        deleteChat={handleDeleteChat}
+        isTyping={isUsersTyping?.[companionId]}
+        companion={companion}
+      />
       <MessageList
-        chatId={chatId}
         messages={messagesList}
         isEmpty={messagesList.length === 0}
         user={authUser}
+        chatId={chatId}
+        setViewedMessage={setViewedMessage}
       />
-      <MessageFooter sendImages={sendImages} sendMessage={sendMessage} />
+      <MessageFooter
+        isAuthUserTyping={isUsersTyping?.[authUserId]}
+        chatId={chatId}
+        sendImages={sendImages}
+        authUserId={authUserId}
+        sendMessage={sendMessage}
+      />
     </Box>
   );
 }

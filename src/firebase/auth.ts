@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from 'firebase/auth';
+import { browserSessionPersistence, getAuth } from 'firebase/auth';
 import { getFirestore } from "firebase/firestore";
 import { getStorage, ref } from 'firebase/storage';
 import { getDatabase } from "firebase/database";
@@ -18,8 +18,10 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+auth.setPersistence(browserSessionPersistence).catch(error => console.log(error.message))
 const db = getFirestore(app);
 const realTimeDB = getDatabase(app);
 const storage = getStorage(app);
+
 
 export { auth, db, app, storage, ref, realTimeDB };

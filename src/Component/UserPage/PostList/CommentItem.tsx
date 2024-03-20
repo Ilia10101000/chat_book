@@ -20,12 +20,12 @@ import { Link } from "react-router-dom";
 interface ICommentItem {
   data: DocumentData;
   authUserId: string;
-  removeComment:(commentId:string) => void
+  removeComment:(commentDoc:any) => void
 }
 
 function CommentItem({ data, authUserId, removeComment }: ICommentItem) {
 
-  const [commmentAuthor, loadingCA, errorCA] = useDocumentData(doc(db, `${USERS_D}`, data!.author));
+  const [commmentAuthor, loadingCA, errorCA] = useDocumentData(doc(db, `${USERS_D}`, data.authorId));
 
   const [showConfirmDialog, setConfirmDialog] = useState(false);
   const handleHideDialog = () => {
@@ -36,7 +36,7 @@ function CommentItem({ data, authUserId, removeComment }: ICommentItem) {
   }
 
   const handleSubmitRemoveComment = () => {
-    removeComment(data.id);
+    removeComment(data);
     handleHideDialog();
   }
   if (loadingCA) {

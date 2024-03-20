@@ -11,7 +11,7 @@ import {
   ThemeOptions,
   ThemeProvider,
 } from "@mui/material/styles";
-import {Container } from "@mui/material";
+import { Container } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 
 import { PaletteMode } from "@mui/material";
@@ -21,7 +21,10 @@ interface ThemeProps {
 }
 
 interface CustomePalette extends PaletteOptions {
-  customeBackground: {
+  customeBackground?: {
+    main: string;
+  };
+  customeMessageItemBackground?: {
     main: string;
   };
 }
@@ -81,6 +84,9 @@ function Theme({ children }: ThemeProps) {
         customeBackground: {
           main: mode === "light" ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.5)",
         },
+        customeMessageItemBackground: {
+          main: mode === "light" ? "#dbd6d6" : "#000",
+        },
       },
       components: {
         MuiBackdrop: {
@@ -107,7 +113,7 @@ function Theme({ children }: ThemeProps) {
           styleOverrides: {
             paper: {
               backgroundImage: "none",
-              background:'inherit'
+              background: "inherit",
             },
           },
         },

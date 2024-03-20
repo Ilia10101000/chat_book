@@ -1,52 +1,88 @@
-import React, { useEffect, useRef, ReactNode } from "react";
-import { Paper, Box } from "@mui/material";
+import React, { useEffect, useRef, ReactNode, MutableRefObject } from "react";
+import { Box } from "@mui/material";
 import { User } from "firebase/auth";
 import { MessageItem } from "./MessageItem";
-import { deleteDoc, doc } from "firebase/firestore";
-import { db, ref, storage } from "../../firebase/auth";
-import { CHATS_D, CHATS_S, MESSAGES } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
-import { deleteObject } from "firebase/storage";
+import { DocumentData, doc } from "firebase/firestore";
+import { useDocumentData } from "react-firebase-hooks/firestore";
+import { db } from "../../firebase/auth";
+import { CHATS_D } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
+import { deleteMessage } from "../../firebase/utils/message_utils";
 
 interface IMessageList {
-  chatId: string;
   isEmpty: boolean;
-  messages: any;
+  chatId: string;
+  messages: DocumentData;
   user: User;
+  setViewedMessage: (chatId:string) => void;
 }
 
-export function MessageList({ messages, user, isEmpty, chatId }: IMessageList) {
+
+export function MessageList({
+  messages,
+  user,
+  isEmpty,
+  chatId,
+  setViewedMessage,
+}: IMessageList) {
+  const [chatData, loadingCD, errorCD] = useDocumentData(
+    doc(db, `${CHATS_D}/${chatId}`)
+  );
+
   const containerRef = useRef<HTMLDivElement>(null);
+  const lastMMessageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     containerRef.current.scrollTop = containerRef.current.scrollHeight;
   });
 
-  const deleteMessage = async (message: { id: string; type:string,imageId?:string}) => {
-    try {
-      if (message.type === 'text') {
-        await deleteDoc(doc(db, `${CHATS_D}/${chatId}/${MESSAGES}/${message.id}`));
-      } else if (message.type === 'image') {
-        await deleteObject(ref(storage,`${CHATS_S}/${chatId}/${message.imageId}`))
-        await deleteDoc(doc(db, `${CHATS_D}/${chatId}/${MESSAGES}/${message.id}`));
-      }
-    } catch (error) {
-      console.log(error.message)
+  useEffect(() => {
+    if (lastMMessageRef.current) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setViewedMessage(chatId);
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { root: null, rootMargin: "0px", threshold: 1 }
+      );
+      observer.observe(lastMMessageRef.current);
+
+      return () => {
+        if (lastMMessageRef.current) {
+          observer.unobserve(lastMMessageRef.current);
+        }
+      };
     }
-  };
+  }, [lastMMessageRef.current]);
 
   let result: ReactNode;
   if (messages.length !== 0) {
-    result = messages?.map((doc, index) => (
+    result = messages?.map((doc) => (
       <MessageItem
-        key={index}
-        doc={doc}
-        user={user}
+        ref={
+          (doc.id === chatData?.lastMessage?.messageId && doc.senderId !== user.uid) ? lastMMessageRef : null
+        }
+        key={doc.id}
+        // @ts-ignore
+        chatId={chatId}
         deleteMessage={deleteMessage}
+        user={user}
+        doc={doc}
+        showViewedIcon={
+          chatData?.lastMessage?.messageId === doc.id &&
+          chatData?.lastMessage?.senderId === user.uid &&
+          chatData?.lastMessage?.isReaded
+        }
       />
     ));
   }
   if (isEmpty) {
-    result = <div>Start chat</div>;
+    result = (
+      <div style={{ textAlign: "center", marginTop: "10px" }}>Start chat</div>
+    );
   }
 
   return (
@@ -55,7 +91,7 @@ export function MessageList({ messages, user, isEmpty, chatId }: IMessageList) {
       sx={{
         boxSizing: "border-box",
         minWidth: "300px",
-        maxWidth: "800px",
+        maxWidth: "1000px",
         width: "100%",
         mx: "auto",
         gap: "10px",

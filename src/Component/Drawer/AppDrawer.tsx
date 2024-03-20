@@ -8,7 +8,6 @@ import {
   Avatar
 } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useTheme } from "@mui/material/styles";
 import DrawerAppHeader from "./DrawerAppHeader";
 import { ThemeSwitch } from "../CustomeElement/SwitchTheme";
 import { UserAvatar } from "./DrawerUserAvatar";
@@ -31,8 +30,6 @@ function AppDrawer({
   signOut,
   userInfo,
 }: IAppDrawer) {
-  
-  const theme = useTheme();
 
   return (
       <Drawer
@@ -91,7 +88,7 @@ function AppDrawer({
                 height: { xs: "50px", sm: "45px", md: "50px" },
               }}
               photoURL={userInfo.photoURL}
-              userName={userInfo.displayName || userInfo.email}
+              userName={userInfo.displayName}
             />
           </Link>
         </Fab>

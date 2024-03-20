@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDocument } from 'react-firebase-hooks/firestore';
-import { FirestoreError, doc } from 'firebase/firestore';
+import { doc } from 'firebase/firestore';
 import { db } from '../firebase/auth';
 import {
   FRIEND,

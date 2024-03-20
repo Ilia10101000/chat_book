@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect } from "react";
-import { Box, Fab, IconButton, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { Box, IconButton, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { useState } from "react";
 import EmailIcon from "@mui/icons-material/Email";
 import GroupIcon from "@mui/icons-material/Group";

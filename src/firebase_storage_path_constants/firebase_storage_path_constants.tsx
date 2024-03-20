@@ -2,18 +2,18 @@
 
 const USERS_D = "users";
 const CHATS_D = "chats";
-const POSTS = 'posts';
-const COMMENTS = 'comments';
-const LIKES = 'likes';
-const MARKED_PERSONS = 'marked_persons';
-const TAGS_IN_THIRD_PARTY_POSTS = 'tags_in_third_party_posts';
 
 // Personal user collections
 
+const POSTS = 'posts';
+const COMMENTS = 'comments';
+const LIKES = 'likes';
 const EXISTING_CHATS = "existing_chats";
 const RECEIVED_FRIENDS_REQUESTS = "received_friends_requests";
 const SENT_FRIENDS_REQUESTS = "sent_friends_requests";
 const FRIENDS_LIST = "friends_list";
+const MARKED_PERSONS = 'marked_persons';
+const TAGS_IN_THIRD_PARTY_POSTS = 'tags_in_third_party_posts';
 
 //Personal chats collections
 
@@ -46,5 +46,3 @@ export {
   MARKED_PERSONS,
   TAGS_IN_THIRD_PARTY_POSTS,
 };
-
-
