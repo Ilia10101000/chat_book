@@ -15,12 +15,14 @@ function PhotoURLDialog({ open, handleClose, handleError, updatePage }) {
   const [pending, setPending] = useState(false);
   const user = useAuth();
 
-  const photoRef = ref(storage, `${AVATAR_S}/${user.uid}/${AVATAR_S}`);
-
   const deleteUserPhoto = async () => {
     setPending(true);
     try {
-      await deleteObject(photoRef);
+      if (
+        user.photoURL.startsWith("https://firebasestorage.googleapis.com/")
+      ) {
+        await deleteObject(ref(storage, `${AVATAR_S}/${user.uid}/${AVATAR_S}`));
+      }
       await updateProfile(user, {
         photoURL: "",
       });

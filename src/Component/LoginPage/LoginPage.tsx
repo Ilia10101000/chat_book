@@ -7,8 +7,7 @@ import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth, db } from "../../firebase/auth";
 import { useSignInWithGoogle } from "react-firebase-hooks/auth";
 import DefaultUserIcon from '../../img/default-user.svg'
-import { useEffect } from "react";
-import { collection, getDocs, limit, query, where } from "firebase/firestore";
+import { collection, doc, getDocs, limit, query, setDoc, where } from "firebase/firestore";
 import { USERS_D } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
 
 interface IWindow extends Window {
@@ -25,7 +24,16 @@ const LoginPage = () => {
   const handleSignInWithGoogle = async () => {
     const credentials = await signInWithGoogle();
     const { uid, photoURL, displayName, email } = credentials.user;
-    const userDocSnap = await getDocs(query(collection(db,USERS_D), where('email','==', email), limit(1)))
+    const userDocSnap = await getDocs(query(collection(db, USERS_D), where('email', '==', email), limit(1)))
+    if (userDocSnap.empty) {
+      await setDoc(doc(db, USERS_D, uid), {
+        id: uid,
+        displayName,
+        email,
+        photoURL,
+        searchQuery:displayName.toLowerCase()
+      })
+    }
   }
 
   return (

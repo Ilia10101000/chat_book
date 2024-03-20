@@ -17,7 +17,6 @@ const UserContext = createContext<User>(null);
 
 const App = () => {
   const [user, loading] = useAuthState(auth);
-  console.log(user)
 
   let availablePaths =
     user?.uid && !loading ? authorizedRoutes : unAuthorizedRoutes;
