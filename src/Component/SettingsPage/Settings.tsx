@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Box } from "@mui/material";
-import { useAuth } from "../../hooks/useAuth";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { CustomTabPanel } from "../CustomeElement/CustomeTabPanel";
@@ -13,6 +12,7 @@ import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import BrushIcon from "@mui/icons-material/Brush";
 import { AppTheme } from "./AppTheme";
+import { useAuth } from "../../App";
 
 function Settings() {
   const authUser = useAuth();

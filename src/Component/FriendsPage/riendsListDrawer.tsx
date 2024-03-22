@@ -3,11 +3,12 @@ import { Box, Divider, Typography, Drawer, Badge } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { CustomTabPanel } from "../CustomeElement/CustomeTabPanel";
-import { useAuth } from "../../hooks/useAuth";
 import { FriendsList } from "./FriendsList/FriendsList";
 import { RequestList } from "./RequestList/RequestList";
+import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
+import { useAuth } from "../../App";
 
-function FriendsListDrawer({ open, onClose }) {
+function FriendsListDrawer({ open, onClose, receivedNewFriendsRequsts }) {
   const user = useAuth();
 
   const authUserData = {
@@ -27,7 +28,7 @@ function FriendsListDrawer({ open, onClose }) {
       onClose={onClose}
       variant="temporary"
       sx={{
-        backgroundColor:'background.paper',
+        backgroundColor: "background.paper",
         width: "250px",
         "& .MuiDrawer-paper": {
           width: "250px",
@@ -43,7 +44,17 @@ function FriendsListDrawer({ open, onClose }) {
       >
         <Tabs variant="fullWidth" value={tabNumber} onChange={handleChange}>
           <Tab label="Friends" />
-          <Tab label="Request" />
+          <Tab
+            label="Request"
+            iconPosition="start"
+            icon={
+              receivedNewFriendsRequsts?.length ? (
+                <PersonAddAlt1Icon
+                  sx={{ fontSize: "18px", color: "#ce93d8" }}
+                />
+              ) : null
+            }
+          />
         </Tabs>
       </Box>
       <CustomTabPanel style={{ padding: "0px" }} value={tabNumber} index={0}>

@@ -1,9 +1,11 @@
-import React from "react";
+import React, { Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import { App } from "./App";
 import { Theme } from "./theme";
 import { BrowserRouter } from "react-router-dom";
+import "./i18n";
+import { CircularProgress } from "@mui/material";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -11,10 +13,23 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Theme>
-        <App />
-      </Theme>
-    </BrowserRouter>
+    <Suspense
+      fallback={
+        <CircularProgress
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%,-50%)",
+          }}
+        />
+      }
+    >
+      <BrowserRouter>
+        <Theme>
+          <App />
+        </Theme>
+      </BrowserRouter>
+    </Suspense>
   </React.StrictMode>
 );

@@ -1,10 +1,13 @@
 import { initializeApp } from "firebase/app";
-import { browserSessionPersistence, getAuth } from 'firebase/auth';
+import {
+  browserPopupRedirectResolver,
+  browserSessionPersistence,
+  initializeAuth,
+  getAuth
+} from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import { getStorage, ref } from 'firebase/storage';
+import { getStorage, ref } from "firebase/storage";
 import { getDatabase } from "firebase/database";
-
-
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -18,10 +21,13 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-auth.setPersistence(browserSessionPersistence).catch(error => console.log(error.message))
+// const auth = initializeAuth(app, {
+//   persistence: [browserSessionPersistence],
+//   popupRedirectResolver: browserPopupRedirectResolver,
+
+// });
 const db = getFirestore(app);
 const realTimeDB = getDatabase(app);
 const storage = getStorage(app);
-
 
 export { auth, db, app, storage, ref, realTimeDB };

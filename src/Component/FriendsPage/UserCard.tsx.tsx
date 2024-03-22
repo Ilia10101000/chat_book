@@ -23,12 +23,12 @@ function UserCard({ handleClick, userId}: IUserCard) {
     return <div>Failed request</div>
   } else {
     return (
-      <ListItemButton onClick={() => handleClick(userData.id)} sx={{ p: 0 }}>
+      <ListItemButton onClick={() => handleClick(userData?.id)} sx={{ p: 0 }}>
         <ListItem>
           <ListItemAvatar>
             <UserAvatar
-              userName={userData.displayName}
-              photoURL={userData.photoURL}
+              userName={userData?.displayName}
+              photoURL={userData?.photoURL}
             />
           </ListItemAvatar>
           <ListItemText
@@ -37,7 +37,7 @@ function UserCard({ handleClick, userId}: IUserCard) {
               overflow: "hidden",
               textOverflow: "ellipsis",
             }}
-            primary={userData.displayName}
+            primary={userData?.displayName}
           />
         </ListItem>
       </ListItemButton>

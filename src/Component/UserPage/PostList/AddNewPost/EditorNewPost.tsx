@@ -5,7 +5,6 @@ import { IconButton, TextField, CircularProgress } from "@mui/material";
 import { CustomePostImageEditor } from "./CustomePostImageEditor";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useAuth } from "../../../../hooks/useAuth";
 import { getDownloadURL, uploadString } from "firebase/storage";
 import { storage, ref, db } from "../../../../firebase/auth";
 import {
@@ -17,6 +16,7 @@ import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { useImageDragDropContext } from "./NewImageModalWindow";
+import { useAuth } from "../../../../App";
 
 const generateUniqueFileName = (userId: string) => {
   return `${Date.now()}-${userId}-${Math.floor(Math.random() * 10000) + 1}`;

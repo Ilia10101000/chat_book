@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { CustomeInput } from "./CustomeInput";
 import Button from "@mui/material/Button";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -12,6 +12,8 @@ import {
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import * as Yup from "yup";
 
 interface IEmailForms {
   handleSubmit: (email: string, password: string) => void;
@@ -19,6 +21,7 @@ interface IEmailForms {
 
 function EmailForms({ handleSubmit }: IEmailForms) {
   const [isShownPassword, setIsShownPassword] = useState(false);
+  const { t, i18n } = useTranslation();
 
   const toogleVisibilityPassword = () => {
     setIsShownPassword((value) => !value);
@@ -34,6 +37,19 @@ function EmailForms({ handleSubmit }: IEmailForms) {
     },
     validationSchema: emailValidationSchema,
   });
+
+    useEffect(() => {
+      i18n.on("languageChanged", (lng) => {
+        Object.keys(formik.errors).forEach((fieldName) => {
+          if (Object.keys(formik.touched).includes(fieldName)) {
+            formik.setFieldTouched(fieldName);
+          }
+        });
+      });
+      return () => {
+        i18n.off("languageChanged", (lng) => {});
+      };
+    }, [formik.errors]);
 
   return (
     <form onSubmit={formik.handleSubmit}>
@@ -86,8 +102,13 @@ function EmailForms({ handleSubmit }: IEmailForms) {
             key={form.name}
           />
         ))}
-        <Button type="submit" variant="contained" disabled={!formik.isValid}>
-          Submit
+        <Button
+          color="secondary"
+          type="submit"
+          variant="contained"
+          disabled={!formik.isValid}
+        >
+          {t('login.loginButton')}
         </Button>
       </Stack>
     </form>

@@ -140,7 +140,7 @@ function SigninInfo() {
         boxShadow: 5,
       }}
     >
-      <Button onClick={goBack}>Go back</Button>
+      <Button size="small" color='warning' onClick={goBack}>Go back</Button>
       {form}
     </Box>
   ) : (

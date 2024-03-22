@@ -96,7 +96,7 @@ function Signin() {
         style={{
           display: "flex",
           justifyContent: "center",
-          alignItems: "baseline",
+          alignItems: "center",
           paddingTop: "40px",
           width: "100%",
           minHeight: "100vh",

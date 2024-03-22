@@ -93,6 +93,7 @@ function PhotoURLValue({
         flexDirection: "column",
         alignItems: "center",
         gap: "15px",
+        
       }}
     >
       <NewImageModalWindow
@@ -178,14 +179,34 @@ function SigninSubmitList({
 
   return (
     <>
-      <div>{email}</div>
-      <div>{displayName}</div>
-      <div>
+      <Box sx={{ width: { xs: "150px", sm: "250px" } }}>
         <img
-          style={{ width: "250px", borderRadius: "50%" }}
+          style={{ width: "100%", borderRadius: "50%" }}
           src={photoURL || User}
           alt="sdf"
         />
+      </Box>
+      <div
+        style={{
+          whiteSpace: "nowrap",
+          textOverflow: "ellipsis",
+          overflow: "hidden",
+          width: "100%",
+          textAlign: "center",
+        }}
+      >
+        {email}
+      </div>
+      <div
+        style={{
+          whiteSpace: "nowrap",
+          textOverflow: "ellipsis",
+          overflow: "hidden",
+          width: "100%",
+          textAlign: "center",
+        }}
+      >
+        {displayName}
       </div>
       <TextField
         sx={{ width: "280px" }}

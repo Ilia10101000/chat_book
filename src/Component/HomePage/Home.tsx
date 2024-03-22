@@ -1,25 +1,34 @@
-import React, { ReactNode, useEffect } from "react";
-import { Box, IconButton, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import React, { ReactNode, createContext, useContext, useEffect } from "react";
+import {
+  Badge,
+  Box,
+  IconButton,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Modal,
+} from "@mui/material";
 import { useState } from "react";
 import EmailIcon from "@mui/icons-material/Email";
 import GroupIcon from "@mui/icons-material/Group";
 import TuneIcon from "@mui/icons-material/Tune";
 import AddToPhotosOutlinedIcon from "@mui/icons-material/AddToPhotosOutlined";
 import NewspaperIcon from "@mui/icons-material/Newspaper";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { auth, realTimeDB } from "../../firebase/auth";
 import { signOut } from "firebase/auth";
 import { serverTimestamp } from "firebase/firestore";
 import { ref, set } from "firebase/database";
 import { useTheme } from "../../theme";
-import { useAuth } from "../../hooks/useAuth";
 import { AppDrawer } from "../Drawer/AppDrawer";
 import { MessageListDrawer } from "../MessagesPage/MessageListDrawer";
 import { FriendsListDrawer } from "../FriendsPage/riendsListDrawer";
-import { USERS_RT } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
+import { PRESENT, RECEIVED_FRIENDS_REQUESTS, RECEIVED_NEW_MESSAGES, USERS_RT } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
 import { NewImageModalWindow } from "../UserPage/PostList/AddNewPost/NewImageModalWindow";
 import { EditorNewPost } from "../UserPage/PostList/AddNewPost/EditorNewPost";
 import { MobileDrawer } from "../Drawer/MobileDrawer";
+import { useObjectVal } from "react-firebase-hooks/database";
+import { useAuth } from "../../App";
 
 const makeDrawerInner = (drawerListItems: any): ReactNode => {
   return drawerListItems.map(({ mode, label, icon, ...modeAction }) => {
@@ -77,12 +86,12 @@ const makeDrawerInner = (drawerListItems: any): ReactNode => {
 const makeMobileDrawerInner = (drawerListItems: any): ReactNode => {
   return drawerListItems.map(({ mode, label, icon, ...modeAction }) => {
     let button = (
-        <IconButton
-          onClick={mode === "button" ? modeAction.handleClick : undefined}
-          key={label}
-        >
-          {icon}
-        </IconButton>
+      <IconButton
+        onClick={mode === "button" ? modeAction.handleClick : undefined}
+        key={label}
+      >
+        {icon}
+      </IconButton>
     );
     if (mode === "link") {
       return (
@@ -103,7 +112,7 @@ const makeMobileDrawerInner = (drawerListItems: any): ReactNode => {
 
 const setIsUserOnline = async (userId: string, isOnline: boolean) => {
   try {
-    set(ref(realTimeDB, `${USERS_RT}/${userId}`), {
+    set(ref(realTimeDB, `${USERS_RT}/${userId}/${PRESENT}`), {
       isOnline,
       lastVisit: serverTimestamp(),
     });
@@ -112,8 +121,22 @@ const setIsUserOnline = async (userId: string, isOnline: boolean) => {
   }
 };
 
+const HomeContext = createContext(null);
+
+const useHomeContext = () => {
+  return useContext(HomeContext);
+};
+
 function HomePage() {
   let user = useAuth();
+
+  const [userEventsSnapshot, loading, error] = useObjectVal<{
+    [RECEIVED_NEW_MESSAGES]:{[key:string]:boolean},
+    [RECEIVED_FRIENDS_REQUESTS]:{[key:string]:boolean},
+  }>(ref(realTimeDB, `${USERS_RT}/${user.uid}`));
+
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const [showMessageDrawer, setShowMessageDrawer] = useState(false);
   const [showFriendsDrawer, setShowFriendsDrawer] = useState(false);
@@ -141,13 +164,29 @@ function HomePage() {
       setIsUserOnline(user.uid, false);
     };
   }, []);
+  useEffect(() => {
+    if (location.pathname === "/") {
+      navigate(`u/${user.uid}`, { replace: true });
+    }
+  }, [location.pathname]);
+
+  const receivedMessagesChatIdList = userEventsSnapshot?.[RECEIVED_NEW_MESSAGES]
+    ? Object.keys(userEventsSnapshot[RECEIVED_NEW_MESSAGES]).filter(
+        (chatId) => userEventsSnapshot[RECEIVED_NEW_MESSAGES][chatId] === true
+      )
+    : null;
+  const receivedNewFriendsRequests = userEventsSnapshot?.[RECEIVED_FRIENDS_REQUESTS]
+    ? Object.keys(userEventsSnapshot[RECEIVED_FRIENDS_REQUESTS]).filter(
+        (userId) => userEventsSnapshot[RECEIVED_FRIENDS_REQUESTS][userId] === true
+      )
+    : null;
 
   const drawerListItems = [
     {
       mode: "link",
       label: "News",
       icon: <NewspaperIcon />,
-      href: '/news',
+      href: "/news",
     },
     {
       mode: "button",
@@ -158,13 +197,33 @@ function HomePage() {
     {
       mode: "button",
       label: "Friends",
-      icon: <GroupIcon />,
+      icon: receivedNewFriendsRequests ? (
+        <Badge
+          color="secondary"
+          badgeContent={receivedNewFriendsRequests.length}
+          max={10}
+        >
+          <GroupIcon />
+        </Badge>
+      ) : (
+        <GroupIcon />
+      ),
       handleClick: toogleFriendsDrawerOpen,
     },
     {
       mode: "button",
       label: "Message",
-      icon: <EmailIcon />,
+      icon: receivedMessagesChatIdList ? (
+        <Badge
+          color="secondary"
+          badgeContent={receivedMessagesChatIdList.length}
+          max={10}
+        >
+          <EmailIcon />
+        </Badge>
+      ) : (
+        <EmailIcon />
+      ),
       handleClick: toogleMessageDrawerOpen,
     },
     { mode: "link", label: "Settings", icon: <TuneIcon />, href: "/settings" },
@@ -173,59 +232,68 @@ function HomePage() {
   const drawerInner = makeDrawerInner(drawerListItems);
   const mobileDrawerInner = makeMobileDrawerInner(drawerListItems);
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: { xs: "column", sm: "row" },
-        height: "100%",
-        width: "100%",
-        overflow: "hidden",
+    <HomeContext.Provider
+      value={{
+        toogleFriendsDrawerOpen,
+        newReceivedMessages: userEventsSnapshot?.[RECEIVED_NEW_MESSAGES],
       }}
     >
-      <AppDrawer
-        drawerInner={drawerInner}
-        mode={mode}
-        toogleThemeMode={toogleThemeMode}
-        signOut={signOutApp}
-        userInfo={user}
-      />
-      <MessageListDrawer
-        open={showMessageDrawer}
-        onClose={toogleMessageDrawerOpen}
-      />
-      <FriendsListDrawer
-        open={showFriendsDrawer}
-        onClose={toogleFriendsDrawerOpen}
-      />
       <Box
-        component="main"
         sx={{
-          flexGrow: 1,
-          overflowY: "scroll",
-          transition: (theme) =>
-            theme.transitions.create("width", {
-              easing: theme.transitions.easing.easeIn,
-              duration: theme.transitions.duration.leavingScreen,
-            }),
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          height: "100%",
+          width: "100%",
+          overflow: "hidden",
         }}
       >
-        <NewImageModalWindow
-          open={showAddNewPostModel}
-          onClose={toogleShowAddNewPostModel}
+        <AppDrawer
+          drawerInner={drawerInner}
+          mode={mode}
+          toogleThemeMode={toogleThemeMode}
+          signOut={signOutApp}
+          userInfo={user}
+        />
+        <MessageListDrawer
+          open={showMessageDrawer}
+          onClose={toogleMessageDrawerOpen}
+          receivedNewMessages={receivedMessagesChatIdList}
+        />
+        <FriendsListDrawer
+          open={showFriendsDrawer}
+          onClose={toogleFriendsDrawerOpen}
+          receivedNewFriendsRequsts={receivedNewFriendsRequests}
+        />
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            overflowY: "scroll",
+            transition: (theme) =>
+              theme.transitions.create("width", {
+                easing: theme.transitions.easing.easeIn,
+                duration: theme.transitions.duration.leavingScreen,
+              }),
+          }}
         >
-          <EditorNewPost />
-        </NewImageModalWindow>
-        <Outlet />
+          <NewImageModalWindow
+            open={showAddNewPostModel}
+            onClose={toogleShowAddNewPostModel}
+          >
+            <EditorNewPost />
+          </NewImageModalWindow>
+          <Outlet />
+        </Box>
+        <MobileDrawer
+          signOut={signOutApp}
+          mode={mode}
+          toogleThemeMode={toogleThemeMode}
+          drawerInner={mobileDrawerInner}
+          userInfo={user}
+        />
       </Box>
-      <MobileDrawer
-        signOut={signOutApp}
-        mode={mode}
-        toogleThemeMode={toogleThemeMode}
-        drawerInner={mobileDrawerInner}
-        userInfo={user}
-      />
-    </Box>
+    </HomeContext.Provider>
   );
 }
 
-export { HomePage };
+export { HomePage, useHomeContext };

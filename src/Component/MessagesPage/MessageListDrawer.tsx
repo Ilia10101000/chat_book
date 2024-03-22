@@ -5,7 +5,6 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import { useAuth } from "../../hooks/useAuth";
 import { collection} from "firebase/firestore";
 import { db } from "../../firebase/auth";
 import { MessageListItemLink } from "./MessageListItemLink";
@@ -13,8 +12,9 @@ import {
   USERS_D,
   EXISTING_CHATS,
 } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
+import { useAuth } from "../../App";
 
-function MessageListDrawer({ open, onClose }) {
+function MessageListDrawer({ open, onClose, receivedNewMessages }) {
   const authUser = useAuth();
 
   const [existingChatsList, loadingECL, errorECL] = useCollectionData(
@@ -24,13 +24,13 @@ function MessageListDrawer({ open, onClose }) {
   let result: React.ReactNode | null;
 
   if (loadingECL) {
-    result = <CircularProgress sx={{mx:'auto'}} />;
-
+    result = <CircularProgress sx={{ mx: "auto" }} />;
   } else if (!existingChatsList?.length) {
-    result = <div style={{textAlign:'center'}}>No existing chats...</div>;
+    result = <div style={{ textAlign: "center" }}>No existing chats...</div>;
   } else {
     result = existingChatsList?.map(({ companion, chatId }, index) => (
       <MessageListItemLink
+        isHasNewMessage={receivedNewMessages?.some(id => id === chatId)}
         key={index}
         companion={companion}
         chatId={chatId}

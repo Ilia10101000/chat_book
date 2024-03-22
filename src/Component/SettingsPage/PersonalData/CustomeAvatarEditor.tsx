@@ -50,8 +50,7 @@ const CustomeAvatarEditor = ({ postsImage, handleSave }: IAvatarEditor) => {
         borderRadius={editorSquardParams / 2}
         scale={scaledImage}
       />
-      <Stack spacing={3} direction="row" sx={{ mb: 1 }} alignItems="center">
-        <div>
+      <Stack direction="row" sx={{ mb: 1 }} alignItems="center">
           <ZoomInIcon fontSize="small" />
           <Slider
             size="small"
@@ -63,7 +62,6 @@ const CustomeAvatarEditor = ({ postsImage, handleSave }: IAvatarEditor) => {
             valueLabelDisplay="auto"
             sx={{ width: "100px" }}
           />
-        </div>
       </Stack>
       <Button
         startIcon={<CheckIcon />}

@@ -6,10 +6,10 @@ import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
-import { useAuth } from "../../../hooks/useAuth";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase/auth";
 import { AVATAR_S, USERS_D } from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
+import { useAuth } from "../../../App";
 
 function PhotoURLDialog({ open, handleClose, handleError, updatePage }) {
   const [pending, setPending] = useState(false);

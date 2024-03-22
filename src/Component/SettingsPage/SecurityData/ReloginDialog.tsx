@@ -22,8 +22,8 @@ function ReloginDialog({ open, handleClose, handleConfirm, displayName }) {
           <br />
           <br />
           To ensure the security of your account, we kindly ask you to log in
-          again before proceeding with the password change. Once you've logged
-          back in, you'll be able to update your password securely.
+          again before proceeding with your action. Once you've logged
+          back in, you'll be able to finish.
         </DialogContentText>
       </DialogContent>
       <DialogActions>

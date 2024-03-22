@@ -8,10 +8,10 @@ import {
 } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 import CircularProgress from "@mui/material/CircularProgress";
-import { useAuth } from "../../hooks/useAuth";
 import { db } from "../../firebase/auth";
 import { CHATS_D} from "../../firebase_storage_path_constants/firebase_storage_path_constants";
 import { createChatDoc } from "../../firebase/utils/message_utils";
+import { useAuth } from "../../App";
 
 function MiddlewareCheckComponent() {
   const { reciever } = useParams();

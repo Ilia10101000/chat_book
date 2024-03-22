@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import DefaultPhoto from "../../../img/default-user.svg";
-import { Link } from "react-router-dom";
-import { Box, Button, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { Box, Button, Dialog, List, Typography } from "@mui/material";
 import { ContactButton } from "./ContactButton";
 import { User } from "firebase/auth";
 import { DocumentData } from "firebase/firestore";
 import EmailIcon from "@mui/icons-material/Email";
+import { UserCard } from "../../FriendsPage/UserCard.tsx";
 
 interface IPersonalDisplayData {
   isOwnPage: boolean;
-  friendsCount: number;
+  friendsList: any;
   postsCount: number;
   user: DocumentData;
   authUser: User;
@@ -17,20 +18,35 @@ interface IPersonalDisplayData {
 
 function PersonalDisplayData({
   authUser,
-  friendsCount,
+  friendsList,
   postsCount,
   user,
   isOwnPage,
 }: IPersonalDisplayData) {
-  const [handleError, setHandleError] = useState(null);
+  const [error, setError] = useState(null);
+  const [isOpenFriendsDialog, setIsOpenFriendsDialog] = useState(false)
+  const navigate = useNavigate();
+  console.log(friendsList)
+
+  const handleStartChat = () => {
+    navigate(`/messages/${user?.id}`,{state:user});
+  }
+
+  const handleClickFrindsCard = (userId:string) => {
+    navigate(`/u/${userId}`)
+  }
+
+  const toogleOpenFriendsDialog = () => {
+    setIsOpenFriendsDialog(value => !value);
+  }
 
   useEffect(() => {
-    if (handleError) {
+    if (error) {
       setTimeout(() => {
-        setHandleError(null);
+        setError(null);
       }, 2000);
     }
-  }, [handleError]);
+  }, [error]);
 
   return (
     <Box sx={{ display: "flex", gap: "20px", py: 3, maxWidth: "100%" }}>
@@ -79,7 +95,8 @@ function PersonalDisplayData({
             flexDirection: { xs: "column", sm: "row" },
           }}
         >
-          <div
+          <Typography
+            variant="button"
             style={{
               textOverflow: "ellipsis",
               overflow: "hidden",
@@ -87,16 +104,19 @@ function PersonalDisplayData({
             }}
           >
             {postsCount || 0} Publications
-          </div>
-          <div
+          </Typography>
+          <Typography
+            onClick={toogleOpenFriendsDialog}
+            variant="button"
             style={{
               textOverflow: "ellipsis",
               overflow: "hidden",
               whiteSpace: "nowrap",
+              cursor: "pointer",
             }}
           >
-            {friendsCount || 0} Friends
-          </div>
+            {friendsList?.length || 0} Friends
+          </Typography>
         </Box>
         {!isOwnPage && (
           <Box
@@ -104,21 +124,36 @@ function PersonalDisplayData({
               display: "flex",
               gap: "15px",
               flexDirection: { xs: "column", sm: "row" },
+              alignItems: "start",
             }}
           >
-            <Link to={`/messages/${user?.id}`} state={user}>
-              <Button startIcon={<EmailIcon />} size="small" variant="outlined">
-                Start chat
-              </Button>
-            </Link>
+            <Button
+              startIcon={<EmailIcon />}
+              size="small"
+              variant="outlined"
+              onClick={handleStartChat}
+            >
+              Start chat
+            </Button>
             <ContactButton
               authUser={authUser}
               user={user}
-              handleError={handleError}
+              handleError={error}
             />
           </Box>
         )}
       </Box>
+      <Dialog open={isOpenFriendsDialog} onClose={toogleOpenFriendsDialog}>
+        <List sx={{ maxHeight:'70vh', maxWidth:'80vh', overflow:'scroll' }}>
+          {friendsList.map(({ id }) => (
+            <UserCard
+              key={id}
+              userId={id}
+              handleClick={handleClickFrindsCard}
+            />
+          ))}
+        </List>
+      </Dialog>
     </Box>
   );
 }

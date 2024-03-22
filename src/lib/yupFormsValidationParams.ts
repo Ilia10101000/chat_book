@@ -1,4 +1,5 @@
 import * as Yup from "yup";
+import i18n from "../i18n";
 
 interface IFormsList {
   label: string;
@@ -21,34 +22,39 @@ const transformNameValue = (value: string) => {
 };
 
 const emailSchema = Yup.string()
-  .matches(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, "Enter a valid email")
-  .required("Email is required");
+  .matches(
+    /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+    i18n.t("login.validEmail")
+  )
+  .required(i18n.t("login.required"));
 
 const passwordSchema = Yup.string()
-  .min(6, "Min lenght is 6 letters")
-  .max(40, "Your password too long")
-  .required("Set password for your account");
+  .min(6, i18n.t("login.minLen"))
+  .required(i18n.t("login.required"));
 
 const confirmPassword = Yup.string()
-  .oneOf([Yup.ref("password"), null], "Passwords must match")
-  .required("Required");
+  .oneOf([Yup.ref("password"), null], i18n.t("login.passswordMustMatch"))
+  .required(i18n.t("login.required"));
 
-const phoneSchema = Yup.string()
-  .min(18, "Enter valid phone")
-  .matches(
-    /^\+38\(0(99|98|97|96|95|94|93|68|67|66|63|50|39|94)\)-\d{3}-\d{2}-\d{2}$/,
-    "Check your typed value"
-  )
-  .required("Phone is required");
+// const phoneSchema = Yup.string()
+//   .min(18, "Enter valid phone")
+//   .matches(
+//     /^\+38\(0(99|98|97|96|95|94|93|68|67|66|63|50|39|94)\)-\d{3}-\d{2}-\d{2}$/,
+//     "Check your typed value"
+//   )
+//   .required('Required');
 
 const nameSchema = Yup.string()
-  .min(2, "Enter your name")
-  .matches(/^(?!-)(?!.*-\s*-)[A-Za-zА-Яа-яЁё -]+$/, "Check typed value")
-  .required("Name is required");
+  .min(2, i18n.t("login.enterName"))
+  .matches(/^(?!-)(?!.*-\s*-)[A-Za-zА-Яа-яЁё -]+$/, i18n.t("login.checkValue"))
+  .required(i18n.t("login.required"));
 
 const emailValidationSchema = Yup.object({
   email: emailSchema,
   password: passwordSchema,
+}).shape({});
+const emailVerifySchema = Yup.object({
+  email: emailSchema,
 }).shape({});
 
 const newSigninValidationSchema = Yup.object({
@@ -66,9 +72,9 @@ const loginValidationSchema = Yup.object({
   displayName: nameSchema,
 }).shape({});
 
-const phoneValidationSchema = Yup.object({
-  phone: phoneSchema,
-}).shape({});
+// const phoneValidationSchema = Yup.object({
+//   phone: phoneSchema,
+// }).shape({});
 
 const resetPasswordSchema = Yup.object({
   email: emailSchema,
@@ -76,7 +82,7 @@ const resetPasswordSchema = Yup.object({
 
 const emailFormsList: Array<IFormsList> = [
   {
-    label: "Email",
+    label: i18n.t("login.email"),
     name: "email",
     shouldTransform: {
       value: true,
@@ -87,7 +93,7 @@ const emailFormsList: Array<IFormsList> = [
     },
   },
   {
-    label: "Password",
+    label: i18n.t("login.password"),
     name: "password",
     shouldTransform: {
       value: false,
@@ -100,7 +106,7 @@ const emailFormsList: Array<IFormsList> = [
 
 const resetPasswordFromList = [
   {
-    label: "Email",
+    label: i18n.t("login.email"),
     name: "email",
     shouldTransform: {
       value: true,
@@ -114,7 +120,7 @@ const resetPasswordFromList = [
 
 const loginFormList: Array<IFormsList> = [
   {
-    label: "Name",
+    label: i18n.t("login.name"),
     name: "name",
     shouldTransform: {
       value: true,
@@ -142,7 +148,7 @@ const phoneFormList: Array<IFormsList> = [
 
 export {
   emailValidationSchema,
-  phoneValidationSchema,
+
   newSigninValidationSchema,
   resetPasswordSchema,
   emailFormsList,
@@ -150,4 +156,5 @@ export {
   phoneFormList,
   loginValidationSchema,
   updatePasswordValidationSchema,
+  emailVerifySchema,
 };

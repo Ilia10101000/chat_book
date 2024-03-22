@@ -1,5 +1,4 @@
 import React, { ReactNode, useEffect, useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/auth";
 import {
@@ -9,7 +8,9 @@ import {
 } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
 import { NewsPostItem } from "./NewsPostItem";
 import { Box, Button, CircularProgress, List, Typography } from "@mui/material";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useHomeContext } from "../HomePage/Home";
+import { useAuth } from "../../App";
 
 function NewsPage() {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ function NewsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [newsList, setNewsList] = useState([]);
+  const {toogleFriendsDrawerOpen} = useHomeContext()
 
   const fetchNewsList = async () => {
     setLoading(true);
@@ -68,8 +70,10 @@ function NewsPage() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          position: "relative",
+          position: "absolute",
           top: "50%",
+          left:'50%',
+          transform:'translate(-50%,-50%)'
         }}
       >
         <Typography variant="h5" sx={{ mb: 2, textAlign: "center" }}>
@@ -87,14 +91,20 @@ function NewsPage() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          position: "relative",
+          position: "absolute",
           top: "50%",
+          left:'50%',
+          transform:'translate(-50%,-50%)'
         }}
       >
-        <Typography variant="h6" sx={{ mb: 2,textAlign:'center' }}>
+        <Typography variant="h6" sx={{ mb: 2, textAlign: "center" }}>
           Find and subscribe to your friends to watching their news
         </Typography>
-        <Button variant="contained" color="success" onClick={reloadPage}>
+        <Button
+          variant="contained"
+          color="success"
+          onClick={toogleFriendsDrawerOpen}
+        >
           Find friends
         </Button>
       </Box>
@@ -111,19 +121,10 @@ function NewsPage() {
   }
 
   return (
-    <>
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        height: "100vh",
-          overflowY: "scroll",
-      }}
-    >
+    <Box sx={{maxHeight:'100vh'}}>
       {res}
-      </Box>
       <Outlet />
-    </>
+    </Box>
   );
 }
 

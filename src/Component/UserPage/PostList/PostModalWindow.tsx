@@ -22,7 +22,6 @@ import {
   POSTS,
   USERS_D,
 } from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
-import { useAuth } from "../../../hooks/useAuth";
 import {
   useCollectionData,
   useDocumentData,
@@ -39,6 +38,7 @@ import {
   addComment,
   toogleVisibilityComments,
 } from "../../../firebase/utils/post_utils";
+import { useAuth } from "../../../App";
 
 const style: SxProps<Theme> = {
   position: "relative",

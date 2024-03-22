@@ -11,7 +11,8 @@ import Picker from "@emoji-mart/react";
 import { useTheme } from "../../theme";
 import { MessageFooterImagesContainer } from "./MessageFooterImagesContainer";
 import { realTimeDB } from "../../firebase/auth";
-import { CHATS_RT } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
+import { CHATS_RT, USERS_D } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
+import { updateDoc } from "firebase/firestore";
 
 interface IMessageFooter {
   sendMessage: (message: string, authUserId: string, chatId: string) => void;
@@ -19,6 +20,7 @@ interface IMessageFooter {
   isAuthUserTyping: boolean;
   authUserId: string;
   chatId: string;
+  setNewMessageToCompanion: () => void
 }
 
 const MessageFooter = ({
@@ -26,7 +28,8 @@ const MessageFooter = ({
   sendImages,
   isAuthUserTyping,
   authUserId,
-  chatId
+  chatId,
+  setNewMessageToCompanion
 }: IMessageFooter) => {
   const [message, setMessage] = useState("");
   const [isOpenEmoji, setIsOpenEmoji] = useState(false);
@@ -62,6 +65,8 @@ const MessageFooter = ({
       sendImages(imageList,authUserId,chatId);
       setImageList(null);
     }
+    setNewMessageToCompanion();
+    
   };
 
   const toogleEmojiView = () => {

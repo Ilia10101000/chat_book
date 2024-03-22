@@ -1,4 +1,4 @@
-import { ref as refRT, set } from "firebase/database";
+import { ref as refRT, set, remove } from "firebase/database";
 import { db, realTimeDB, ref, storage } from "../auth";
 import {
   USERS_D,
@@ -7,6 +7,8 @@ import {
   CHATS_S,
   EXISTING_CHATS,
   MESSAGES,
+  USERS_RT,
+  RECEIVED_NEW_MESSAGES,
 } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
 import {
   collection,
@@ -136,10 +138,22 @@ const sendMessage = async (
   });
 };
 
-const setViewedMessage = async (chatId: string) => {
+const setReceiveNewMessageStatus = async (chatId:string, userId:string) => {
+  await set(refRT(realTimeDB, `${USERS_RT}/${userId}/${RECEIVED_NEW_MESSAGES}`), {
+    [chatId]: true,
+  });
+}
+
+const setViewedMessage = async (userId:string,chatId: string) => {
   await updateDoc(doc(db, `${CHATS_D}/${chatId}`), {
     "lastMessage.isReaded": true,
   });
+  await remove(
+    refRT(
+      realTimeDB,
+      `${USERS_RT}/${userId}/${RECEIVED_NEW_MESSAGES}/${chatId}`
+    )
+  );
 };
 
 const deleteMessage = async (
@@ -237,4 +251,5 @@ export {
   deleteChat,
   createChatDoc,
   deleteChatDuringDeleteUserAccount,
+  setReceiveNewMessageStatus,
 };

@@ -14,7 +14,12 @@ import { ref } from "firebase/database";
 import { realTimeDB } from "../../firebase/auth";
 import { useObjectVal } from "react-firebase-hooks/database";
 import Badge from "@mui/material/Badge";
-import { USERS_D, CHATS_D, USERS_RT } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
+import {
+  USERS_D,
+  CHATS_D,
+  USERS_RT,
+  PRESENT,
+} from "../../firebase_storage_path_constants/firebase_storage_path_constants";
 
 type IisOnlineSnapShot = {
   isOnline: boolean;
@@ -24,15 +29,19 @@ function MessageListItemLink({
   onClose,
   companion,
   chatId,
+  isHasNewMessage,
 }: {
   onClose: () => void;
   companion: string;
   chatId: string;
+  isHasNewMessage:boolean;
 }) {
   const [isOnlineSnapShot, loading, error] = useObjectVal<IisOnlineSnapShot>(
-    ref(realTimeDB, `${USERS_RT}/${companion}`)
+    ref(realTimeDB, `${USERS_RT}/${companion}/${PRESENT}`)
   );
-  const [user, loadingURL] = useDocumentData(doc(db, `${USERS_D}/${companion}`));
+  const [user, loadingURL] = useDocumentData(
+    doc(db, `${USERS_D}/${companion}`)
+  );
   const [lastMessage, loadingLM] = useDocumentData(
     doc(db, `${CHATS_D}/${chatId}`)
   );
@@ -75,7 +84,7 @@ function MessageListItemLink({
         state={user}
         style={{ textDecoration: "none", color: "inherit" }}
       >
-        <ListItemButton onClick={onClose} sx={{ p: 0 }}>
+        <ListItemButton onClick={onClose} sx={{ p: 0, ...(isHasNewMessage && {backgroundColor:'rgba(255,255,255,0.1)'}) }}>
           <ListItem>
             <ListItemAvatar sx={{ mr: 2 }}>
               <Badge

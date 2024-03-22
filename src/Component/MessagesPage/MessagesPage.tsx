@@ -12,7 +12,6 @@ import { MessageFooter } from "./MessageFooter";
 import { MessageList } from "./MessageList";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
-import { useAuth } from "../../hooks/useAuth";
 import { db, realTimeDB } from "../../firebase/auth";
 import { MessageAppBar } from "./MessageAppBar";
 import {
@@ -27,7 +26,9 @@ import {
   sendMessage,
   setViewedMessage,
   deleteChat,
+  setReceiveNewMessageStatus,
 } from "../../firebase/utils/message_utils";
+import { useAuth } from "../../App";
 
 function MessagesPage() {
   const { chatId } = useParams();
@@ -51,7 +52,7 @@ function MessagesPage() {
   const navigate = useNavigate()
   
   useEffect(() => {
-    setIsUserTyping(chatId, companion.id,authUser.uid);
+    setIsUserTyping(chatId, companion?.id,authUser.uid);
   }, [])
   
   const [chatDoc, loadingCD, errorCD] = useDocument(
@@ -103,6 +104,14 @@ function MessagesPage() {
     }
   } 
 
+  const handleSetViewedMessage = (chatId: string) => {
+    setViewedMessage(authUserId,chatId);
+  };
+
+  const setNewMessageToCompanion = async () => {
+    await setReceiveNewMessageStatus(chatId, companion?.id);
+  }
+
   return (
     <Box
       sx={{
@@ -122,7 +131,7 @@ function MessagesPage() {
         isEmpty={messagesList.length === 0}
         user={authUser}
         chatId={chatId}
-        setViewedMessage={setViewedMessage}
+        setViewedMessage={handleSetViewedMessage}
       />
       <MessageFooter
         isAuthUserTyping={isUsersTyping?.[authUserId]}
@@ -130,6 +139,7 @@ function MessagesPage() {
         sendImages={sendImages}
         authUserId={authUserId}
         sendMessage={sendMessage}
+        setNewMessageToCompanion={setNewMessageToCompanion}
       />
     </Box>
   );

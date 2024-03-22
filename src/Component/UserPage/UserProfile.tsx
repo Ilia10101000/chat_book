@@ -1,7 +1,6 @@
 import React from "react";
 import { Outlet, useParams } from "react-router-dom";
 import { Box, CircularProgress } from "@mui/material";
-import { useAuth } from "../../hooks/useAuth";
 import { collection, doc, orderBy, query } from "firebase/firestore";
 import { db } from "../../firebase/auth";
 import {
@@ -16,8 +15,9 @@ import {
   TAGS_IN_THIRD_PARTY_POSTS
 } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
 import { PostList } from "./PostList/PostList";
+import { useAuth } from "../../App";
 
-const UserProfile = () => {
+const UserProfile = () => {  
   const { userId } = useParams();
 
   const authUser = useAuth();
@@ -65,7 +65,7 @@ const UserProfile = () => {
           user={user}
           isOwnPage={isOwnPage}
           authUser={authUser}
-          friendsCount={friends.length}
+          friendsList={friends}
           postsCount={posts.length}
         />
         <PostList

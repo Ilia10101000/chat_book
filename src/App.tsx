@@ -1,4 +1,4 @@
-import React, { createContext, useEffect } from "react";
+import React, { createContext, useContext } from "react";
 import { ErrorPage } from "./Component/Error/Error";
 import {
   unAuthorizedRoutes,
@@ -38,13 +38,19 @@ const App = () => {
   return (
     <DndProvider backend={HTML5Backend}>
       <UserContext.Provider value={user}>
-        <Routes>
-          {renderRoutes(availablePaths)}
-          <Route path={"*"} element={<ErrorPage />} />
-        </Routes>
+          <Routes>
+            {renderRoutes(availablePaths)}
+            <Route path={"*"} element={<ErrorPage />} />
+          </Routes>
       </UserContext.Provider>
     </DndProvider>
   );
 };
 
-export { App, UserContext };
+function useAuth() {
+  return useContext(UserContext);
+};
+
+export { App, useAuth };
+  
+  
