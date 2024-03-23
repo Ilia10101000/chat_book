@@ -21,6 +21,7 @@ import User from "../../img/default-user.svg";
 import { Link } from 'react-router-dom';
 import { USERS_RT } from '../../firebase_storage_path_constants/firebase_storage_path_constants';
 import { Delete, MoreVert } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 
 type IMessageAppBar = {
   companion: { [key: string]: string };
@@ -35,6 +36,8 @@ function MessageAppBar({ companion, isTyping, deleteChat }: IMessageAppBar) {
   const [isOnlineSnapShot, loading, error] = useObjectVal<{
     isOnline: boolean;
   }>(ref(realTimeDB, `${USERS_RT}/${companion.id}`));
+
+  const { t } = useTranslation();
 
   const isOnline = isOnlineSnapShot?.isOnline;
 
@@ -67,7 +70,13 @@ function MessageAppBar({ companion, isTyping, deleteChat }: IMessageAppBar) {
               textOverflow: "ellipsis",
             }}
             primary={companion.displayName || companion.email}
-            secondary={isTyping ? "Typing..." : isOnline ? "online" : null}
+            secondary={
+              isTyping
+                ? t("messagePage.typing")
+                : isOnline
+                ? t("messagePage.online")
+                : null
+            }
           />
         </ListItem>
         <SpeedDial
@@ -84,22 +93,22 @@ function MessageAppBar({ companion, isTyping, deleteChat }: IMessageAppBar) {
         >
           <SpeedDialAction
             onClick={() => setShowConfirmDeleteChat(true)}
-            tooltipTitle={"Delete chat"}
+            tooltipTitle={t("messagePage.deleteChat")}
             icon={<Delete />}
           />
         </SpeedDial>
       </Toolbar>
       <Dialog open={showConfirmDeleteChat}>
-        <DialogTitle>Delete chat?</DialogTitle>
+        <DialogTitle>{t("messagePage.deleteChat")}?</DialogTitle>
         <DialogActions>
           <Button
             variant="contained"
             onClick={() => setShowConfirmDeleteChat(false)}
           >
-            Cancel
+            {t("login.cancel")}
           </Button>
           <Button onClick={deleteChat} color="error">
-            Delete
+            {t("login.delete")}
           </Button>
         </DialogActions>
       </Dialog>

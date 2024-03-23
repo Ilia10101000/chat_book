@@ -19,14 +19,13 @@ interface IUser {
   id: string;
 }
 
-const FriendsList = ({ authUser, onClose }) => {
-
+const FriendsList = ({ authUser, onClose, placeLabel, noMat, findFrie }) => {
   const [usersSearchValue, setUsersSearchValue] = useState("");
   const [textValue] = useDebounce(usersSearchValue, 800);
 
   const [resultUserSearch, setResultUserSearch] = useState(null);
   const [loading, setLoading] = useState(false);
-  
+
   const [friendsList, loadingFL, errorFL] = useCollectionData(
     collection(db, `${USERS_D}/${authUser.id}/${FRIENDS_LIST}`)
   );
@@ -42,7 +41,7 @@ const FriendsList = ({ authUser, onClose }) => {
       );
       const data = await getDocs(queryRef);
       const resultList = data.docs.map((doc) => doc.data());
-      const result = resultList.filter(user => user.id !== authUser.id);
+      const result = resultList.filter((user) => user.id !== authUser.id);
       setResultUserSearch(result);
     } catch (error) {
       console.error("Error fetching data:", error.message);
@@ -53,22 +52,26 @@ const FriendsList = ({ authUser, onClose }) => {
 
   useEffect(() => {
     if (textValue) {
-        fetchData(textValue)
+      fetchData(textValue);
     } else if (!textValue && resultUserSearch) {
-      setResultUserSearch(null)
-      }
-  }, [textValue])
-  
+      setResultUserSearch(null);
+    }
+  }, [textValue]);
+
   let result: React.ReactNode | null;
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    function handleClickFriendCard (id: string){
-      navigate(`u/${id}`);
-      onClose();
-  };
-  
-  let noResult = <div style={{textAlign:'center'}}>{resultUserSearch ? 'Not matches' : 'Find your friends'}</div>;
+  function handleClickFriendCard(id: string) {
+    navigate(`u/${id}`);
+    onClose();
+  }
+
+  let noResult = (
+    <div style={{ textAlign: "center" }}>
+      {resultUserSearch ?  noMat  :  findFrie }
+    </div>
+  );
   let dataList = resultUserSearch ? resultUserSearch : friendsList;
 
   if (!dataList?.length) {
@@ -99,7 +102,7 @@ const FriendsList = ({ authUser, onClose }) => {
         <TextField
           type="text"
           value={usersSearchValue}
-          label={"Find friends"}
+          label={placeLabel}
           onChange={handleChangeUsersSearchValue}
           autoComplete="off"
         />

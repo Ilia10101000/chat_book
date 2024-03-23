@@ -20,10 +20,13 @@ import { Link } from "react-router-dom";
 interface ICommentItem {
   data: DocumentData;
   authUserId: string;
-  removeComment:(commentDoc:any) => void
+  removeComment: (commentDoc: any) => void;
+  delComment:string;
+  can:string;
+  del:string;
 }
 
-function CommentItem({ data, authUserId, removeComment }: ICommentItem) {
+function CommentItem({ data, authUserId, removeComment, delComment,can,del }: ICommentItem) {
 
   const [commmentAuthor, loadingCA, errorCA] = useDocumentData(doc(db, `${USERS_D}`, data.authorId));
 
@@ -55,19 +58,22 @@ function CommentItem({ data, authUserId, removeComment }: ICommentItem) {
       }}
     >
       {isCommentOwner && (
-          <IconButton
-            size="small"
-            sx={{ position: "absolute", right: "-15px", top: "-10px" }}
-            onClick={handleShowDialog}
-          >
-            <DeleteIcon sx={{ fontSize: "16px" }} />
-          </IconButton>
+        <IconButton
+          size="small"
+          sx={{ position: "absolute", right: "-15px", top: "-10px" }}
+          onClick={handleShowDialog}
+        >
+          <DeleteIcon sx={{ fontSize: "16px" }} />
+        </IconButton>
       )}
-      <Link style={{textDecoration:'none', color:'inherit'}} to={`/user/${commmentAuthor.id}`}>
+      <Link
+        style={{ textDecoration: "none", color: "inherit" }}
+        to={`/user/${commmentAuthor.id}`}
+      >
         <UserAvatar
           photoURL={commmentAuthor.photoURL}
           userName={commmentAuthor.displayName}
-          style={{width:'25px',height:'25px'}}
+          style={{ width: "25px", height: "25px" }}
         />
       </Link>
       <Box
@@ -95,17 +101,17 @@ function CommentItem({ data, authUserId, removeComment }: ICommentItem) {
       </Box>
       {setConfirmDialog && (
         <Dialog open={showConfirmDialog} onClose={handleHideDialog}>
-          <DialogTitle>Remove comment?</DialogTitle>
+          <DialogTitle>{delComment}</DialogTitle>
           <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
             <Button size="small" onClick={handleHideDialog}>
-              Cancel
+              {can}
             </Button>
             <Button
               size="small"
               onClick={handleSubmitRemoveComment}
               color="error"
             >
-              Remove
+              {del}
             </Button>
           </DialogActions>
         </Dialog>

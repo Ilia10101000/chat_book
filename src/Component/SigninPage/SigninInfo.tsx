@@ -1,13 +1,14 @@
 import { Box, Button } from "@mui/material";
 import React, { ReactNode } from "react";
 import { useSigninValue } from "./Signin";
-import { useParams, Navigate, useNavigate } from "react-router-dom";
+import { useParams, Navigate, useNavigate, useLocation } from "react-router-dom";
 import {
   DisplayNameValue,
   EmailValue,
   PhotoURLValue,
   SigninSubmitList,
 } from "./SigninValueFields";
+import { useTranslation } from "react-i18next";
 
 const transformEmailValue = (value: string) => {
   return value.replace(/\s+/g, "");
@@ -20,7 +21,15 @@ function SigninInfo() {
   const { requiredInfo } = useParams();
   const { signinForm, error, loading } = useSigninValue();
   const navigate = useNavigate();
-  const goBack = () => navigate(-1);
+  const { t, i18n } = useTranslation();
+  const location = useLocation()
+  const goBack = () => {
+    if (location.pathname === "/signin/displayName") {
+      navigate("/login");
+    } else {
+      navigate(- 1);
+    }
+  }
 
   let form: ReactNode | null = null;
 
@@ -35,7 +44,7 @@ function SigninInfo() {
           signinForm.touched.displayName && signinForm.errors.displayName
         }
         autoComplete="off"
-        label={"Type your name"}
+        label={t('login.enterName')}
         name={"displayName"}
         id={"displayName"}
         value={signinForm.values.displayName}
@@ -48,6 +57,7 @@ function SigninInfo() {
             )
             .then(() => signinForm.handleBlur(e));
         }}
+        nextStepButton={t("signin.nextStepButton")}
       />
     );
   }
@@ -58,7 +68,7 @@ function SigninInfo() {
         error={signinForm.touched.email && Boolean(signinForm.errors.email)}
         helperText={signinForm.touched.email && signinForm.errors.email}
         displayName={signinForm.values.displayName}
-        label={"Enter your email"}
+        label={t("login.email")}
         name={"email"}
         autoComplete="off"
         id={"email"}
@@ -72,6 +82,7 @@ function SigninInfo() {
             )
             .then(() => signinForm.handleBlur(e));
         }}
+        nextStepButton={t("signin.nextStepButton")}
       />
     );
   }
@@ -83,6 +94,9 @@ function SigninInfo() {
         onChange={(data_url: string) =>
           signinForm.setFieldValue("photoURL", data_url)
         }
+        selectAvatar={t("signin.selectAvatar")}
+        nextStepButton={t("signin.nextStepButton")}
+        photoSkipStep={t("signin.photoSkipStep")}
       />
     );
   }
@@ -91,11 +105,12 @@ function SigninInfo() {
       <SigninSubmitList
         loading={loading}
         error={error}
+        confirmButton={t("signin.confirmButton")}
         isValid={signinForm.isValid}
         handleSubmit={signinForm.handleSubmit}
         values={signinForm.values}
         mainPassword={{
-          label: "Set password",
+          label: t("login.password"),
           name: "password",
           id: "password",
           value: signinForm.values.password,
@@ -106,7 +121,7 @@ function SigninInfo() {
           helperText: signinForm.touched.password && signinForm.errors.password,
         }}
         confirmPassword={{
-          label: "Confirm password",
+          label: t("signin.confirmPassword"),
           name: "confirmPassword",
           id: "confirmPassword",
           value: signinForm.values.confirmPassword,
@@ -140,7 +155,9 @@ function SigninInfo() {
         boxShadow: 5,
       }}
     >
-      <Button size="small" color='warning' onClick={goBack}>Go back</Button>
+      <Button size="small" color="warning" onClick={goBack}>
+        {t("signin.goBackButton")}
+      </Button>
       {form}
     </Box>
   ) : (

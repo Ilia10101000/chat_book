@@ -21,9 +21,8 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { setDoc, deleteDoc, doc } from "firebase/firestore";
 import { FavoriteLikesGroupItem } from "./FavoriteLikesGroup";
-import { UserAvatar } from "../../Drawer/DrawerUserAvatar";
 
-function LikesList({ postId, userId, authUserId }) {
+function LikesList({ postId, userId, authUserId, likesCount }) {
   const [likesList, loadingLL, errorLL] = useCollectionData(
     collection(db, `${USERS_D}/${userId}/${POSTS}/${postId}/${LIKES}`)
   );
@@ -131,7 +130,7 @@ function LikesList({ postId, userId, authUserId }) {
             }}
             variant="caption"
           >
-            {likesList.length} people likes this post
+            {likesList.length} {likesCount}
           </Typography>
           <Dialog open={isExpandedLikesGroup} onClose={handleReduceLikesGroup}>
             <List

@@ -20,6 +20,7 @@ import { useDebounce } from "use-debounce";
 import { db } from "../../../firebase/auth";
 import { USERS_D } from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
 import SendIcon from "@mui/icons-material/Send";
+import { useTranslation } from "react-i18next";
 
 const style: SxProps<Theme> = {
   position: "relative",
@@ -41,14 +42,13 @@ const SearchUsersDialog = ({ open, closeModal, handleSubmit }) => {
   const [loading, setLoading] = useState(false);
 
   const [searchListHeight, setSearchListHeight] = useState(0);
+  const {t} = useTranslation()
 
-  const listRef = useRef < HTMLDivElement>(null);
+  const listRef = useRef< HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    if (listRef.current) {
-      setSearchListHeight(listRef.current.clientHeight);
-    }
-  }, [options.length]);
+    setSearchListHeight(listRef?.current?.clientHeight);
+  }, [options.length, listRef?.current]);
 
   const fetchData = async (searchQuery: string) => {
     setLoading(true);
@@ -108,7 +108,7 @@ const SearchUsersDialog = ({ open, closeModal, handleSubmit }) => {
         <TextField
           ref={listRef}
           sx={{ width: "100%" }}
-          placeholder={"Choose person"}
+          placeholder={t("userPage.choosePerson")}
           value={searchQuery}
           onChange={handleChange}
           InputProps={{
@@ -158,25 +158,22 @@ const SearchUsersDialog = ({ open, closeModal, handleSubmit }) => {
             ))}
           </List>
         )}
-        {!loading &&
-          !options.length &&
-          defSearchQuery &&
-          !selectedUser && (
-            <Box
-              sx={{
-                width: "100%",
-                p: 2,
-                textAlign: "center",
-                position: "absolute",
-                left: 0,
-                top: `${searchListHeight}px`,
-                backgroundColor: (theme) =>
-                  theme.palette.mode === "light" ? "#fff" : "#000",
-              }}
-            >
-              No matches
-            </Box>
-          )}
+        {!loading && !options.length && defSearchQuery && !selectedUser && (
+          <Box
+            sx={{
+              width: "100%",
+              p: 2,
+              textAlign: "center",
+              position: "absolute",
+              left: 0,
+              top: `${searchListHeight}px`,
+              backgroundColor: (theme) =>
+                theme.palette.mode === "light" ? "#fff" : "#000",
+            }}
+          >
+            {t("userPage.noMatches")}
+          </Box>
+        )}
       </Box>
     </Modal>
   );

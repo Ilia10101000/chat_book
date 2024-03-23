@@ -7,6 +7,7 @@ import {
   ListItemButton,
 } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import { useTranslation } from "react-i18next";
 
 interface IPostDialogConfig {
   isShownComments: boolean;
@@ -20,6 +21,7 @@ function PostDialogConfig({
   handleDeletePost,
 }: IPostDialogConfig) {
   const [showDialog, setShowDialog] = useState(false);
+  const {t} = useTranslation()
 
   const handleClose = () => {
     setShowDialog(false);
@@ -44,12 +46,14 @@ function PostDialogConfig({
               onClick={handleDeletePost}
               sx={{ color: "#ff0000" }}
             >
-              Delete post
+              {t("userPage.deletePost")}
             </ListItemButton>
           </ListItem>
           <ListItem sx={{ p: 0 }}>
             <ListItemButton onClick={toogleVisibleComments}>
-              {isShownComments ? "Hide" : "Show"} comments
+              {isShownComments
+                ? t("imageModal.hideComment")
+                : t("imageModal.showComment")}
             </ListItemButton>
           </ListItem>
         </List>

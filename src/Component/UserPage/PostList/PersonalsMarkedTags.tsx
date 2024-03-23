@@ -8,6 +8,7 @@ import {
 import { IconButton, Tooltip } from "@mui/material";
 import { Link } from "react-router-dom";
 import ClearIcon from "@mui/icons-material/Clear";
+import { useTranslation } from "react-i18next";
 
 interface IPersonalsMarkedTags {
   userId: string;
@@ -37,9 +38,11 @@ function PersonalsMarkedTags({
   removeTag
 }: IPersonalsMarkedTags) {
 
+  const {t} = useTranslation()
+
   return (
     <>
-      <Tooltip title="Tag a person">
+      <Tooltip title={t("userPage.setTag")}>
         <IconButton
           sx={{
             position: "absolute",

@@ -20,7 +20,7 @@ import {
   SENT_FRIENDS_REQUESTS,
 } from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
 
-function RequestList({ authUser, onClose }) {
+function RequestList({ authUser, onClose,recLabel,senLabel }) {
   const [tabNumber, setTabNumber] = useState("1");
 
   const [receivedFriendsRequest, loadingRFR, errorRFR] = useCollectionData(
@@ -46,8 +46,8 @@ function RequestList({ authUser, onClose }) {
         }}
       >
         <Select value={tabNumber} onChange={handleChange}>
-          <MenuItem value={1}>Received</MenuItem>
-          <MenuItem value={2}>Sent</MenuItem>
+          <MenuItem value={1}>{recLabel}</MenuItem>
+          <MenuItem value={2}>{senLabel}</MenuItem>
         </Select>
       </Box>
       <CustomTabPanel style={{ padding: "8px" }} value={+tabNumber} index={1}>

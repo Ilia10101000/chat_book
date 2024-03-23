@@ -10,10 +10,12 @@ import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase/auth";
 import { AVATAR_S, USERS_D } from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
 import { useAuth } from "../../../App";
+import { useTranslation } from "react-i18next";
 
 function PhotoURLDialog({ open, handleClose, handleError, updatePage }) {
   const [pending, setPending] = useState(false);
   const user = useAuth();
+  const {t} = useTranslation()
 
   const deleteUserPhoto = async () => {
     setPending(true);
@@ -42,12 +44,12 @@ function PhotoURLDialog({ open, handleClose, handleError, updatePage }) {
       aria-labelledby="photo-url-dialog"
     >
       <DialogTitle id="photo-url-dialog">
-        {"Confirm delete photo!"}
+        {t('imageModal.confirmDelete')}
       </DialogTitle>
       <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
+        <Button onClick={handleClose}>{t('login.cancel')}</Button>
         <Button disabled={pending} color="error" onClick={deleteUserPhoto}>
-          Delete
+          {t('login.delete')}
         </Button>
       </DialogActions>
     </Dialog>

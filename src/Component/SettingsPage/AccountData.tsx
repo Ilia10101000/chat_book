@@ -16,25 +16,25 @@ import { useFormik } from "formik";
 import { emailVerifySchema } from "../../lib/yupFormsValidationParams";
 import { updateEmail } from "firebase/auth";
 import { useSendEmailVerification } from "react-firebase-hooks/auth";
+import { useTranslation } from "react-i18next";
 
 function ConfirmDeleteAccountDialog({
   open,
   handleClose,
   handleConfirmDeleteAccount,
 }) {
+  const {t} = useTranslation()
   return (
     <Dialog
       sx={{ maxWidth: { xs: "280px", md: "400px" }, mx: "auto" }}
       open={open}
       onClose={handleClose}
     >
-      <DialogTitle id="alert-dialog-title">
-        {"Delete this account?"}
-      </DialogTitle>
+      <DialogTitle id="alert-dialog-title">{t("settingsPage.deleteAccount")}?</DialogTitle>
       <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
+        <Button onClick={handleClose}>{t("login.cancel")}</Button>
         <Button color="error" onClick={handleConfirmDeleteAccount}>
-          Delete
+          {t("login.delete")}
         </Button>
       </DialogActions>
     </Dialog>
@@ -51,6 +51,7 @@ function AccountData({
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [askRelogin, setAskRelogin] = useState(false);
   const [tabNumber, setTabNumber] = useState(0);
+  const { t } = useTranslation();
 
   const handleOpenAskReload = () => {
     setAskRelogin(true);
@@ -90,13 +91,13 @@ function AccountData({
 
   const tabsList = [
     {
-      label: "Email",
+      label: t("login.email"),
       icon: (
         <AlternateEmailIcon sx={{ fontSize: { xs: "15px", sm: "25px" } }} />
       ),
     },
     {
-      label: "Delete",
+      label: t("login.delete"),
       icon: <PersonRemoveIcon sx={{ fontSize: { xs: "15px", sm: "25px" } }} />,
     },
   ];
@@ -128,7 +129,7 @@ function AccountData({
             color="error"
             variant="contained"
           >
-            Delete account
+            {t("settingsPage.deleteAccount")}
           </Button>
           {showConfirmDialog && (
             <ConfirmDeleteAccountDialog
@@ -155,7 +156,8 @@ function EmailSetting({ user }: { user: User }) {
   const [error, setError] = useState("");
   const [sendEmailVerification, sending, errorEV] =
     useSendEmailVerification(auth);
-  const [isSentEV,setIsSentEV] = useState(false)
+  const [isSentEV, setIsSentEV] = useState(false);
+  const { t } = useTranslation();
 
   const emailForm = useFormik({
     initialValues: {
@@ -208,7 +210,7 @@ function EmailSetting({ user }: { user: User }) {
         id="email"
         value={emailForm.values.email}
         onChange={emailForm.handleChange}
-        label={"Your email"}
+        label={t('login.email')}
         onBlur={(e) => {
           emailForm
             .setFieldValue("email", transformNameValue(emailForm.values.email))
@@ -224,11 +226,16 @@ function EmailSetting({ user }: { user: User }) {
         color="warning"
         onClick={() => emailForm.handleSubmit()}
       >
-        Change
+        {t('login.changeEmail')}
       </Button>
       {!user.emailVerified && (
-        <Button disabled={isSentEV} onClick={handleSentEV} color="success" variant="contained">
-          Verify email
+        <Button
+          disabled={isSentEV}
+          onClick={handleSentEV}
+          color="success"
+          variant="contained"
+        >
+          {t('login.verifyEmail')}
         </Button>
       )}
       {error && (

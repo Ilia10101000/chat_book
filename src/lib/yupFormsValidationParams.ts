@@ -14,6 +14,12 @@ interface IFormsList {
   };
 }
 
+Yup.setLocale({
+  mixed: {
+    required: "login.required",
+  },
+});
+
 const transformEmailValue = (value: string) => {
   return value.replace(/\s+/g, "");
 };
@@ -26,7 +32,8 @@ const emailSchema = Yup.string()
     /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
     i18n.t("login.validEmail")
   )
-  .required(i18n.t("login.required"));
+  .required();
+// .required(i18n.t("login.required"));
 
 const passwordSchema = Yup.string()
   .min(6, i18n.t("login.minLen"))
@@ -46,7 +53,10 @@ const confirmPassword = Yup.string()
 
 const nameSchema = Yup.string()
   .min(2, i18n.t("login.enterName"))
-  .matches(/^(?!-)(?!.*-\s*-)[A-Za-zА-Яа-яЁё -]+$/, i18n.t("login.checkValue"))
+  .matches(
+    /^(?!-)(?!.*-\s*-)[A-Za-zА-Яа-яЁёЇїІіЄєҐґ -]+$/,
+    i18n.t("login.checkValue")
+  )
   .required(i18n.t("login.required"));
 
 const emailValidationSchema = Yup.object({
@@ -72,89 +82,19 @@ const loginValidationSchema = Yup.object({
   displayName: nameSchema,
 }).shape({});
 
-// const phoneValidationSchema = Yup.object({
-//   phone: phoneSchema,
-// }).shape({});
-
 const resetPasswordSchema = Yup.object({
   email: emailSchema,
 });
 
-const emailFormsList: Array<IFormsList> = [
-  {
-    label: i18n.t("login.email"),
-    name: "email",
-    shouldTransform: {
-      value: true,
-      schema: transformEmailValue,
-    },
-    withMask: {
-      value: false,
-    },
-  },
-  {
-    label: i18n.t("login.password"),
-    name: "password",
-    shouldTransform: {
-      value: false,
-    },
-    withMask: {
-      value: false,
-    },
-  },
-];
 
-const resetPasswordFromList = [
-  {
-    label: i18n.t("login.email"),
-    name: "email",
-    shouldTransform: {
-      value: true,
-      schema: transformEmailValue,
-    },
-    withMask: {
-      value: false,
-    },
-  },
-];
-
-const loginFormList: Array<IFormsList> = [
-  {
-    label: i18n.t("login.name"),
-    name: "name",
-    shouldTransform: {
-      value: true,
-      schema: transformNameValue,
-    },
-    withMask: {
-      value: false,
-    },
-  },
-];
-
-const phoneFormList: Array<IFormsList> = [
-  {
-    label: "Phone",
-    name: "phone",
-    shouldTransform: {
-      value: false,
-    },
-    withMask: {
-      value: true,
-      mask: "+38(099)-999-99-99",
-    },
-  },
-];
 
 export {
   emailValidationSchema,
-
   newSigninValidationSchema,
   resetPasswordSchema,
-  emailFormsList,
-  resetPasswordFromList,
-  phoneFormList,
   loginValidationSchema,
   updatePasswordValidationSchema,
   emailVerifySchema,
 };
+
+

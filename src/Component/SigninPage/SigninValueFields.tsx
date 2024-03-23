@@ -26,7 +26,7 @@ function DisplayNameValue(props: any) {
     <>
       <TextField {...props} />
       <Button onClick={goForward} disabled={props.error}>
-        Submit
+        {props.nextStepButton}
       </Button>
     </>
   );
@@ -44,7 +44,7 @@ function EmailValue({ displayName, ...props }: any) {
     <>
       <TextField {...props} />
       <Button onClick={goForward} disabled={!props.value || props.error}>
-        Submit
+        {props.nextStepButton}
       </Button>
     </>
   );
@@ -53,10 +53,16 @@ function PhotoURLValue({
   displayName,
   value,
   onChange,
+  selectAvatar,
+  nextStepButton,
+  photoSkipStep,
 }: {
   displayName: string;
   value: string;
   onChange: (data_url: string) => void;
+  nextStepButton: string;
+  photoSkipStep: string;
+  selectAvatar: any;
 }) {
   const navigate = useNavigate();
 
@@ -93,7 +99,6 @@ function PhotoURLValue({
         flexDirection: "column",
         alignItems: "center",
         gap: "15px",
-        
       }}
     >
       <NewImageModalWindow
@@ -137,11 +142,13 @@ function PhotoURLValue({
           }}
           onClick={handleOpenEditorWindow}
         >
-          Click to select avatar
+          {selectAvatar}
           <AddPhotoAlternateIcon sx={{ fontSize: "55px" }} />
         </Box>
       )}
-      <Button onClick={nextStep}>{value ? "Next step" : "Skip"}</Button>
+      <Button onClick={nextStep}>
+        {value ? nextStepButton : photoSkipStep}
+      </Button>
     </div>
   );
 }
@@ -154,6 +161,7 @@ function SigninSubmitList({
   confirmPassword,
   values,
   handleSubmit,
+  confirmButton,
 }: {
   loading: boolean;
   error: string | null;
@@ -161,6 +169,7 @@ function SigninSubmitList({
   mainPassword: any;
   confirmPassword: any;
   handleSubmit: () => void;
+  confirmButton:string;
   values: {
     email: string;
     displayName: string;
@@ -228,7 +237,7 @@ function SigninSubmitList({
         {...confirmPassword}
       />
       <Button disabled={!isValid} onClick={handleSubmit}>
-        Confirm
+        {confirmButton}
       </Button>
       {loading && <CircularProgress color="success" />}
       {error && <div>{error}</div>}

@@ -11,6 +11,7 @@ import { Box, Button, CircularProgress, List, Typography } from "@mui/material";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useHomeContext } from "../HomePage/Home";
 import { useAuth } from "../../App";
+import { useTranslation } from "react-i18next";
 
 function NewsPage() {
   const navigate = useNavigate();
@@ -18,7 +19,8 @@ function NewsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [newsList, setNewsList] = useState([]);
-  const {toogleFriendsDrawerOpen} = useHomeContext()
+  const { toogleFriendsDrawerOpen } = useHomeContext()
+  const {t} = useTranslation()
 
   const fetchNewsList = async () => {
     setLoading(true);
@@ -72,15 +74,15 @@ function NewsPage() {
           alignItems: "center",
           position: "absolute",
           top: "50%",
-          left:'50%',
-          transform:'translate(-50%,-50%)'
+          left: "50%",
+          transform: "translate(-50%,-50%)",
         }}
       >
         <Typography variant="h5" sx={{ mb: 2, textAlign: "center" }}>
-          Some error occured
+          {t("error.desc")}
         </Typography>
         <Button variant="contained" color="warning" onClick={reloadPage}>
-          Try again
+          {t("error.tryAgain")}
         </Button>
       </Box>
     );
@@ -93,27 +95,32 @@ function NewsPage() {
           alignItems: "center",
           position: "absolute",
           top: "50%",
-          left:'50%',
-          transform:'translate(-50%,-50%)'
+          left: "50%",
+          transform: "translate(-50%,-50%)",
         }}
       >
         <Typography variant="h6" sx={{ mb: 2, textAlign: "center" }}>
-          Find and subscribe to your friends to watching their news
+          {t("newsPage.action")}
         </Typography>
         <Button
           variant="contained"
           color="success"
           onClick={toogleFriendsDrawerOpen}
         >
-          Find friends
+          {t("newsPage.actionButton")}
         </Button>
       </Box>
     );
   } else {
     res = (
-      <List sx={{width:'100%', maxWidth:'700px'}}>
+      <List sx={{ width: "100%", maxWidth: "700px" }}>
         {newsList.map((news) => (
-          <NewsPostItem key={news.id} authUserId={authUser.uid} {...news} />
+          <NewsPostItem
+            likesCount={t("userPage.likesCount")}
+            key={news.id}
+            authUserId={authUser.uid}
+            {...news}
+          />
         ))}
       </List>
     );

@@ -1,19 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { CustomeInput } from "./CustomeInput";
 import Button from "@mui/material/Button";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import { useFormik } from "formik";
-import { Stack } from "@mui/material";
+import { Stack, TextField } from "@mui/material";
 import {
   emailValidationSchema,
-  emailFormsList,
 } from "../../lib/yupFormsValidationParams";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import * as Yup from "yup";
 
 interface IEmailForms {
   handleSubmit: (email: string, password: string) => void;
@@ -38,18 +36,28 @@ function EmailForms({ handleSubmit }: IEmailForms) {
     validationSchema: emailValidationSchema,
   });
 
-    useEffect(() => {
-      i18n.on("languageChanged", (lng) => {
-        Object.keys(formik.errors).forEach((fieldName) => {
-          if (Object.keys(formik.touched).includes(fieldName)) {
-            formik.setFieldTouched(fieldName);
-          }
-        });
-      });
-      return () => {
-        i18n.off("languageChanged", (lng) => {});
-      };
-    }, [formik.errors]);
+  // useLayoutEffect(() => {
+  //   Object.keys(formik.errors).forEach((fieldName) => {
+  //     if (Object.keys(formik.touched).includes(fieldName)) {
+  //       console.log(fieldName)
+  //       formik.setFieldError(fieldName, formik.errors[fieldName])
+  //     }
+  //   });
+  // },[formik.errors])
+
+  // useEffect(() => {
+  //   i18n.on("languageChanged", (lng) => {
+  //     Object.keys(formik.errors).forEach((fieldName) => {
+  //       if (Object.keys(formik.touched).includes(fieldName)) {
+  //         console.log(fieldName)
+  //         formik.setFieldError( [fieldName], t(formik.errors[fieldName]) );
+  //       }
+  //     });
+  //   });
+  //   return () => {
+  //     i18n.off("languageChanged", (lng) => {});
+  //   };
+  // }, [formik.errors]);
 
   return (
     <form onSubmit={formik.handleSubmit}>
@@ -60,55 +68,57 @@ function EmailForms({ handleSubmit }: IEmailForms) {
           alignItems: "center",
         }}
       >
-        {emailFormsList.map((form) => (
-          <CustomeInput
-            autoComplete="off"
-            type={
-              form.name === "password" && !isShownPassword ? "password" : "text"
-            }
-            label={form.label}
-            id={form.name}
-            name={form.name}
-            InputProps={
-              form.name === "password"
-                ? {
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton onClick={toogleVisibilityPassword}>
-                          {isShownPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }
-                : null
-            }
-            helperText={formik.touched[form.name] && formik.errors[form.name]}
-            error={
-              formik.touched[form.name] && Boolean(formik.errors[form.name])
-            }
-            value={formik.values[form.name]}
-            onChange={formik.handleChange}
-            onBlur={(e: any) => {
-              if (form.shouldTransform.value) {
-                const { schema } = form.shouldTransform;
-                formik
-                  .setFieldValue(form.name, schema && schema(e.target.value))
-                  .then(() => formik.handleBlur(e));
-              } else {
-                formik.handleBlur(e);
-              }
-            }}
-            mask={form.withMask.value ? form.withMask.mask : null}
-            key={form.name}
-          />
-        ))}
+        <TextField
+          sx={{ width: "250px" }}
+          autoComplete="off"
+          type={"text"}
+          label={t("login.email")}
+          id={"email"}
+          name={"email"}
+          helperText={formik.touched["email"] && formik.errors["email"]}
+          error={formik.touched["email"] && Boolean(formik.errors["email"])}
+          value={formik.values["email"]}
+          onChange={formik.handleChange}
+          onBlur={(e: any) => {
+            const newFieldValue = e.target.value.trim().replace(/\s+/g, "");
+            formik
+              .setFieldValue("email", newFieldValue)
+              .then(() => formik.handleBlur(e));
+          }}
+        />
+        <TextField
+          sx={{ width: "250px" }}
+          autoComplete="off"
+          type={!isShownPassword ? "password" : "text"}
+          label={t("login.password")}
+          id={"password"}
+          name={"password"}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={toogleVisibilityPassword}>
+                  {isShownPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          helperText={formik.touched["password"] && formik.errors["password"]}
+          error={
+            formik.touched["password"] && Boolean(formik.errors["password"])
+          }
+          value={formik.values["password"]}
+          onChange={formik.handleChange}
+          onBlur={(e: any) => {
+            formik.handleBlur(e);
+          }}
+        />
         <Button
           color="secondary"
           type="submit"
           variant="contained"
           disabled={!formik.isValid}
         >
-          {t('login.loginButton')}
+          {t("login.loginButton")}
         </Button>
       </Stack>
     </form>

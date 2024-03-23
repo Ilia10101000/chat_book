@@ -17,6 +17,7 @@ import {
 import { Box } from "@mui/material";
 import { NewImageModalWindow } from "../../UserPage/PostList/AddNewPost/NewImageModalWindow";
 import { EditorNewAvatar } from "./EditorUserAvatar";
+import { useTranslation } from "react-i18next";
 
 interface IPersonalData {
   displayName: string;
@@ -32,6 +33,7 @@ function PersonalData({
   handleError,
 }: IPersonalData) {
   const navigate = useNavigate();
+  const {t} = useTranslation()
 
   const displayNameForm = useFormik({
     initialValues: {
@@ -120,10 +122,13 @@ function PersonalData({
             justifyContent: "center",
             alignItems: "center",
             cursor: "pointer",
+            "&:hover": {
+              border: "1px solid #8c8c8c",
+            },
           }}
           onClick={() => setShowEditor(true)}
         >
-          Add photo
+          {t("settingsPage.addPhoto")}
         </Box>
       )}
       <TextField
@@ -139,7 +144,7 @@ function PersonalData({
         id="displayName"
         value={displayNameForm.values.displayName}
         onChange={displayNameForm.handleChange}
-        label={"Your name"}
+        label={t("login.name")}
         onBlur={(e) => {
           displayNameForm
             .setFieldValue(
@@ -158,7 +163,7 @@ function PersonalData({
         color="warning"
         onClick={() => displayNameForm.handleSubmit()}
       >
-        Change
+        {t("login.change")}
       </Button>
       <PhotoURLDialog
         open={isOpenDialog}

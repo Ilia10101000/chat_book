@@ -20,11 +20,15 @@ interface IMessageItem {
   showViewedIcon: boolean;
   doc: DocumentData;
   user: User;
-  deleteMessage: (message: {
-    id: string;
-    type: string;
-    imageId?: string;
-  },chatId:string) => void;
+  delLabel:string;
+  deleteMessage: (
+    message: {
+      id: string;
+      type: string;
+      imageId?: string;
+    },
+    chatId: string
+  ) => void;
 }
 
 const MessageItem = forwardRef<HTMLDivElement>((props: IMessageItem, ref) => {
@@ -138,7 +142,7 @@ const MessageItem = forwardRef<HTMLDivElement>((props: IMessageItem, ref) => {
                 )
               }
               icon={<DeleteIcon />}
-              tooltipTitle={"Delete"}
+              tooltipTitle={props.delLabel}
             />
           </SpeedDial>
         )}

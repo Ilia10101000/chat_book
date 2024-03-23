@@ -7,19 +7,19 @@ import {
 } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
-function AppTheme() {
+function AppTheme({ descLabel }) {
   const { changeAppTheme, appThemesValues, appTheme } = useTheme();
 
   return (
     <Box>
       <Typography variant="h4" sx={{ textAlign: "center", my: 2 }}>
-        Select app theme
+        {descLabel}
       </Typography>
       <Box sx={{ display: "flex", gap: "20px", justifyContent: "center" }}>
-        {Object.keys(appThemesValues).map((theme,index) => {
+        {Object.keys(appThemesValues).map((theme, index) => {
           const box = (
-              <Box
-                  onClick={() => changeAppTheme(theme)}
+            <Box
+              onClick={() => changeAppTheme(theme)}
               sx={{
                 borderRadius: "10px",
                 overflow: "hidden",
@@ -50,14 +50,10 @@ function AppTheme() {
           const isSelected = appTheme === theme;
           return isSelected ? (
             <div key={index}>
-
               <Badge badgeContent={<CheckBoxIcon />}>{box}</Badge>
             </div>
           ) : (
-              <div key={index}>
-                {box}
-
-              </div>
+            <div key={index}>{box}</div>
           );
         })}
       </Box>

@@ -39,6 +39,7 @@ import {
   toogleVisibilityComments,
 } from "../../../firebase/utils/post_utils";
 import { useAuth } from "../../../App";
+import { useTranslation } from "react-i18next";
 
 const style: SxProps<Theme> = {
   position: "relative",
@@ -70,6 +71,7 @@ function PostModalWindow() {
   const authUser = useAuth();
 
   const [error, setError] = useState("");
+  const {t} = useTranslation()
 
   const [commentsList, loadingCL, errorCL] = useCollectionData(
     query(
@@ -206,6 +208,7 @@ function PostModalWindow() {
                 )}
               </Box>
               <LikesList
+                likesCount={t("userPage.likesCount")}
                 authUserId={authUser?.uid}
                 userId={user?.id}
                 postId={post?.id}
@@ -227,17 +230,23 @@ function PostModalWindow() {
                       removeComment={removeComment}
                       authUserId={authUser.uid}
                       data={comment}
+                      can={t("login.cancel")}
+                      del={t("login.delete")}
+                      delComment={t("userPage.deleteComment")}
                     />
                   ))}
                 </List>
                 <Divider />
                 <Box sx={{ mt: "auto" }}>
-                  <AddPostComment addComment={handleAddComment} />
+                  <AddPostComment
+                    addCommentLabel={t("userPage.addComment")}
+                    addComment={handleAddComment}
+                  />
                 </Box>
               </>
             ) : (
               <Box sx={{ p: 2, display: "flex", gap: "10px" }}>
-                <Typography>Comments are closed</Typography>
+                <Typography>{t("userPage.commentsClosed")}</Typography>
                 <LockPersonIcon />
               </Box>
             )}

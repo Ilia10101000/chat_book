@@ -11,6 +11,7 @@ import { updatePassword } from "firebase/auth";
 import { auth } from "../../../firebase/auth";
 import { ReloginDialog } from "./ReloginDialog";
 import { signOut } from "firebase/auth";
+import { useTranslation } from "react-i18next";
 
 function SecurityData({
   handleError,
@@ -22,6 +23,7 @@ function SecurityData({
   const [success, setSuccess] = useState(false);
   const [askRelogin, setAskRelogin] = useState(false);
   const [isShownPassword, setIsShownPassword] = useState(false);
+  const {t} = useTranslation()
 
   const passwordForm = useFormik({
     initialValues: {
@@ -79,7 +81,7 @@ function SecurityData({
       }}
     >
       <TextField
-        label={"New password"}
+        label={t("login.enterNewPassword")}
         name={"password"}
         id={"password"}
         value={passwordForm.values.password}
@@ -106,7 +108,7 @@ function SecurityData({
         }}
       />
       <TextField
-        label={"Confirm password"}
+        label={t("signin.confirmPassword")}
         name={"confirmPassword"}
         id={"confirmPassword"}
         value={passwordForm.values.confirmPassword}
@@ -133,17 +135,15 @@ function SecurityData({
           passwordForm.handleSubmit();
         }}
       >
-        Change password
+        {t("login.changePassword")}
       </Button>
-      {success && <Alert>Update successful.</Alert>}
-      {askRelogin && (
-        <ReloginDialog
-          displayName={displayName}
-          open={askRelogin}
-          handleClose={handleCloseAskReload}
-          handleConfirm={confirmSignout}
-        />
-      )}
+      {success && <Alert>{t("settingsPage.success")}</Alert>}
+      <ReloginDialog
+        displayName={displayName}
+        open={askRelogin}
+        handleClose={handleCloseAskReload}
+        handleConfirm={confirmSignout}
+      />
     </Box>
   );
 }

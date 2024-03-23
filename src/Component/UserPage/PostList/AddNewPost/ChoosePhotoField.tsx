@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react';
 import { Box, Typography, Button, Divider } from '@mui/material';
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import { useTranslation } from 'react-i18next';
 
 interface IChoosePhotoField {
     isActive: boolean;
@@ -9,6 +10,7 @@ interface IChoosePhotoField {
 
 export const ChoosePhotoField = forwardRef(
   ({ isActive, handleClick }: IChoosePhotoField, ref) => {
+    const {t} = useTranslation()
     return (
       <>
         <Box
@@ -26,19 +28,26 @@ export const ChoosePhotoField = forwardRef(
           }}
         >
           <Typography>
-            {isActive ? <AddPhotoAlternateIcon /> : "Drag your photo here"}
+            {isActive ? <AddPhotoAlternateIcon /> : t("imageModal.dnd")}
           </Typography>
         </Box>
         <Divider />
-        <Typography>or</Typography>
+        <Typography>{t("imageModal.or")}</Typography>
         <Button
           onClick={handleClick}
           startIcon={<AddPhotoAlternateIcon />}
           variant="contained"
         >
-          Choose
+          {t("imageModal.chooseImage")}
         </Button>
       </>
     );
   }
 );
+
+
+
+/*
+ЇїІіЄєҐґ
+
+*/

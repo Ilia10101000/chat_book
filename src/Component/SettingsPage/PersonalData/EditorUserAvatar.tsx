@@ -7,6 +7,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 import { useImageDragDropContext } from "../../UserPage/PostList/AddNewPost/NewImageModalWindow";
 import { CustomeAvatarEditor } from "./CustomeAvatarEditor";
+import { useTranslation } from "react-i18next";
 
 
 
@@ -16,7 +17,7 @@ function EditorNewAvatar({ handleSaveImage }: { handleSaveImage:(imageData:strin
 
   const [savedImage, setSavedImage] = useState("");
   const [pendingAddPost, setPendingAddPost] = useState(false);
-
+  const {t} = useTranslation()
   const handleSave = (editorRef: React.MutableRefObject<any>) => {
     if (editorRef.current) {
       const canvasScaled = editorRef.current
@@ -34,7 +35,7 @@ function EditorNewAvatar({ handleSaveImage }: { handleSaveImage:(imageData:strin
       const handleSubmit = async () => {
         setPendingAddPost(true);
         try {
-          handleSaveImage(savedImage);
+         await handleSaveImage(savedImage);
         } catch (error) {
           handleError(error.message);
         } finally {
@@ -74,7 +75,7 @@ function EditorNewAvatar({ handleSaveImage }: { handleSaveImage:(imageData:strin
               onClick={handleRemoveImage}
               variant="contained"
             >
-              Back
+              {t("signin.goBackButton")}
             </Button>
 
             <Button
@@ -92,12 +93,16 @@ function EditorNewAvatar({ handleSaveImage }: { handleSaveImage:(imageData:strin
               onClick={handleSubmit}
               variant="contained"
             >
-              Save
+              {t("signin.confirmButton")}
             </Button>
           </div>
         </Box>
       ) : (
-        <CustomeAvatarEditor handleSave={handleSave} postsImage={postsImage} />
+        <CustomeAvatarEditor
+          buttonLabel={t("signin.confirmButton")}
+          handleSave={handleSave}
+          postsImage={postsImage}
+        />
       )}
     </Box>
   );

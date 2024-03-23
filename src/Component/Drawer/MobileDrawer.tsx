@@ -14,6 +14,7 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 import NightsStayIcon from "@mui/icons-material/NightsStay";
 import { UserAvatar } from "./DrawerUserAvatar";
 import { Link } from "react-router-dom";
+import { SwitchLanguage } from "../CustomeElement/SwitchLanguage";
 
 function MobileDrawer({
   drawerInner,
@@ -92,11 +93,13 @@ function MobileDrawer({
             icon={<MoreVertIcon sx={{ fontSize: "18px" }} />}
             ariaLabel="SpeedDial toogle theme & signout"
           >
+            <SpeedDialAction icon={<SwitchLanguage />} />
             <SpeedDialAction
               onClick={toogleThemeMode}
               icon={mode === "dark" ? <NightsStayIcon /> : <LightModeIcon />}
             />
             <SpeedDialAction onClick={signOut} icon={<LogoutIcon />} />
+
           </SpeedDial>
         </Box>
       </Stack>

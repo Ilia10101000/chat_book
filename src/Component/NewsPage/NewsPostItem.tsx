@@ -14,7 +14,14 @@ import { UserAvatar } from "../Drawer/DrawerUserAvatar";
 import { LikesList } from "../UserPage/PostList/LikesList";
 import { Link } from "react-router-dom";
 
-function NewsPostItem({ imageURL, ownerPostId, showComments, id, authUserId }) {
+function NewsPostItem({
+  imageURL,
+  ownerPostId,
+  showComments,
+  id,
+  authUserId,
+  likesCount,
+}) {
   const [user, loadingU, errorU] = useDocumentData(
     doc(db, `${USERS_D}/${ownerPostId}`)
   );
@@ -26,14 +33,13 @@ function NewsPostItem({ imageURL, ownerPostId, showComments, id, authUserId }) {
     setIsImageLoaded(true);
   };
 
-
-  const containerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     if (containerRef.current) {
-      setHeightSkeleton(containerRef.current.clientWidth)
+      setHeightSkeleton(containerRef.current.clientWidth);
     }
-  },[])
+  }, []);
 
   return (
     <ListItem
@@ -119,7 +125,12 @@ function NewsPostItem({ imageURL, ownerPostId, showComments, id, authUserId }) {
         />
       </Box>
       <Box sx={{ alignSelf: "start" }}>
-        <LikesList authUserId={authUserId} postId={id} userId={ownerPostId} />
+        <LikesList
+          likesCount={likesCount}
+          authUserId={authUserId}
+          postId={id}
+          userId={ownerPostId}
+        />
       </Box>
     </ListItem>
   );

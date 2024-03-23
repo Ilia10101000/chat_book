@@ -29,6 +29,7 @@ import {
   setReceiveNewMessageStatus,
 } from "../../firebase/utils/message_utils";
 import { useAuth } from "../../App";
+import { useTranslation } from "react-i18next";
 
 function MessagesPage() {
   const { chatId } = useParams();
@@ -49,7 +50,8 @@ function MessagesPage() {
     [key:string]: boolean;
   }>(ref(realTimeDB, `${CHATS_RT}/${chatId}`));
   
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const {t} = useTranslation()
   
   useEffect(() => {
     setIsUserTyping(chatId, companion?.id,authUser.uid);
@@ -90,7 +92,7 @@ function MessagesPage() {
           minHeight: "100vh",
         }}
       >
-        Some error occured! try again
+        {t("error.desc")}
       </div>
     );
   }
@@ -127,6 +129,7 @@ function MessagesPage() {
         companion={companion}
       />
       <MessageList
+        delLabel={t('login.delete')}
         messages={messagesList}
         isEmpty={messagesList.length === 0}
         user={authUser}

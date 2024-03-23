@@ -17,6 +17,7 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { useImageDragDropContext } from "./NewImageModalWindow";
 import { useAuth } from "../../../../App";
+import { useTranslation } from "react-i18next";
 
 const generateUniqueFileName = (userId: string) => {
   return `${Date.now()}-${userId}-${Math.floor(Math.random() * 10000) + 1}`;
@@ -31,6 +32,7 @@ function EditorNewPost() {
   const [savedImage, setSavedImage] = useState("");
   const [pendingAddPost, setPendingAddPost] = useState(false);
   const [hideComments, setHideComments] = useState(false);
+  const {t} = useTranslation()
 
   const handleChangeText = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -56,7 +58,7 @@ function EditorNewPost() {
 
   const closeEditor = () => {
     setSavedImage("");
-    handleClose();
+    onCloseWindow();
   };
 
   const handleAddPost = async () => {
@@ -100,7 +102,7 @@ function EditorNewPost() {
           <img src={savedImage} style={{ width: "100%" }} />
           <div style={{ width: "100%", position: "relative" }}>
             <TextField
-              placeholder="Add posts text..."
+              placeholder={t("imageModal.postDesc")}
               sx={{ width: "100%", mt: 2 }}
               autoComplete="off"
               multiline
@@ -130,7 +132,7 @@ function EditorNewPost() {
               onClick={closeEditor}
               variant="contained"
             >
-              Back
+              {t("signin.goBackButton")}
             </Button>
             <FormControlLabel
               control={
@@ -139,7 +141,7 @@ function EditorNewPost() {
                   onChange={() => setHideComments((value) => !value)}
                 />
               }
-              label="Hide comments"
+              label={t("imageModal.hideComment")}
             />
 
             <Button
@@ -157,7 +159,7 @@ function EditorNewPost() {
               onClick={handleAddPost}
               variant="contained"
             >
-              Add post
+              {t("drawerInner.post")}
             </Button>
           </div>
         </Box>

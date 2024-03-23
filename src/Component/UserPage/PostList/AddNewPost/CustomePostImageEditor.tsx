@@ -10,6 +10,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import AspectRatioIcon from "@mui/icons-material/AspectRatio";
 import SpeedDial from "@mui/material/SpeedDial";
 import SpeedDialAction from "@mui/material/SpeedDialAction";
+import { useTranslation } from "react-i18next";
 
 interface IAvatarEditor {
   postsImage: File;
@@ -36,6 +37,7 @@ const CustomePostImageEditor = ({ postsImage, handleSave }: IAvatarEditor,) => {
   let editorHeight = editorWidth / imageRatio;
 
   const [scaledImage, setScaledImage] = useState(1);
+  const {t} = useTranslation()
 
   const editorRef = useRef(null);
 
@@ -96,7 +98,7 @@ const CustomePostImageEditor = ({ postsImage, handleSave }: IAvatarEditor,) => {
         color="success"
         onClick={() => handleSave(editorRef)}
       >
-        Submit
+        {t("signin.confirmButton")}
       </Button>
     </div>
   );

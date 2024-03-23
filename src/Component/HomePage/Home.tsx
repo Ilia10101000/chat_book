@@ -29,6 +29,7 @@ import { EditorNewPost } from "../UserPage/PostList/AddNewPost/EditorNewPost";
 import { MobileDrawer } from "../Drawer/MobileDrawer";
 import { useObjectVal } from "react-firebase-hooks/database";
 import { useAuth } from "../../App";
+import { useTranslation } from "react-i18next";
 
 const makeDrawerInner = (drawerListItems: any): ReactNode => {
   return drawerListItems.map(({ mode, label, icon, ...modeAction }) => {
@@ -137,6 +138,7 @@ function HomePage() {
 
   const location = useLocation();
   const navigate = useNavigate();
+  const {t} = useTranslation()
 
   const [showMessageDrawer, setShowMessageDrawer] = useState(false);
   const [showFriendsDrawer, setShowFriendsDrawer] = useState(false);
@@ -184,19 +186,19 @@ function HomePage() {
   const drawerListItems = [
     {
       mode: "link",
-      label: "News",
+      label: t("drawerInner.news"),
       icon: <NewspaperIcon />,
       href: "/news",
     },
     {
       mode: "button",
-      label: "Add post",
+      label: t("drawerInner.post"),
       icon: <AddToPhotosOutlinedIcon />,
       handleClick: toogleShowAddNewPostModel,
     },
     {
       mode: "button",
-      label: "Friends",
+      label: t("drawerInner.friends"),
       icon: receivedNewFriendsRequests ? (
         <Badge
           color="secondary"
@@ -212,7 +214,7 @@ function HomePage() {
     },
     {
       mode: "button",
-      label: "Message",
+      label: t("drawerInner.messages"),
       icon: receivedMessagesChatIdList ? (
         <Badge
           color="secondary"
@@ -226,7 +228,12 @@ function HomePage() {
       ),
       handleClick: toogleMessageDrawerOpen,
     },
-    { mode: "link", label: "Settings", icon: <TuneIcon />, href: "/settings" },
+    {
+      mode: "link",
+      label: t("drawerInner.settings"),
+      icon: <TuneIcon />,
+      href: "/settings",
+    },
   ];
 
   const drawerInner = makeDrawerInner(drawerListItems);
@@ -248,6 +255,7 @@ function HomePage() {
         }}
       >
         <AppDrawer
+          logout={t("drawerInner.logout")}
           drawerInner={drawerInner}
           mode={mode}
           toogleThemeMode={toogleThemeMode}

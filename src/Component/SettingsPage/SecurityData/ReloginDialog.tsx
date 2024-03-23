@@ -5,8 +5,10 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import { useTranslation } from "react-i18next";
 
 function ReloginDialog({ open, handleClose, handleConfirm, displayName }) {
+  const { t } = useTranslation();
   return (
     <Dialog
       sx={{ maxWidth: { xs: "280px", md: "400px" }, mx: "auto" }}
@@ -14,22 +16,20 @@ function ReloginDialog({ open, handleClose, handleConfirm, displayName }) {
       onClose={handleClose}
     >
       <DialogTitle id="alert-dialog-title">
-        {"Require recent login"}
+        {t("reloginDialog.title")}
       </DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
-          {`Dear ${displayName},`}
-          <br />
-          <br />
-          To ensure the security of your account, we kindly ask you to log in
-          again before proceeding with your action. Once you've logged
-          back in, you'll be able to finish.
+          {t("reloginDialog.dear", { name: displayName })}
+          <br/>
+          <br/>
+          {t("reloginDialog.message")}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
+        <Button onClick={handleClose}>{t("login.cancel")}</Button>
         <Button color="success" onClick={handleConfirm}>
-          Relogin
+          {t("reloginDialog.relogin")}
         </Button>
       </DialogActions>
     </Dialog>

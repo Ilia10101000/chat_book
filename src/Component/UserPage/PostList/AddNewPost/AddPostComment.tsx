@@ -8,9 +8,10 @@ import { useTheme } from "../../../../theme";
 
 interface IAddPostComment {
   addComment: (comment: string) => void;
+  addCommentLabel:string;
 }
 
-function AddPostComment({ addComment }: IAddPostComment) {
+function AddPostComment({ addComment,addCommentLabel }: IAddPostComment) {
   const [comment, setComment] = useState("");
   const [isOpenEmoji, setIsOpenEmoji] = useState(false);
   const { mode } = useTheme();
@@ -60,7 +61,7 @@ function AddPostComment({ addComment }: IAddPostComment) {
         value={comment}
         onChange={handleChange}
         multiline
-        placeholder="Add comment..."
+        placeholder={addCommentLabel}
         variant="standard"
         maxRows={3}
         sx={{

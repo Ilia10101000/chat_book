@@ -11,9 +11,14 @@ import CheckIcon from "@mui/icons-material/Check";
 interface IAvatarEditor {
   postsImage: File;
   handleSave: (editorRef: React.MutableRefObject<any>) => void;
+  buttonLabel:any
 }
 
-const CustomeAvatarEditor = ({ postsImage, handleSave }: IAvatarEditor) => {
+const CustomeAvatarEditor = ({
+  postsImage,
+  handleSave,
+  buttonLabel,
+}: IAvatarEditor) => {
   const theme = useTheme();
 
   const isXs = useMediaQuery(theme.breakpoints.between("xs", "md"));
@@ -51,17 +56,17 @@ const CustomeAvatarEditor = ({ postsImage, handleSave }: IAvatarEditor) => {
         scale={scaledImage}
       />
       <Stack direction="row" sx={{ mb: 1 }} alignItems="center">
-          <ZoomInIcon fontSize="small" />
-          <Slider
-            size="small"
-            value={scaledImage}
-            min={1}
-            max={2}
-            step={0.01}
-            onChange={handleChangeScale}
-            valueLabelDisplay="auto"
-            sx={{ width: "100px" }}
-          />
+        <ZoomInIcon fontSize="small" />
+        <Slider
+          size="small"
+          value={scaledImage}
+          min={1}
+          max={2}
+          step={0.01}
+          onChange={handleChangeScale}
+          valueLabelDisplay="auto"
+          sx={{ width: "100px" }}
+        />
       </Stack>
       <Button
         startIcon={<CheckIcon />}
@@ -70,7 +75,7 @@ const CustomeAvatarEditor = ({ postsImage, handleSave }: IAvatarEditor) => {
         color="success"
         onClick={() => handleSave(editorRef)}
       >
-        Submit
+        {buttonLabel}
       </Button>
     </div>
   );

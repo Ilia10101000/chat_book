@@ -25,6 +25,7 @@ import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
 import HandshakeIcon from "@mui/icons-material/Handshake";
+import { useTranslation } from "react-i18next";
 
 type Status =
   | typeof FRIEND
@@ -143,52 +144,54 @@ const acceptFriendRequest = async ({user1Id,user2Id}:{user1Id:string;user2Id:str
 
 
 
-const shownButton: { [key: string]: IButtonProp } = {
-  [FRIEND]: {
-    label: "Remove from friend",
-    onClick: removeFromFriendsList,
-    color: "error",
-    icon:<PersonRemoveIcon/>
-  },
-  [SENTREQUEST]: {
-    label: "Cancel friend request",
-    onClick: cancelFriendRequest,
-    color: "warning",
-    icon:<DoDisturbIcon/>
-  },
-  [RECEIVED_REQUEST]: {
-    label: "Accept friend request",
-    onClick: acceptFriendRequest,
-    color: "success",
-    icon:<HandshakeIcon/>
-  },
-  [NO_CONTACT]: {
-    label: "Send friend request",
-    onClick: sendFriendRequest,
-    color: "info",
-    icon:<PersonAddAlt1Icon/>
-  },
-  [LOADING]: {
-    label: <CircularProgress size={25}/>,
-    onClick: null,
-    color: "primary",
-    icon:null
-  },
-};
-
-function ContactButton({
-  authUser,
-  user,
-  handleError,
-}: IContactButton) {
-  const [waitingRequestProcessing, setWaitingRequestProcessing] =
+  
+  function ContactButton({
+    authUser,
+    user,
+    handleError,
+  }: IContactButton) {
+    const [waitingRequestProcessing, setWaitingRequestProcessing] =
     useState(false);
-
-  const status: Status = useCheckRelationshipUserStatus(
-    authUser.uid,
-    user?.id,
-    handleError
-  );
+    
+    const status: Status = useCheckRelationshipUserStatus(
+      authUser.uid,
+      user?.id,
+      handleError
+    );
+    
+    const {t} = useTranslation()
+      const shownButton: { [key: string]: IButtonProp } = {
+        [FRIEND]: {
+          label: t("contactButton.remove"),
+          onClick: removeFromFriendsList,
+          color: "error",
+          icon: <PersonRemoveIcon />,
+        },
+        [SENTREQUEST]: {
+          label: t("contactButton.cancel"),
+          onClick: cancelFriendRequest,
+          color: "warning",
+          icon: <DoDisturbIcon />,
+        },
+        [RECEIVED_REQUEST]: {
+          label: t("contactButton.accept"),
+          onClick: acceptFriendRequest,
+          color: "success",
+          icon: <HandshakeIcon />,
+        },
+        [NO_CONTACT]: {
+          label: t("contactButton.send"),
+          onClick: sendFriendRequest,
+          color: "info",
+          icon: <PersonAddAlt1Icon />,
+        },
+        [LOADING]: {
+          label: <CircularProgress size={25} />,
+          onClick: null,
+          color: "primary",
+          icon: null,
+        },
+      };
 
   const handleClickContactButton = async () => {
     setWaitingRequestProcessing(true);

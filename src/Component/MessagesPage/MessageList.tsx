@@ -11,9 +11,10 @@ import { deleteMessage } from "../../firebase/utils/message_utils";
 interface IMessageList {
   isEmpty: boolean;
   chatId: string;
+  delLabel:string;
   messages: DocumentData;
   user: User;
-  setViewedMessage: (chatId:string) => void;
+  setViewedMessage: (chatId: string) => void;
 }
 
 
@@ -21,6 +22,7 @@ export function MessageList({
   messages,
   user,
   isEmpty,
+  delLabel,
   chatId,
   setViewedMessage,
 }: IMessageList) {
@@ -63,11 +65,15 @@ export function MessageList({
     result = messages?.map((doc) => (
       <MessageItem
         ref={
-          (doc.id === chatData?.lastMessage?.messageId && doc.senderId !== user.uid) ? lastMMessageRef : null
+          doc.id === chatData?.lastMessage?.messageId &&
+          doc.senderId !== user.uid
+            ? lastMMessageRef
+            : null
         }
         key={doc.id}
         // @ts-ignore
         chatId={chatId}
+        delLabel={delLabel}
         deleteMessage={deleteMessage}
         user={user}
         doc={doc}

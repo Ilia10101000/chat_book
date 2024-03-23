@@ -13,11 +13,13 @@ import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import BrushIcon from "@mui/icons-material/Brush";
 import { AppTheme } from "./AppTheme";
 import { useAuth } from "../../App";
+import { useTranslation } from "react-i18next";
 
 function Settings() {
   const authUser = useAuth();
   const [error, setError] = useState("");
   const [tabNumber, setTabNumber] = useState(0);
+  const {t} = useTranslation()
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabNumber(newValue);
@@ -37,21 +39,21 @@ function Settings() {
 
   const tabsList = [
     {
-      label: "Personal Data",
+      label: t("settingsPage.personalData"),
       icon: <PersonPinIcon sx={{ fontSize: { xs: "25px", sm: "35px" } }} />,
     },
     {
-      label: "Theme",
+      label: t("settingsPage.theme"),
       icon: <BrushIcon sx={{ fontSize: { xs: "25px", sm: "35px" } }} />,
     },
     {
-      label: "Security",
+      label: t("settingsPage.security"),
       icon: (
         <AdminPanelSettingsIcon sx={{ fontSize: { xs: "25px", sm: "35px" } }} />
       ),
     },
     {
-      label: "Account",
+      label: t("settingsPage.account"),
       icon: (
         <ManageAccountsIcon sx={{ fontSize: { xs: "25px", sm: "35px" } }} />
       ),
@@ -94,7 +96,7 @@ function Settings() {
             />
           </CustomTabPanel>
           <CustomTabPanel value={tabNumber} index={1}>
-            <AppTheme />
+            <AppTheme descLabel={t("settingsPage.changeTheme")} />
           </CustomTabPanel>
           <CustomTabPanel value={tabNumber} index={2}>
             <SecurityData

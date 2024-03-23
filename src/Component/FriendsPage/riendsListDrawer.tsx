@@ -7,6 +7,7 @@ import { FriendsList } from "./FriendsList/FriendsList";
 import { RequestList } from "./RequestList/RequestList";
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import { useAuth } from "../../App";
+import { useTranslation } from "react-i18next";
 
 function FriendsListDrawer({ open, onClose, receivedNewFriendsRequsts }) {
   const user = useAuth();
@@ -17,6 +18,7 @@ function FriendsListDrawer({ open, onClose, receivedNewFriendsRequsts }) {
     photoURL: user.photoURL,
   };
   const [tabNumber, setTabNumber] = useState(0);
+  const {t} = useTranslation()
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabNumber(newValue);
@@ -43,9 +45,9 @@ function FriendsListDrawer({ open, onClose, receivedNewFriendsRequsts }) {
         }}
       >
         <Tabs variant="fullWidth" value={tabNumber} onChange={handleChange}>
-          <Tab label="Friends" />
+          <Tab label={t("drawerInner.friends")} />
           <Tab
-            label="Request"
+            label={t("friendsPage.request")}
             iconPosition="start"
             icon={
               receivedNewFriendsRequsts?.length ? (
@@ -58,10 +60,21 @@ function FriendsListDrawer({ open, onClose, receivedNewFriendsRequsts }) {
         </Tabs>
       </Box>
       <CustomTabPanel style={{ padding: "0px" }} value={tabNumber} index={0}>
-        <FriendsList authUser={authUserData} onClose={onClose} />
+        <FriendsList
+          noMat={t("userPage.noMatches")}
+          findFrie={t("friendsPage.find")}
+          placeLabel={t("friendsPage.findFriends")}
+          authUser={authUserData}
+          onClose={onClose}
+        />
       </CustomTabPanel>
       <CustomTabPanel style={{ padding: "0px" }} value={tabNumber} index={1}>
-        <RequestList authUser={authUserData} onClose={onClose} />
+        <RequestList
+          recLabel={t("friendsPage.received")}
+          senLabel={t("friendsPage.sent")}
+          authUser={authUserData}
+          onClose={onClose}
+        />
       </CustomTabPanel>
     </Drawer>
   );

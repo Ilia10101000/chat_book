@@ -7,6 +7,7 @@ import { User } from "firebase/auth";
 import { DocumentData } from "firebase/firestore";
 import EmailIcon from "@mui/icons-material/Email";
 import { UserCard } from "../../FriendsPage/UserCard.tsx";
+import { useTranslation } from "react-i18next";
 
 interface IPersonalDisplayData {
   isOwnPage: boolean;
@@ -26,7 +27,7 @@ function PersonalDisplayData({
   const [error, setError] = useState(null);
   const [isOpenFriendsDialog, setIsOpenFriendsDialog] = useState(false)
   const navigate = useNavigate();
-  console.log(friendsList)
+  const {t} = useTranslation()
 
   const handleStartChat = () => {
     navigate(`/messages/${user?.id}`,{state:user});
@@ -103,7 +104,7 @@ function PersonalDisplayData({
               whiteSpace: "nowrap",
             }}
           >
-            {postsCount || 0} Publications
+            {postsCount || 0} {t("userPage.publications")}
           </Typography>
           <Typography
             onClick={toogleOpenFriendsDialog}
@@ -115,7 +116,7 @@ function PersonalDisplayData({
               cursor: "pointer",
             }}
           >
-            {friendsList?.length || 0} Friends
+            {friendsList?.length || 0} {t("drawerInner.friends")}
           </Typography>
         </Box>
         {!isOwnPage && (
@@ -133,7 +134,7 @@ function PersonalDisplayData({
               variant="outlined"
               onClick={handleStartChat}
             >
-              Start chat
+              {t("userPage.startChat")}
             </Button>
             <ContactButton
               authUser={authUser}
@@ -144,7 +145,7 @@ function PersonalDisplayData({
         )}
       </Box>
       <Dialog open={isOpenFriendsDialog} onClose={toogleOpenFriendsDialog}>
-        <List sx={{ maxHeight:'70vh', maxWidth:'80vh', overflow:'scroll' }}>
+        <List sx={{ maxHeight: "70vh", maxWidth: "80vh", overflow: "scroll" }}>
           {friendsList.map(({ id }) => (
             <UserCard
               key={id}
