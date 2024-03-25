@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import { App } from "./App";
 import { Theme } from "./theme";
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 import "./i18n";
 import { CircularProgress } from "@mui/material";
 
@@ -25,11 +25,11 @@ root.render(
         />
       }
     >
-      <BrowserRouter>
+      <HashRouter>
         <Theme>
           <App />
         </Theme>
-      </BrowserRouter>
+      </HashRouter>
     </Suspense>
   </React.StrictMode>
 );
