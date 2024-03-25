@@ -88,10 +88,14 @@ function SecurityData({
         onChange={passwordForm.handleChange}
         onBlur={passwordForm.handleBlur}
         error={
-          passwordForm.touched.password && Boolean(passwordForm.errors.password)
+          passwordForm.values.password &&
+          passwordForm.touched.password &&
+          Boolean(passwordForm.errors.password)
         }
         helperText={
-          passwordForm.touched.password && passwordForm.errors.password
+          passwordForm.values.password &&
+          passwordForm.touched.password &&
+          t(passwordForm.errors.password,{min:6})
         }
         sx={{
           width: "280px",
@@ -115,12 +119,14 @@ function SecurityData({
         onChange={passwordForm.handleChange}
         onBlur={passwordForm.handleBlur}
         error={
+          passwordForm.values.confirmPassword &&
           passwordForm.touched.confirmPassword &&
           Boolean(passwordForm.errors.confirmPassword)
         }
         helperText={
+          passwordForm.values.confirmPassword &&
           passwordForm.touched.confirmPassword &&
-          passwordForm.errors.confirmPassword
+          t(passwordForm.errors.confirmPassword)
         }
         sx={{
           width: "280px",

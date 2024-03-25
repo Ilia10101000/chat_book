@@ -107,13 +107,14 @@ function PersonalDisplayData({
             {postsCount || 0} {t("userPage.publications")}
           </Typography>
           <Typography
-            onClick={toogleOpenFriendsDialog}
+            onClick={friendsList?.length ? toogleOpenFriendsDialog :null}
             variant="button"
             style={{
               textOverflow: "ellipsis",
               overflow: "hidden",
               whiteSpace: "nowrap",
-              cursor: "pointer",
+              ...(friendsList?.length ? {cursor: "pointer"} : null)
+              ,
             }}
           >
             {friendsList?.length || 0} {t("drawerInner.friends")}

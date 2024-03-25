@@ -47,14 +47,15 @@ const style: SxProps<Theme> = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: "100%",
-  maxWidth: "1200px",
+  maxWidth: "1400px",
   backgroundColor: (theme) =>
     theme.palette.mode === "light" ? "#fff" : "#000",
   p: { xs: 1, sm: 1.5 },
   display: "flex",
-  flexDirection: { xs: "column", sm: "row" },
-  maxHeight: "92vh",
-  overflow: "hidden",
+  flexDirection: { xs: "column", md: "row" },
+  height: { xs: "95vh", sm: "92vh" },
+  gap: 1,
+  flexWrap: "nowrap",
 };
 
 function PostModalWindow() {
@@ -71,7 +72,7 @@ function PostModalWindow() {
   const authUser = useAuth();
 
   const [error, setError] = useState("");
-  const {t} = useTranslation()
+  const { t } = useTranslation();
 
   const [commentsList, loadingCL, errorCL] = useCollectionData(
     query(
@@ -142,17 +143,19 @@ function PostModalWindow() {
         )}
         <IconButton
           onClick={closeModal}
-          sx={{ position: "absolute", right: "5px", top: "2px", zIndex: 2000 }}
+          sx={{ position: "absolute", right: "5px", top: "0px", zIndex: 2000 }}
         >
           <CloseIcon sx={{ fontSize: "30px", color: "#fff" }} />
         </IconButton>
         <Box sx={style}>
           <Box
             sx={{
-              flexGrow: 1,
+              maxWidth: "1000px",
               display: "flex",
               alignItems: "center",
+              justifyContent: "center",
               px: isScreenBelow700px ? 4 : 0,
+              mx: "auto",
             }}
           >
             <ImageContainer
@@ -167,13 +170,14 @@ function PostModalWindow() {
             sx={{
               display: "flex",
               flexDirection: "column",
-              maxHeight: "100%",
-              p: { xs: "5px 0px 0px 0px", sm: 2 },
-              maxWidth: { xs: "100%", sm: "300px", md: "400px" },
+              width: { xs: "100%", md: "400px" },
+              minWidth: { xs: "100%", md: "400px" },
+              height: "100%",
+              justifyContent: "space-between",
               overflow: "hidden",
             }}
           >
-            <Box>
+            <Box sx={{ flexGrow: 0, flexShrink: 3 }}>
               <Box
                 sx={{
                   display: "flex",
@@ -219,25 +223,30 @@ function PostModalWindow() {
               <>
                 <List
                   sx={{
-                    flexGrow: 1,
+                    flexGrow: 3,
+                    flexShrink: 1,
                     overflowY: "scroll",
-                    p: { xs: "8px 16px 8px 0px", md: "8px 16px 8px 8px" },
+                    msxHeight: "100%",
                   }}
                 >
-                  {commentsList?.map((comment) => (
-                    <CommentItem
-                      key={comment.id}
-                      removeComment={removeComment}
-                      authUserId={authUser.uid}
-                      data={comment}
-                      can={t("login.cancel")}
-                      del={t("login.delete")}
-                      delComment={t("userPage.deleteComment")}
-                    />
-                  ))}
+                  {commentsList ? (
+                    commentsList?.map((comment) => (
+                      <CommentItem
+                        key={comment.id}
+                        removeComment={removeComment}
+                        authUserId={authUser.uid}
+                        data={comment}
+                        can={t("login.cancel")}
+                        del={t("login.delete")}
+                        delComment={t("userPage.deleteComment")}
+                      />
+                    ))
+                  ) : (
+                    <Typography variant="body2" sx={{textAlign:'center'}}>{t("userPage.noComments")}</Typography>
+                  )}
                 </List>
-                <Divider />
-                <Box sx={{ mt: "auto" }}>
+                <Box sx={{ mt: "auto", height: "56px", flexShrink: 0 }}>
+                  <Divider />
                   <AddPostComment
                     addCommentLabel={t("userPage.addComment")}
                     addComment={handleAddComment}

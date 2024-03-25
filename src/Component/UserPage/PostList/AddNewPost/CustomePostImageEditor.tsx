@@ -64,7 +64,7 @@ const CustomePostImageEditor = ({ postsImage, handleSave }: IAvatarEditor,) => {
         scale={scaledImage}
       />
       <Stack spacing={3} direction="row" sx={{ mb: 1 }} alignItems="center">
-        <div>
+        <div style={{display:'flex',alignItems:'center'}}>
           <ZoomInIcon fontSize="small" />
           <Slider
             size="small"

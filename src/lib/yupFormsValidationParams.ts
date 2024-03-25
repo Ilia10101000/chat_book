@@ -1,5 +1,4 @@
 import * as Yup from "yup";
-import i18n from "../i18n";
 
 interface IFormsList {
   label: string;
@@ -14,34 +13,24 @@ interface IFormsList {
   };
 }
 
-Yup.setLocale({
-  mixed: {
-    required: "login.required",
-  },
-});
-
-const transformEmailValue = (value: string) => {
-  return value.replace(/\s+/g, "");
-};
-const transformNameValue = (value: string) => {
-  return value.trim().replace(/\s{2,}/g, " ");
-};
+// const transformEmailValue = (value: string) => {
+//   return value.replace(/\s+/g, "");
+// };
+// const transformNameValue = (value: string) => {
+//   return value.trim().replace(/\s{2,}/g, " ");
+// };
 
 const emailSchema = Yup.string()
-  .matches(
-    /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-    i18n.t("login.validEmail")
-  )
-  .required();
-// .required(i18n.t("login.required"));
+  .matches(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, "login.validEmail")
+  .required("login.required");
 
 const passwordSchema = Yup.string()
-  .min(6, i18n.t("login.minLen"))
-  .required(i18n.t("login.required"));
+  .min(6, "login.minLen")
+  .required("login.required");
 
 const confirmPassword = Yup.string()
-  .oneOf([Yup.ref("password"), null], i18n.t("login.passswordMustMatch"))
-  .required(i18n.t("login.required"));
+  .oneOf([Yup.ref("password"), null], "login.passswordMustMatch")
+  .required("login.required");
 
 // const phoneSchema = Yup.string()
 //   .min(18, "Enter valid phone")
@@ -52,17 +41,12 @@ const confirmPassword = Yup.string()
 //   .required('Required');
 
 const nameSchema = Yup.string()
-  .min(2, i18n.t("login.enterName"))
-  .matches(
-    /^(?!-)(?!.*-\s*-)[A-Za-zА-Яа-яЁёЇїІіЄєҐґ -]+$/,
-    i18n.t("login.checkValue")
-  )
-  .required(i18n.t("login.required"));
+  .min(2, "login.enterName")
+  .matches(/^(?!-)(?!.*-\s*-)[A-Za-zА-Яа-яЁёЇїІіЄєҐґ -]+$/, "login.checkValue")
+  .required("login.required");
 
-const emailValidationSchema = Yup.object({
-  email: emailSchema,
-  password: passwordSchema,
-}).shape({});
+const emailValidationSchema = Yup.object().shape({ email: emailSchema, password: passwordSchema });
+
 const emailVerifySchema = Yup.object({
   email: emailSchema,
 }).shape({});

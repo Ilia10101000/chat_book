@@ -10,7 +10,7 @@ i18n.use(initReactI18next).init({
           validEmail: "Введіть дійсну електронну адресу",
           required: "Обов'язкове поле",
           passswordMustMatch: "Паролі мають збігатися",
-          minLen: "Мінімальна довжина – 6 літер",
+          minLen: "Мінімальна довжина – {{min}} літер",
           enterName: "Введіть ім'я",
           checkValue: "Перевірте введене значення",
           name: "Ваше ім'я",
@@ -68,6 +68,7 @@ i18n.use(initReactI18next).init({
           addPhoto: "Додайте фото",
           deleteAccount: "Видалити обліковий запис",
           success: "Оновлення успішне",
+          check: "Перевірьте свою електронну пошту",
         },
         error: {
           desc: "Сталася якась помилка",
@@ -93,6 +94,7 @@ i18n.use(initReactI18next).init({
           noMatches: "Немає збігів",
           commentsClosed: "Коментарі закриті",
           likesCount: "людям сподобалась ця публікація",
+          noComments: "Поки немає коментарів...",
         },
         friendsPage: {
           findFriends: "Знайти друзів",
@@ -111,6 +113,12 @@ i18n.use(initReactI18next).init({
           online: "В мережі",
           typing: "Вводить текст...",
           deleteChat: "Видалити чат",
+          noExist: "Немає наявних чатів",
+        },
+        resetPasswordForm: {
+          send: "Надіслати",
+          context:
+            "Введіть електронну адресу, яка прив’язана до вашого облікового запису, щоб отримати інструкції для скидання пароля",
         },
       },
     },
@@ -121,7 +129,7 @@ i18n.use(initReactI18next).init({
           validEmail: "Enter a valid email",
           required: "Required",
           passswordMustMatch: "Passwords must match",
-          minLen: "Min lenght is 6 letters",
+          minLen: "Min lenght is {{min}} letters",
           enterName: "Enter your name",
           checkValue: "Check typed value",
           name: "Name",
@@ -178,6 +186,7 @@ i18n.use(initReactI18next).init({
           addPhoto: "Add photo",
           deleteAccount: "Delete account",
           success: "Update successful",
+          check: "Check your email",
         },
         error: {
           desc: "Some error occured",
@@ -203,6 +212,7 @@ i18n.use(initReactI18next).init({
           noMatches: "No matches",
           commentsClosed: "Comments are closed",
           likesCount: "people likes this post",
+          noComments: "No comments yet...",
         },
         friendsPage: {
           findFriends: "Find friends",
@@ -221,6 +231,12 @@ i18n.use(initReactI18next).init({
           online: "Online",
           typing: "Typing...",
           deleteChat: "Delete chat",
+          noExist: "No existing chats",
+        },
+        resetPasswordForm: {
+          send: "Send",
+          context:
+            "Enter the email address associated with your account to receive instructions for resetting your password",
         },
       },
     },

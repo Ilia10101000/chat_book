@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import CircularProgress from "@mui/material/CircularProgress";
 import {
@@ -41,14 +41,7 @@ const SearchUsersDialog = ({ open, closeModal, handleSubmit }) => {
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const [searchListHeight, setSearchListHeight] = useState(0);
   const {t} = useTranslation()
-
-  const listRef = useRef< HTMLDivElement>(null);
-
-  useLayoutEffect(() => {
-    setSearchListHeight(listRef?.current?.clientHeight);
-  }, [options.length, listRef?.current]);
 
   const fetchData = async (searchQuery: string) => {
     setLoading(true);
@@ -106,7 +99,6 @@ const SearchUsersDialog = ({ open, closeModal, handleSubmit }) => {
           <CloseIcon sx={{ color: "#fff" }} />
         </IconButton>
         <TextField
-          ref={listRef}
           sx={{ width: "100%" }}
           placeholder={t("userPage.choosePerson")}
           value={searchQuery}
@@ -127,7 +119,8 @@ const SearchUsersDialog = ({ open, closeModal, handleSubmit }) => {
               width: "100%",
               position: "absolute",
               left: 0,
-              top: `${searchListHeight}px`,
+              bottom: 0,
+              transform: "translate(0%,100%)",
               backgroundColor: (theme) =>
                 theme.palette.mode === "light" ? "#fff" : "#000",
             }}
@@ -166,7 +159,8 @@ const SearchUsersDialog = ({ open, closeModal, handleSubmit }) => {
               textAlign: "center",
               position: "absolute",
               left: 0,
-              top: `${searchListHeight}px`,
+              bottom: 0,
+              transform: "translate(0%,100%)",
               backgroundColor: (theme) =>
                 theme.palette.mode === "light" ? "#fff" : "#000",
             }}

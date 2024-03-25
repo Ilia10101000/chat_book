@@ -13,9 +13,11 @@ import {
   EXISTING_CHATS,
 } from "../../firebase_storage_path_constants/firebase_storage_path_constants";
 import { useAuth } from "../../App";
+import { useTranslation } from "react-i18next";
 
 function MessageListDrawer({ open, onClose, receivedNewMessages }) {
   const authUser = useAuth();
+  const {t} = useTranslation()
 
   const [existingChatsList, loadingECL, errorECL] = useCollectionData(
     collection(db, `${USERS_D}/${authUser.uid}/${EXISTING_CHATS}`)
@@ -26,7 +28,7 @@ function MessageListDrawer({ open, onClose, receivedNewMessages }) {
   if (loadingECL) {
     result = <CircularProgress sx={{ mx: "auto" }} />;
   } else if (!existingChatsList?.length) {
-    result = <div style={{ textAlign: "center" }}>No existing chats...</div>;
+    result = <div style={{ textAlign: "center" }}>{t("messagePage.noExist")}</div>;
   } else {
     result = existingChatsList?.map(({ companion, chatId }, index) => (
       <MessageListItemLink

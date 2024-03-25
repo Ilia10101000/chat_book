@@ -92,16 +92,17 @@ function NewImageModalWindow({ open, onClose, children }) {
 
   return (
     <Modal open={open}>
+      <>
+          <IconButton
+            onClick={onCloseWindow}
+            sx={{ position: "absolute", right: {xs:'5px',sm:'15px'}, top: {xs:'5px',sm:'15px'} }}
+          >
+            <CloseIcon sx={{ color: "#fff" }} />
+          </IconButton>
       <Box sx={style}>
         <ImageContext.Provider
           value={{ postsImage, onCloseWindow, handleRemoveImage, handleError }}
         >
-          <IconButton
-            onClick={onCloseWindow}
-            sx={{ position: "absolute", right: "-5px", top: "-40px" }}
-          >
-            <CloseIcon sx={{ color: "#fff" }} />
-          </IconButton>
           {postsImage ? (
             children
           ) : (
@@ -125,6 +126,7 @@ function NewImageModalWindow({ open, onClose, children }) {
           />
         </ImageContext.Provider>
       </Box>
+      </>
     </Modal>
   );
 }

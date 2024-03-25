@@ -34,12 +34,14 @@ function MessageAppBar({ companion, isTyping, deleteChat }: IMessageAppBar) {
   const [showConfirmDeleteChat, setShowConfirmDeleteChat] = useState(false);
 
   const [isOnlineSnapShot, loading, error] = useObjectVal<{
-    isOnline: boolean;
+    present: {
+      isOnline:boolean
+    }
   }>(ref(realTimeDB, `${USERS_RT}/${companion.id}`));
 
   const { t } = useTranslation();
 
-  const isOnline = isOnlineSnapShot?.isOnline;
+  const isOnline = isOnlineSnapShot?.present?.isOnline;
 
   return (
     <AppBar

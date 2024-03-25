@@ -1,13 +1,11 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import { PersonalsMarkedTags } from "./PersonalsMarkedTags";
-import { DocumentData, collection, deleteDoc } from "firebase/firestore";
+import { DocumentData, collection } from "firebase/firestore";
 import { db } from "../../../firebase/auth";
-import { setDoc, doc } from "firebase/firestore";
 import {
   POSTS,
   USERS_D,
   MARKED_PERSONS,
-  TAGS_IN_THIRD_PARTY_POSTS,
 } from "../../../firebase_storage_path_constants/firebase_storage_path_constants";
 import { SearchUsersDialog } from "./SearchUsersDialog";
 import { useCollectionData } from "react-firebase-hooks/firestore";
@@ -94,7 +92,7 @@ function ImageContainer({
   return (
     <Box
       ref={containerRef}
-      sx={{ position: "relative", width: "100%", padding: "0px" }}
+      sx={{ position: "relative", width: "100%", padding: "0px"}}
     >
       <img
         onClick={isOwner && showMarkedTags ? setPersonalTagCoords : null}
@@ -111,9 +109,9 @@ function ImageContainer({
       <Skeleton
         variant="rounded"
         sx={{
+          display: isLoadedImage ? "none" : "block",
           width: `${containerHeight}px`,
           height: `${containerHeight}px`,
-          display: isLoadedImage ? "none" : "block",
         }}
       />
 

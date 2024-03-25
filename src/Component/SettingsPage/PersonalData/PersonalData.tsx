@@ -139,7 +139,7 @@ function PersonalData({
         autoComplete="off"
         helperText={
           displayNameForm.touched.displayName &&
-          displayNameForm.errors.displayName
+          t(displayNameForm.errors.displayName)
         }
         id="displayName"
         value={displayNameForm.values.displayName}

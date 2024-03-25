@@ -34,30 +34,23 @@ function EmailForms({ handleSubmit }: IEmailForms) {
       handleSubmit(email, password);
     },
     validationSchema: emailValidationSchema,
+
   });
 
-  // useLayoutEffect(() => {
-  //   Object.keys(formik.errors).forEach((fieldName) => {
-  //     if (Object.keys(formik.touched).includes(fieldName)) {
-  //       console.log(fieldName)
-  //       formik.setFieldError(fieldName, formik.errors[fieldName])
-  //     }
-  //   });
-  // },[formik.errors])
-
-  // useEffect(() => {
-  //   i18n.on("languageChanged", (lng) => {
-  //     Object.keys(formik.errors).forEach((fieldName) => {
-  //       if (Object.keys(formik.touched).includes(fieldName)) {
-  //         console.log(fieldName)
-  //         formik.setFieldError( [fieldName], t(formik.errors[fieldName]) );
-  //       }
-  //     });
-  //   });
-  //   return () => {
-  //     i18n.off("languageChanged", (lng) => {});
-  //   };
-  // }, [formik.errors]);
+  useEffect(() => {
+    i18n.on("languageChanged", (lng) => {
+      console.log('4000$')
+      Object.keys(formik.errors).forEach((fieldName) => {
+        if (Object.keys(formik.touched).includes(fieldName)) {
+          console.log(fieldName)
+          formik.setFieldError( fieldName, t(formik.errors[fieldName]) );
+        }
+      });
+    });
+    return () => {
+      i18n.off("languageChanged", (lng) => {});
+    };
+  }, []);
 
   return (
     <form onSubmit={formik.handleSubmit}>
@@ -75,7 +68,7 @@ function EmailForms({ handleSubmit }: IEmailForms) {
           label={t("login.email")}
           id={"email"}
           name={"email"}
-          helperText={formik.touched["email"] && formik.errors["email"]}
+          helperText={formik.touched["email"] && t(formik.errors["email"])}
           error={formik.touched["email"] && Boolean(formik.errors["email"])}
           value={formik.values["email"]}
           onChange={formik.handleChange}
@@ -102,7 +95,8 @@ function EmailForms({ handleSubmit }: IEmailForms) {
               </InputAdornment>
             ),
           }}
-          helperText={formik.touched["password"] && formik.errors["password"]}
+          //@ts-ignore
+          helperText={formik.touched["password"]  && t(formik.errors['password'],{min:6})}
           error={
             formik.touched["password"] && Boolean(formik.errors["password"])
           }

@@ -206,11 +206,11 @@ function EmailSetting({ user }: { user: User }) {
       <TextField
         error={emailForm.touched.email && Boolean(emailForm.errors.email)}
         autoComplete="off"
-        helperText={emailForm.touched.email && emailForm.errors.email}
+        helperText={emailForm.touched.email && t(emailForm.errors.email)}
         id="email"
         value={emailForm.values.email}
         onChange={emailForm.handleChange}
-        label={t('login.email')}
+        label={t("login.email")}
         onBlur={(e) => {
           emailForm
             .setFieldValue("email", transformNameValue(emailForm.values.email))
@@ -226,7 +226,7 @@ function EmailSetting({ user }: { user: User }) {
         color="warning"
         onClick={() => emailForm.handleSubmit()}
       >
-        {t('login.changeEmail')}
+        {t("login.changeEmail")}
       </Button>
       {!user.emailVerified && (
         <Button
@@ -235,7 +235,7 @@ function EmailSetting({ user }: { user: User }) {
           color="success"
           variant="contained"
         >
-          {t('login.verifyEmail')}
+          {t("login.verifyEmail")}
         </Button>
       )}
       {error && (
@@ -243,6 +243,7 @@ function EmailSetting({ user }: { user: User }) {
           {error}
         </Alert>
       )}
+      {isSentEV && <Alert>{t("settingsPage.check")}</Alert>}
     </Box>
   );
 }

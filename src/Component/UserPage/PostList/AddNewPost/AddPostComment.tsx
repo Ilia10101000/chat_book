@@ -43,7 +43,8 @@ function AddPostComment({ addComment,addCommentLabel }: IAddPostComment) {
         style={{
           position: "absolute",
           left: "10px",
-          bottom: "65px",
+          top: 0,
+          transform:'translate(0%,-100%)',
           display: isOpenEmoji ? "block" : "none",
         }}
       >
@@ -52,18 +53,16 @@ function AddPostComment({ addComment,addCommentLabel }: IAddPostComment) {
           onEmojiSelect={addEmojiToMessage}
           onClickOutside={handleOnClickOutsideEmojiPicker}
           theme={mode}
-          perLine={5}
-          previewPosition="none"
+          perLine={8}
           searchPosition="none"
         />
       </div>
       <TextField
+        autoComplete="off"
         value={comment}
         onChange={handleChange}
-        multiline
         placeholder={addCommentLabel}
         variant="standard"
-        maxRows={3}
         sx={{
           width: "100%",
           "& .MuiInputBase-root": {

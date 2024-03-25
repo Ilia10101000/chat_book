@@ -11,6 +11,8 @@ import {
   POSTS,
   USERS_D,
 } from "../../../../firebase_storage_path_constants/firebase_storage_path_constants";
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
 import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 import Checkbox from "@mui/material/Checkbox";
@@ -18,13 +20,16 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import { useImageDragDropContext } from "./NewImageModalWindow";
 import { useAuth } from "../../../../App";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "../../../../theme";
+import SentimentSatisfiedAltOutlinedIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
+
 
 const generateUniqueFileName = (userId: string) => {
   return `${Date.now()}-${userId}-${Math.floor(Math.random() * 10000) + 1}`;
 };
 
 function EditorNewPost() {
-  const { handleClose, postsImage, handleError, onCloseWindow } =
+  const { postsImage, handleError, onCloseWindow } =
     useImageDragDropContext();
   const authUser = useAuth();
 
@@ -32,6 +37,8 @@ function EditorNewPost() {
   const [savedImage, setSavedImage] = useState("");
   const [pendingAddPost, setPendingAddPost] = useState(false);
   const [hideComments, setHideComments] = useState(false);
+  const [isOpenEmoji, setIsOpenEmoji] = useState(false);
+  const {mode} = useTheme()
   const {t} = useTranslation()
 
   const handleChangeText = (
@@ -45,7 +52,7 @@ function EditorNewPost() {
   const handleSave = (editorRef: React.MutableRefObject<any>) => {
     if (editorRef.current) {
       const canvasScaled = editorRef.current
-        .getImageScaledToCanvas()
+        .getImage()
         .toDataURL();
 
       setSavedImage(canvasScaled);
@@ -55,10 +62,21 @@ function EditorNewPost() {
   const clearSavedImage = () => {
     setSavedImage("");
   };
+    const addEmojiToMessage = (e: { native: string }) => {
+      setText((message) => message + e.native);
+    };
 
   const closeEditor = () => {
     setSavedImage("");
     onCloseWindow();
+  };
+  const handleOnClickOutsideEmojiPicker = () => {
+    if (isOpenEmoji) {
+      setIsOpenEmoji(false);
+    }
+  };
+  const toogleEmojiView = () => {
+    setIsOpenEmoji((open) => !open);
   };
 
   const handleAddPost = async () => {
@@ -85,7 +103,7 @@ function EditorNewPost() {
   };
 
   return (
-    <Box>
+    <Box sx={{ maxWidth: { xs: "325px", sm: "500px", md: "700px" } }}>
       {savedImage ? (
         <Box
           sx={{
@@ -95,12 +113,31 @@ function EditorNewPost() {
         >
           <IconButton
             onClick={clearSavedImage}
-            sx={{ position: "absolute", right: "-40px", top: "-10px" }}
+            sx={{ position: "absolute", right: "0px", top: "0px" }}
           >
             <EditIcon />
           </IconButton>
           <img src={savedImage} style={{ width: "100%" }} />
           <div style={{ width: "100%", position: "relative" }}>
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+                transform: "translate(0%,-94%)",
+                display: isOpenEmoji ? "block" : "none",
+              }}
+            >
+              <Picker
+                data={data}
+                onEmojiSelect={addEmojiToMessage}
+                onClickOutside={handleOnClickOutsideEmojiPicker}
+                theme={mode}
+                searchPosition="none"
+                perLine={8}
+                maxFrequentRows={1}
+              />
+            </div>
             <TextField
               placeholder={t("imageModal.postDesc")}
               sx={{ width: "100%", mt: 2 }}
@@ -109,6 +146,13 @@ function EditorNewPost() {
               maxRows={2}
               value={text}
               onChange={handleChangeText}
+              InputProps={{
+                endAdornment: (
+                  <IconButton onClick={toogleEmojiView}>
+                    <SentimentSatisfiedAltOutlinedIcon />
+                  </IconButton>
+                ),
+              }}
             />
             <div
               style={{
@@ -122,10 +166,21 @@ function EditorNewPost() {
               {2000 - text.length}
             </div>
           </div>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <Button
               disabled={pendingAddPost}
-              sx={{ mt: 2, padding: "4px 10px", boxSizing: "border-box" }}
+              sx={{
+                mt: 2,
+                padding: "4px 10px",
+                boxSizing: "border-box",
+                fontSize: { xs: "9px", sm: "13px" },
+              }}
               color="warning"
               size="small"
               startIcon={<ArrowBackIcon />}
@@ -135,6 +190,13 @@ function EditorNewPost() {
               {t("signin.goBackButton")}
             </Button>
             <FormControlLabel
+              labelPlacement="bottom"
+              sx={{
+                "& .MuiTypography-root": {
+                  fontSize: { xs: "11px", sm: "1rem" },
+                  textAlign: "center",
+                },
+              }}
               control={
                 <Checkbox
                   checked={hideComments}
@@ -146,7 +208,12 @@ function EditorNewPost() {
 
             <Button
               disabled={pendingAddPost}
-              sx={{ mt: 2, padding: "4px 10px", boxSizing: "border-box" }}
+              sx={{
+                mt: 2,
+                padding: "4px 10px",
+                boxSizing: "border-box",
+                fontSize: { xs: "9px", sm: "13px" },
+              }}
               color="success"
               size="small"
               endIcon={

@@ -8,7 +8,7 @@ import {
   DialogTitle,
   IconButton,
   Typography,
-  Tooltip
+  ListItem
 } from "@mui/material";
 import { useDocumentData } from "react-firebase-hooks/firestore";
 import { db } from "../../../firebase/auth";
@@ -48,19 +48,19 @@ function CommentItem({ data, authUserId, removeComment, delComment,can,del }: IC
   const isCommentOwner = commmentAuthor.id === authUserId;
 
   return (
-    <Box
+    <ListItem
       sx={{
         width: "100%",
         display: "flex",
         gap: "10px",
-        mb: 2,
         position: "relative",
+        ...(isCommentOwner && { pr: "31px" }),
       }}
     >
       {isCommentOwner && (
         <IconButton
           size="small"
-          sx={{ position: "absolute", right: "-15px", top: "-10px" }}
+          sx={{ position: "absolute", right: "0px", top: "0px" }}
           onClick={handleShowDialog}
         >
           <DeleteIcon sx={{ fontSize: "16px" }} />
@@ -83,6 +83,8 @@ function CommentItem({ data, authUserId, removeComment, delComment,can,del }: IC
           wordBreak: "break-word",
           wordWrap: "break-word",
           overflowWrap: "break-word",
+          textOverflow: "ellipsis",
+          overflow: "hidden",
         }}
       >
         <Typography
@@ -93,6 +95,7 @@ function CommentItem({ data, authUserId, removeComment, delComment,can,del }: IC
             overflowX: "hidden",
             whiteSpace: "nowrap",
             textOverflow: "ellipsis",
+            color: "text.secondary",
           }}
         >
           {commmentAuthor.displayName}
@@ -116,7 +119,7 @@ function CommentItem({ data, authUserId, removeComment, delComment,can,del }: IC
           </DialogActions>
         </Dialog>
       )}
-    </Box>
+    </ListItem>
   );
 }
 

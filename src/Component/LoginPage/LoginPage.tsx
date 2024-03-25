@@ -23,6 +23,8 @@ import { ThemeSwitch } from "../CustomeElement/SwitchTheme";
 import { useTheme } from "../../theme";
 import { useTranslation } from "react-i18next";
 import { SwitchLanguage } from "../CustomeElement/SwitchLanguage";
+import { useState } from "react";
+import { ResetPasswordModal } from "./ResetPasswordModal";
 
 interface IWindow extends Window {
   recaptchaVerifier?: any;
@@ -35,6 +37,8 @@ const LoginPage = () => {
     useSignInWithEmailAndPassword(auth);
   const [signInWithGoogle, googleLogedUser, loading, googleAuthError] =
     useSignInWithGoogle(auth);
+  
+  const [showResetMailDialog, setResetMailDialog] = useState(false)
 
   const { mode, toogleThemeMode } = useTheme();
   const { t } = useTranslation();
@@ -56,6 +60,10 @@ const LoginPage = () => {
     }
   };
 
+  const handleSendResetMailDialog = () => {
+    setResetMailDialog(value => !value);
+  }
+
   return (
     <div
       style={{
@@ -69,10 +77,7 @@ const LoginPage = () => {
     >
       <Box
         sx={{
-          position: 'relative',
-        // top: '50%',
-        // left: '50%',
-        // transform:'translate(-50%,-50%)',
+          position: "relative",
           borderRadius: "10px",
           width: "300px",
           p: 4,
@@ -98,7 +103,7 @@ const LoginPage = () => {
           <Button size="small">{t("login.createAccount")}</Button>
         </Link>
         <Button
-          // onClick={handleSignInWithEmailLink}
+          onClick={handleSendResetMailDialog}
           sx={{ fontSize: "10px" }}
           color="error"
         >
@@ -120,8 +125,36 @@ const LoginPage = () => {
             onChange={toogleThemeMode}
           />
         </div>
-        {loginError && <div style={{position:'absolute',top:'0px',transform:'translate(0%,-100%)'}}>{loginError.message}</div>}
-        {googleAuthError && <div style={{position:'absolute',top:'0px',transform:'translate(0%,-100%)'}}>{googleAuthError.message}</div>}
+        {loginError && (
+          <div
+            style={{
+              position: "absolute",
+              top: "0px",
+              transform: "translate(0%,-100%)",
+            }}
+          >
+            {loginError.message}
+          </div>
+        )}
+        {googleAuthError && (
+          <div
+            style={{
+              position: "absolute",
+              top: "0px",
+              transform: "translate(0%,-100%)",
+            }}
+          >
+            {googleAuthError.message}
+          </div>
+        )}
+        {showResetMailDialog && (
+
+        <ResetPasswordModal
+          auth={auth}
+          open={showResetMailDialog}
+          onClose={handleSendResetMailDialog}
+        />
+        )}
       </Box>
     </div>
   );

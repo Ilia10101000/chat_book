@@ -21,7 +21,7 @@ function SigninInfo() {
   const { requiredInfo } = useParams();
   const { signinForm, error, loading } = useSigninValue();
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const location = useLocation()
   const goBack = () => {
     if (location.pathname === "/signin/displayName") {
@@ -41,7 +41,7 @@ function SigninInfo() {
           Boolean(signinForm.errors.displayName)
         }
         helperText={
-          signinForm.touched.displayName && signinForm.errors.displayName
+          signinForm.touched.displayName && t(signinForm.errors.displayName)
         }
         autoComplete="off"
         label={t('login.enterName')}
@@ -66,7 +66,7 @@ function SigninInfo() {
     form = (
       <EmailValue
         error={signinForm.touched.email && Boolean(signinForm.errors.email)}
-        helperText={signinForm.touched.email && signinForm.errors.email}
+        helperText={signinForm.touched.email && t(signinForm.errors.email)}
         displayName={signinForm.values.displayName}
         label={t("login.email")}
         name={"email"}
@@ -110,6 +110,7 @@ function SigninInfo() {
         handleSubmit={signinForm.handleSubmit}
         values={signinForm.values}
         mainPassword={{
+          autocomplete:'off',
           label: t("login.password"),
           name: "password",
           id: "password",
@@ -118,9 +119,10 @@ function SigninInfo() {
           onBlur: signinForm.handleBlur,
           error:
             signinForm.touched.password && Boolean(signinForm.errors.password),
-          helperText: signinForm.touched.password && signinForm.errors.password,
+          helperText: signinForm.touched.password && t(signinForm.errors.password,{min:6}),
         }}
         confirmPassword={{
+          autocomplete:'off',
           label: t("signin.confirmPassword"),
           name: "confirmPassword",
           id: "confirmPassword",
@@ -132,7 +134,7 @@ function SigninInfo() {
             Boolean(signinForm.errors.confirmPassword),
           helperText:
             signinForm.touched.confirmPassword &&
-            signinForm.errors.confirmPassword,
+            t(signinForm.errors.confirmPassword),
         }}
       />
     );
