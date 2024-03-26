@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/static/css/main.31d6cfe0.css",
+    "main.js": "/static/js/main.45a1ff8d.js",
+    "static/media/united-kingdom-flag-icon.svg": "/static/media/united-kingdom-flag-icon.8411a74a2d01099b9cd827dcba16a600.svg",
+    "static/media/default-user.svg": "/static/media/default-user.10ec6d2d458a85295cc7b70bb7033e82.svg",
+    "index.html": "/index.html",
+    "static/media/Flag_of_Ukraine.svg": "/static/media/Flag_of_Ukraine.1896ba7e79b0cb519aed136948150c1c.svg",
+    "main.45a1ff8d.js.map": "/static/js/main.45a1ff8d.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.31d6cfe0.css",
+    "static/js/main.45a1ff8d.js"
+  ]
+}
