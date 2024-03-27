@@ -20,12 +20,12 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-// const auth = initializeAuth(app, {
-//   persistence: [browserSessionPersistence],
-//   popupRedirectResolver: browserPopupRedirectResolver,
+// const auth = getAuth(app);
+const auth = initializeAuth(app, {
+  persistence: [browserSessionPersistence],
+  popupRedirectResolver: browserPopupRedirectResolver,
 
-// });
+});
 const db = getFirestore(app);
 const realTimeDB = getDatabase(app);
 const storage = getStorage(app);
