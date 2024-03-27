@@ -98,8 +98,8 @@ function MessageListItemLink({
                 invisible={!isOnline}
               >
                 <Avatar
-                  alt={user.displayName || user.email}
-                  src={user.photoURL || User}
+                  alt={user?.displayName || user?.email}
+                  src={user?.photoURL || User}
                   sx={{ width: 56, height: 56 }}
                 />
               </Badge>
@@ -115,7 +115,7 @@ function MessageListItemLink({
                 overflow: "hidden",
                 textOverflow: "ellipsis",
               }}
-              primary={user.displayName || user.email}
+              primary={user?.displayName || user?.email}
               secondary={lastMessage?.lastMessage?.message}
             />
           </ListItem>

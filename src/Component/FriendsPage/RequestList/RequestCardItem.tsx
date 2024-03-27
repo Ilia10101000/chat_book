@@ -33,7 +33,7 @@ function RequestCardItem({ userId, onClose, handleRequest, icon }) {
     <ListItem sx={{ p: 0 }}>
       <ListItemAvatar>
         <IconButton onClick={handleViewUserProfile}>
-          <UserAvatar userName={user.displayName} photoURL={user.photoURL} />
+          <UserAvatar userName={user?.displayName} photoURL={user?.photoURL} />
         </IconButton>
       </ListItemAvatar>
       <ListItemText

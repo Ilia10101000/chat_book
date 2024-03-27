@@ -128,7 +128,7 @@ function NewsPage() {
   }
 
   return (
-    <Box sx={{maxHeight:'100vh'}}>
+    <Box sx={{maxHeight:'100vh', display:'flex', justifyContent:'center'}}>
       {res}
       <Outlet />
     </Box>
