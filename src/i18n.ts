@@ -1,7 +1,7 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 
-i18n.use(initReactI18next).init({
+i18n.use(initReactI18next,).init({
   resources: {
     ua: {
       translation: {
@@ -243,7 +243,6 @@ i18n.use(initReactI18next).init({
   },
   lng: localStorage.getItem("lang") || "ua",
   fallbackLng: "ua",
-  debug: true,
 });
 
 export default i18n;

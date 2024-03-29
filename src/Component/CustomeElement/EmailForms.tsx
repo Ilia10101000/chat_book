@@ -1,5 +1,4 @@
-import React, { useEffect, useLayoutEffect } from "react";
-import { CustomeInput } from "./CustomeInput";
+import React from "react";
 import Button from "@mui/material/Button";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
@@ -37,20 +36,6 @@ function EmailForms({ handleSubmit }: IEmailForms) {
 
   });
 
-  useEffect(() => {
-    i18n.on("languageChanged", (lng) => {
-      console.log('4000$')
-      Object.keys(formik.errors).forEach((fieldName) => {
-        if (Object.keys(formik.touched).includes(fieldName)) {
-          console.log(fieldName)
-          formik.setFieldError( fieldName, t(formik.errors[fieldName]) );
-        }
-      });
-    });
-    return () => {
-      i18n.off("languageChanged", (lng) => {});
-    };
-  }, []);
 
   return (
     <form onSubmit={formik.handleSubmit}>
