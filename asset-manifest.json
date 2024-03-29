@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/chat_book/static/css/main.31d6cfe0.css",
-    "main.js": "/chat_book/static/js/main.97f7264a.js",
+    "main.js": "/chat_book/static/js/main.28931642.js",
     "static/media/united-kingdom-flag-icon.svg": "/chat_book/static/media/united-kingdom-flag-icon.8411a74a2d01099b9cd827dcba16a600.svg",
     "index.html": "/chat_book/index.html",
     "static/media/default-user.svg": "/chat_book/static/media/default-user.10ec6d2d458a85295cc7b70bb7033e82.svg",
     "static/media/Flag_of_Ukraine.svg": "/chat_book/static/media/Flag_of_Ukraine.1896ba7e79b0cb519aed136948150c1c.svg",
-    "main.97f7264a.js.map": "/chat_book/static/js/main.97f7264a.js.map"
+    "main.28931642.js.map": "/chat_book/static/js/main.28931642.js.map"
   },
   "entrypoints": [
     "static/css/main.31d6cfe0.css",
-    "static/js/main.97f7264a.js"
+    "static/js/main.28931642.js"
   ]
 }
