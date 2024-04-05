@@ -7,7 +7,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Box from "@mui/material/Box";
 import { updatePasswordValidationSchema } from "../../../lib/yupFormsValidationParams";
 import { useFormik } from "formik";
-import { updatePassword } from "firebase/auth";
+import { User, updatePassword } from "firebase/auth";
 import { auth } from "../../../firebase/auth";
 import { ReloginDialog } from "./ReloginDialog";
 import { signOut } from "firebase/auth";
@@ -57,7 +57,7 @@ function SecurityData({
 
   async function changeUserAccountPassword() {
     try {
-      await updatePassword(auth.currentUser, passwordForm.values.password);
+      await updatePassword(auth.currentUser as User, passwordForm.values.password);
       passwordForm.resetForm()
       setSuccess(true);
     } catch (error) {
@@ -88,8 +88,8 @@ function SecurityData({
         onChange={passwordForm.handleChange}
         onBlur={passwordForm.handleBlur}
         error={
-          passwordForm.values.password &&
-          passwordForm.touched.password &&
+          Boolean(passwordForm.values.password) &&
+          Boolean(passwordForm.touched.password) &&
           Boolean(passwordForm.errors.password)
         }
         helperText={
@@ -119,8 +119,8 @@ function SecurityData({
         onChange={passwordForm.handleChange}
         onBlur={passwordForm.handleBlur}
         error={
-          passwordForm.values.confirmPassword &&
-          passwordForm.touched.confirmPassword &&
+          Boolean(passwordForm.values.confirmPassword) &&
+          Boolean(passwordForm.touched.confirmPassword) &&
           Boolean(passwordForm.errors.confirmPassword)
         }
         helperText={

@@ -2,7 +2,7 @@ import { FormikProps, useFormik } from "formik";
 import React, { createContext, useEffect, useContext, useState } from "react";
 import { newSigninValidationSchema } from "../../lib/yupFormsValidationParams";
 import { Outlet } from "react-router-dom";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { User, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { storage, ref, auth, db } from "../../firebase/auth";
 import { getDownloadURL, uploadString } from "firebase/storage";
 import { doc, setDoc } from "firebase/firestore";
@@ -18,7 +18,7 @@ const SigninContext = createContext<{
   }>;
   error: string | null;
   loading: boolean;
-}>(null);
+} | null>(null);
 
 function Signin() {
   const [error, setError] = useState<string | null>(null);
@@ -45,28 +45,30 @@ function Signin() {
           email,
           password
         );
+        let photoUrlLink = '';
         if (photoURL) {
           await uploadString(
             ref(storage, `${AVATAR_S}/${userCredentials.user.uid}/${AVATAR_S}`),
             photoURL,
             "data_url"
           );
-          const photourlLink = await getDownloadURL(
+          photoUrlLink = await getDownloadURL(
             ref(storage, `${AVATAR_S}/${userCredentials.user.uid}/${AVATAR_S}`)
           );
-          await updateProfile(auth.currentUser, {
-            displayName,
-            photoURL: photourlLink,
-          });
-          await setDoc(doc(db, USERS_D, userCredentials.user.uid), {
-            id: userCredentials.user.uid,
-            displayName,
-            email,
-            photoURL: photourlLink,
-            searchQuery: displayName.toLowerCase()
-          });
         }
+        await updateProfile(userCredentials.user, {
+          displayName,
+          photoURL: photoUrlLink,
+        });
+        await setDoc(doc(db, USERS_D, userCredentials.user.uid), {
+          id: userCredentials.user.uid,
+          displayName,
+          email,
+          photoURL: photoUrlLink,
+          searchQuery: displayName.toLowerCase(),
+        });
       } catch (error) {
+        console.log(error.message)
         setError(error.message);
       } finally {
         setLoading(false);

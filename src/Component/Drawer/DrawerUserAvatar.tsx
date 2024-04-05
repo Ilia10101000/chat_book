@@ -54,7 +54,7 @@ const getFirstNamesLetters = (name: string) => {
 
 function UserAvatar({ photoURL, userName, style = {} }: IUserAvatar) {
   if (!photoURL && !userName) {
-    return <Skeleton variant="rounded" sx={{...style}} />
+    return <Skeleton variant="circular" sx={{ ...style }} />;
   }
   else if (photoURL) {
     return <Avatar sx={{ ...style }} src={photoURL} />;

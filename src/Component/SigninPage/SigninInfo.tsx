@@ -41,7 +41,7 @@ function SigninInfo() {
           Boolean(signinForm.errors.displayName)
         }
         helperText={
-          signinForm.touched.displayName && t(signinForm.errors.displayName)
+          signinForm.touched.displayName && t(signinForm?.errors?.displayName)
         }
         autoComplete="off"
         label={t('login.enterName')}
@@ -110,7 +110,7 @@ function SigninInfo() {
         handleSubmit={signinForm.handleSubmit}
         values={signinForm.values}
         mainPassword={{
-          autocomplete:'off',
+          autoComplete:'off',
           label: t("login.password"),
           name: "password",
           id: "password",
@@ -122,7 +122,7 @@ function SigninInfo() {
           helperText: signinForm.touched.password && t(signinForm.errors.password,{min:6}),
         }}
         confirmPassword={{
-          autocomplete:'off',
+          autoComplete:'off',
           label: t("signin.confirmPassword"),
           name: "confirmPassword",
           id: "confirmPassword",

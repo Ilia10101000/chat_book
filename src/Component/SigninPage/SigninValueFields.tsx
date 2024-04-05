@@ -14,7 +14,7 @@ import { EditorNewAvatar } from "../SettingsPage/PersonalData/EditorUserAvatar";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 
-function DisplayNameValue(props: any) {
+function DisplayNameValue({ nextStepButton , ...props}: any) {
   const navigate = useNavigate();
 
   const goForward = () => {
@@ -26,12 +26,12 @@ function DisplayNameValue(props: any) {
     <>
       <TextField {...props} />
       <Button onClick={goForward} disabled={props.error}>
-        {props.nextStepButton}
+        {nextStepButton}
       </Button>
     </>
   );
 }
-function EmailValue({ displayName, ...props }: any) {
+function EmailValue({ displayName, nextStepButton, ...props }: any) {
   const navigate = useNavigate();
   if (!displayName) {
     return <Navigate to={"/signin/displayName"} />;
@@ -44,7 +44,7 @@ function EmailValue({ displayName, ...props }: any) {
     <>
       <TextField {...props} />
       <Button onClick={goForward} disabled={!props.value || props.error}>
-        {props.nextStepButton}
+        {nextStepButton}
       </Button>
     </>
   );
@@ -80,7 +80,7 @@ function PhotoURLValue({
   };
 
   const deletePhoto = () => {
-    onChange(null);
+    onChange('');
   };
   const handleSubmit = (image) => {
     localStorage.setItem("photoURLSignInValue", image);

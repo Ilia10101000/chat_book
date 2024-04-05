@@ -19,7 +19,7 @@ function Settings() {
   const authUser = useAuth();
   const [error, setError] = useState("");
   const [tabNumber, setTabNumber] = useState(0);
-  const {t} = useTranslation()
+  const { t } = useTranslation();
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabNumber(newValue);

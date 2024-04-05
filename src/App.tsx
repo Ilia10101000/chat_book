@@ -26,6 +26,7 @@ const App = () => {
       <CircularProgress
         sx={{
           position: "absolute",
+
           top: "50%",
           left: "50%",
           transform: "translate(-50%,-50%)",
@@ -38,10 +39,10 @@ const App = () => {
   return (
     <DndProvider backend={HTML5Backend}>
       <UserContext.Provider value={user}>
-          <Routes>
-            {renderRoutes(availablePaths)}
-            <Route path={"*"} element={<ErrorPage />} />
-          </Routes>
+        <Routes>
+          {renderRoutes(availablePaths)}
+          <Route path={"*"} element={<ErrorPage />} />
+        </Routes>
       </UserContext.Provider>
     </DndProvider>
   );
@@ -49,8 +50,6 @@ const App = () => {
 
 function useAuth() {
   return useContext(UserContext);
-};
+}
 
 export { App, useAuth };
-  
-  
