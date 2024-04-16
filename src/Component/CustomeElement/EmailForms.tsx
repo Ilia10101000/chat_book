@@ -87,9 +87,9 @@ function EmailForms({ handleSubmit }: IEmailForms) {
           }
           value={formik.values["password"]}
           onChange={formik.handleChange}
-          onBlur={(e: any) => {
-            formik.handleBlur(e);
-          }}
+          // onBlur={(e: any) => {
+          //   formik.handleBlur(e);
+          // }}
         />
         <Button
           color="secondary"

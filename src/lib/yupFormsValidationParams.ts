@@ -13,13 +13,6 @@ interface IFormsList {
   };
 }
 
-// const transformEmailValue = (value: string) => {
-//   return value.replace(/\s+/g, "");
-// };
-// const transformNameValue = (value: string) => {
-//   return value.trim().replace(/\s{2,}/g, " ");
-// };
-
 const emailSchema = Yup.string()
   .matches(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, "login.validEmail")
   .required("login.required");
@@ -31,14 +24,6 @@ const passwordSchema = Yup.string()
 const confirmPassword = Yup.string()
   .oneOf([Yup.ref("password"), null], "login.passswordMustMatch")
   .required("login.required");
-
-// const phoneSchema = Yup.string()
-//   .min(18, "Enter valid phone")
-//   .matches(
-//     /^\+38\(0(99|98|97|96|95|94|93|68|67|66|63|50|39|94)\)-\d{3}-\d{2}-\d{2}$/,
-//     "Check your typed value"
-//   )
-//   .required('Required');
 
 const nameSchema = Yup.string()
   .min(2, "login.enterName")

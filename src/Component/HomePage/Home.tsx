@@ -162,8 +162,12 @@ function HomePage() {
 
   useEffect(() => {
     setIsUserOnline(user.uid, true);
+    window.addEventListener('beforeunload', () => setIsUserOnline(user.uid, false))
     return () => {
       setIsUserOnline(user.uid, false);
+      window.removeEventListener("beforeunload", () =>
+        setIsUserOnline(user.uid, false)
+      );
     };
   }, []);
   useEffect(() => {
