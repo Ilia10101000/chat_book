@@ -6,7 +6,6 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Modal,
 } from "@mui/material";
 import { useState } from "react";
 import EmailIcon from "@mui/icons-material/Email";
@@ -17,7 +16,7 @@ import NewspaperIcon from "@mui/icons-material/Newspaper";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { auth, realTimeDB } from "../../firebase/auth";
 import { signOut } from "firebase/auth";
-import { serverTimestamp } from "firebase/firestore";
+import { serverTimestamp } from "firebase/database";
 import { ref, set } from "firebase/database";
 import { useTheme } from "../../theme";
 import { AppDrawer } from "../Drawer/AppDrawer";
